@@ -74,7 +74,7 @@ QTGENPRJ_FILES = $(PROJECT).files
 QTGENPRJ_INCLUDES = $(PROJECT).includes
 QTGENPRJ_INCLUDES_LIST = $(sort $(INCDIR))
 QTGENPRJ_FILES_LIST = $(sort $(CSRC) $(CPPSRC) $(ASMXSRC) $(LDSCRIPT) \
-                        	 $(foreach dir,$(QTGENPRJ_INCLUDES_LIST),$(wildcard $(dir)/*.h)) \
+                             $(foreach dir,$(QTGENPRJ_INCLUDES_LIST),$(wildcard $(dir)/*.h)) \
                              Makefile)
 define update_qt_creator_project
 	@rm -f $(QTGENPRJ_FILES) $(QTGENPRJ_INCLUDES)
