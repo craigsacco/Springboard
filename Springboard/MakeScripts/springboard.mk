@@ -1,6 +1,15 @@
 # Architecture setting
 MCU = cortex-m4
 
+# Springboard folders, includes and source
+SPRINGBOARDDIRS = . Kernel InternalHAL
+SPRINGBOARDINC = $(SPRINGBOARD)/Include
+SPRINGBOARDCSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.c))
+SPRINGBOARDCPPSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.cpp))
+SPRINGBOARDASMSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.S))
+SPRINGBOARDHEADERS = $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboard/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.h)) \
+                     $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboard/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.hpp))
+
 # ChibiOS location
 CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
@@ -23,7 +32,6 @@ USE_FPU = hard
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32F4_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
@@ -31,30 +39,33 @@ include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Define linker script file here
 LDSCRIPT = $(STARTUPLD)/STM32F407xG.ld
 
+# Optional sources provided by ChibiOS
+VARIOUSINC = $(CHIBIOS)/os/various
+VARIOUSCSRC = $(VARIOUSINC)/syscalls.c
+VARIOUSCPPSRC = $(VARIOUSINC)/cpp_wrappers/syscalls_cpp.cpp
+
 # C sources
 CSRC = $(STARTUPSRC) $(KERNSRC) $(PORTSRC) $(OSALSRC) $(HALSRC) \
-       $(PLATFORMSRC) $(BOARDSRC) $(TESTSRC) \
+       $(PLATFORMSRC) $(VARIOUSCSRC) $(SPRINGBOARDCSRC) \
        $(wildcard Source/*.c)
 
 # C++ sources
-CPPSRC = $(wildcard Source/*.cpp)
+CPPSRC = $(VARIOUSCPPSRC) $(SPRINGBOARDCPPSRC) \
+         $(wildcard Source/*.cpp)
 
 # ASM sources
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) \
+ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMSRC) \
           $(wildcard Source/*.S)
 
+# Includes folders
 INCDIR = $(CHIBIOS)/os/license $(STARTUPINC) $(KERNINC) $(PORTINC) \
-         $(OSALINC) $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(CHIBIOS)/os/various Include
-
-# Project files
-OUTFILES = $(PROJECT).config $(PROJECT).creator $(PROJECT).files \
-           $(PROJECT).includes
+         $(OSALINC) $(HALINC) $(PLATFORMINC) $(VARIOUSINC) \
+         $(SPRINGBOARDINC) Include
 
 # Tools
 CC   = arm-none-eabi-gcc
 CPPC = arm-none-eabi-g++
-LD   = arm-none-eabi-gcc
+LD   = arm-none-eabi-g++
 CP   = arm-none-eabi-objcopy
 AS   = $(CC) -x assembler-with-cpp
 AR   = arm-none-eabi-ar
@@ -73,8 +84,9 @@ QTGENPRJ_CREATOR = $(PROJECT).creator
 QTGENPRJ_FILES = $(PROJECT).files
 QTGENPRJ_INCLUDES = $(PROJECT).includes
 QTGENPRJ_INCLUDES_LIST = $(sort $(INCDIR))
-QTGENPRJ_FILES_LIST = $(sort $(CSRC) $(CPPSRC) $(ASMXSRC) $(LDSCRIPT) \
+QTGENPRJ_FILES_LIST = $(sort $(CSRC) $(CPPSRC) $(ASMXSRC) $(LDSCRIPT) $(SPRINGBOARDHEADERS) \
                              $(foreach dir,$(QTGENPRJ_INCLUDES_LIST),$(wildcard $(dir)/*.h)) \
+                             $(foreach dir,$(QTGENPRJ_INCLUDES_LIST),$(wildcard $(dir)/*.hpp)) \
                              Makefile)
 define update_qt_creator_project
 	@rm -f $(QTGENPRJ_FILES) $(QTGENPRJ_INCLUDES)

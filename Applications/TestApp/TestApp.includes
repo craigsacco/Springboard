@@ -5,7 +5,6 @@
 ../../Libraries/ChibiOS/17.6.x/os/common/ports/ARMCMx/compilers/GCC
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/compilers/GCC
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/devices/STM32F4xx
-../../Libraries/ChibiOS/17.6.x/os/hal/boards/ST_STM32F4_DISCOVERY
 ../../Libraries/ChibiOS/17.6.x/os/hal/include
 ../../Libraries/ChibiOS/17.6.x/os/hal/osal/rt
 ../../Libraries/ChibiOS/17.6.x/os/hal/ports/STM32/LLD/ADCv2
@@ -29,4 +28,5 @@
 ../../Libraries/ChibiOS/17.6.x/os/license
 ../../Libraries/ChibiOS/17.6.x/os/rt/include
 ../../Libraries/ChibiOS/17.6.x/os/various
+../../Springboard/Include
 Include
