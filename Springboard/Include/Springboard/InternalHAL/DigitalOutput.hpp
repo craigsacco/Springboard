@@ -31,22 +31,22 @@ public:
                                  outputConfiguration | outputSpeed);
     }
 
-    bool Get() const override final
+    inline bool Get() const override final
     {
         return palReadLatch(mPort) & (1UL << mPin);
     }
 
-    void Set(bool state = true) override final
+    inline void Set(bool state = true) override final
     {
         palWritePad(mPort, mPin, state);
     }
 
-    void Clear() override final
+    inline void Clear() override final
     {
         palClearPad(mPort, mPin);
     }
 
-    void Toggle() override final
+    inline void Toggle() override final
     {
         palTogglePad(mPort, mPin);
     }

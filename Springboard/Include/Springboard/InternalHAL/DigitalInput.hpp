@@ -25,7 +25,7 @@ public:
         palSetPadMode(port, pin, PAL_STM32_MODE_INPUT | pullConfiguration);
     }
 
-    bool Get() const override final
+    inline bool Get() const override final
     {
         return palReadPad(mPort, mPin);
     }

@@ -6,21 +6,31 @@ SPRINGBOARDDIRS = . Kernel InternalHAL
 SPRINGBOARDINC = $(SPRINGBOARD)/Include
 SPRINGBOARDCSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.c))
 SPRINGBOARDCPPSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.cpp))
-SPRINGBOARDASMSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.S))
+SPRINGBOARDASMSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.s))
+SPRINGBOARDASMXSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.S))
 SPRINGBOARDHEADERS = $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboard/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.h)) \
                      $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboard/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.hpp))
 
-# ChibiOS location
-CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
+# ChibiOS version and location
+CHIBIOSVERSION = 17.6.x
+ifeq ($(filter $(CHIBIOSVERSION),16.1.x 17.6.x),)
+	$(error Unknown ChibiOS version - only 16.1.x and 17.6.x are supported)
+endif
+ifeq ($(CHIBIOSVERSION),17.6.x)
+	CHIBIOSVERSIONDEF = 1706
+else
+	CHIBIOSVERSIONDEF = 1601
+endif
+CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/$(CHIBIOSVERSION)
 
 # ChibiOS make options
-USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb \
-          -DTHUMB
+USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb \
+          -DTHUMB -DCH_VERSION=$(CHIBIOSVERSIONDEF)
 USE_COPT = -Wall -Wextra -Wundef -Wstrict-prototypes
 USE_CPPOPT = -fno-rtti -Wall -Wextra -Wundef
 USE_LINK_GC = yes
 USE_LDOPT =
-USE_LTO = yes
+USE_LTO = no
 USE_THUMB = yes
 USE_VERBOSE_COMPILE = no
 USE_SMART_BUILD = no
@@ -29,12 +39,23 @@ USE_EXCEPTIONS_STACKSIZE = 0x400
 USE_FPU = hard
 
 # ChibiOS make includes
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
-include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
-include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+CHIBIOSMKHAL = $(CHIBIOS)/os/hal/hal.mk
+CHIBIOSMKPLATFORM = $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
+CHIBIOSMKOSAL = $(CHIBIOS)/os/hal/osal/rt/osal.mk
+CHIBIOSMKRT = $(CHIBIOS)/os/rt/rt.mk
+ifeq ($(CHIBIOSVERSION),17.6.x)
+	CHIBIOSMKSTARTUP = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
+	CHIBIOSMKPORT = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+else
+	CHIBIOSMKSTARTUP = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
+	CHIBIOSMKPORT = $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+endif
+include $(CHIBIOSMKSTARTUP)
+include $(CHIBIOSMKHAL)
+include $(CHIBIOSMKPLATFORM)
+include $(CHIBIOSMKOSAL)
+include $(CHIBIOSMKRT)
+include $(CHIBIOSMKPORT)
 
 # Define linker script file here
 LDSCRIPT = $(STARTUPLD)/STM32F407xG.ld
@@ -54,8 +75,15 @@ CPPSRC = $(VARIOUSCPPSRC) $(SPRINGBOARDCPPSRC) \
          $(wildcard Source/*.cpp)
 
 # ASM sources
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMSRC) \
-          $(wildcard Source/*.S)
+ifeq ($(CHIBIOSVERSION),17.6.x)
+	ASMSRC = $(SPRINGBOARDASMSRC) $(wildcard Source/*.s)
+	ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMXSRC) \
+	          $(wildcard Source/*.S)
+else
+	ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMSRC) \
+	         $(wildcard Source/*.s)
+	ASMXSRC = $(SPRINGBOARDASMXSRC) $(wildcard Source/*.S)
+endif
 
 # Includes folders
 INCDIR = $(CHIBIOS)/os/license $(STARTUPINC) $(KERNINC) $(PORTINC) \
@@ -75,7 +103,11 @@ HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
 # ChibiOS build rules
-RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC
+ifeq ($(CHIBIOSVERSION),17.6.x)
+	RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC
+else
+	RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
+endif
 include $(RULESPATH)/rules.mk
 
 # Qt Generic project file generation

@@ -14,12 +14,20 @@ public:
 
     inline const char* GetName() const
     {
+#if CH_VERSION == 1706
         return mThread->name;
+#else
+        return mThread->p_name;
+#endif
     }
 
     inline Priority GetPriority() const
     {
+#if CH_VERSION == 1706
         return mThread->prio;
+#else
+        return mThread->p_prio;
+#endif
     }
 
     inline void SetPriority(Priority priority)
@@ -29,17 +37,31 @@ public:
 
     inline void Start()
     {
-        chThdResume(&mThread, MSG_OK);
+        chThdStart(mThread);
     }
 
     inline void StartI()
     {
-        chThdResumeI(&mThread, MSG_OK);
+        chThdStartI(mThread);
     }
 
-    inline void StartS()
+    inline bool IsStarted() const
     {
-        chThdResumeS(&mThread, MSG_OK);
+#if CH_VERSION == 1706
+        return mThread->state != CH_STATE_WTSTART;
+#else
+        return mThread->p_state != CH_STATE_WTSTART;
+#endif
+    }
+
+    inline void Terminate()
+    {
+        chThdTerminate(mThread);
+    }
+
+    inline bool IsTerminated() const
+    {
+        return chThdTerminatedX(mThread);
     }
 
     inline static void Sleep_ms(uint32_t milliseconds)
@@ -65,6 +87,16 @@ protected:
         chThdExit(exitcode);
     }
 
+    inline void Yield()
+    {
+        chThdYield();
+    }
+
+    inline bool ShouldTerminate() const
+    {
+        return chThdShouldTerminateX();
+    }
+
     thread_t* mThread;
 };
 
@@ -75,6 +107,7 @@ public:
     StaticThread(const char* name, Priority priority)
         : Thread(name, priority)
     {
+#if CH_VERSION == 1706
         thread_descriptor_t tdp {
             name,
             THD_WORKING_AREA_BASE(mWorkingArea),
@@ -84,6 +117,13 @@ public:
             this
         };
         mThread = chThdCreateSuspended(&tdp);
+#else
+        chSysLock();
+        mThread = chThdCreateI(mWorkingArea, ThreadSize, priority,
+                               StaticThread<ThreadSize>::InternalStart,
+                               this);
+        chSysUnlock();
+#endif
     }
 
 private:

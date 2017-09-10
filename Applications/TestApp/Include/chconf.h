@@ -48,7 +48,7 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 10000
+#define CH_CFG_ST_FREQUENCY                 1000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -58,7 +58,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 2
+#define CH_CFG_ST_TIMEDELTA                 0
 
 /** @} */
 
@@ -265,6 +265,17 @@
 #define CH_CFG_USE_MAILBOXES                TRUE
 
 /**
+ * @brief   I/O Queues APIs.
+ * @details If enabled then the I/O queues APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ * @note    Version 16.1.x only
+ */
+#if CH_VERSION != 1706
+#define CH_CFG_USE_QUEUES                   TRUE
+#endif
+
+/**
  * @brief   Core Memory Manager APIs.
  * @details If enabled then the core memory manager APIs are included
  *          in the kernel.
@@ -347,22 +358,32 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               FALSE
+#define CH_DBG_ENABLE_ASSERTS               TRUE
 
 /**
  * @brief   Debug option, trace buffer.
- * @details If enabled then the trace buffer is activated.
+ * @details (17.6.x) If enabled then the trace buffer is activated.
+ * @details (16.1.x) If enabled then the context switch circular trace
+ *          buffer is activated.
  *
- * @note    The default is @p CH_DBG_TRACE_MASK_DISABLED.
+ * @note    (17.6.x) The default is @p CH_DBG_TRACE_MASK_DISABLED.
+ * @note    (16.1.x) The default is @p FALSE.
  */
+#if CH_VERSION == 1706
 #define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_DISABLED
+#else
+#define CH_DBG_ENABLE_TRACE                 FALSE
+#endif
 
 /**
  * @brief   Trace buffer entries.
  * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
  *          different from @p CH_DBG_TRACE_MASK_DISABLED.
+ * @note    Version 17.6.x only
  */
+#if CH_VERSION == 1706
 #define CH_DBG_TRACE_BUFFER_SIZE            128
+#endif
 
 /**
  * @brief   Debug option, stack checks.
@@ -442,17 +463,23 @@
 
 /**
  * @brief   ISR enter hook.
+ * @note    Version 17.6.x only
  */
+#if CH_VERSION == 1706
 #define CH_CFG_IRQ_PROLOGUE_HOOK() {                                        \
   /* IRQ prologue code here.*/                                              \
 }
+#endif
 
 /**
  * @brief   ISR exit hook.
+ * @note    Version 17.6.x only
  */
+#if CH_VERSION == 1706
 #define CH_CFG_IRQ_EPILOGUE_HOOK() {                                        \
   /* IRQ epilogue code here.*/                                              \
 }
+#endif
 
 /**
  * @brief   Idle thread enter hook.
@@ -504,10 +531,13 @@
  * @brief   Trace hook.
  * @details This hook is invoked each time a new record is written in the
  *          trace buffer.
+ * @note    Version 17.6.x only
  */
+#if CH_VERSION == 1706
 #define CH_CFG_TRACE_HOOK(tep) {                                            \
   /* Trace code here.*/                                                     \
 }
+#endif
 
 /** @} */
 
