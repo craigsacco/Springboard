@@ -6,13 +6,12 @@
 using namespace Springboard::Kernel;
 using namespace Springboard::InternalHAL;
 
-/*
-class InputThread : public StaticThread<128>
+class ButtonThread : public StaticThread<256>
 {
 public:
-    InputThread()
-        : StaticThread<128>("InputThread", NORMALPRIO),
-          mButton(GPIOF, 10, PullConfiguration::PullDown),
+    ButtonThread()
+        : StaticThread<256>("ButtonThread", NORMALPRIO),
+          mButton(GPIOE, 6, PullConfiguration::PullDown),
           mLED(GPIOH, 2, PullConfiguration::Floating,
                OutputConfiguration::PushPull,
                OutputSpeed::Low)
@@ -22,8 +21,7 @@ public:
     void Run() override final
     {
         while (!ShouldTerminate()) {
-            bool state = mButton.Get();
-            mLED.Set(state);
+            mLED.Set(mButton.Get());
             Sleep_ms(10);
         }
     }
@@ -33,11 +31,11 @@ private:
     DigitalOutput mLED;
 };
 
-class OutputThread : public StaticThread<128>
+class ToggleThread : public StaticThread<256>
 {
 public:
-    OutputThread()
-        : StaticThread<128>("OutputThread", NORMALPRIO-1),
+    ToggleThread()
+        : StaticThread<256>("ToggleThread", NORMALPRIO-1),
           mLED(GPIOI, 10, PullConfiguration::Floating,
                OutputConfiguration::PushPull,
                OutputSpeed::Low)
@@ -48,37 +46,27 @@ public:
     {
         while (!ShouldTerminate()) {
             mLED.Toggle();
-            Sleep_ms(500);
+            Sleep_ms(100);
         }
     }
 
 private:
     DigitalOutput mLED;
 };
-*/
 
 int main(void)
 {
     Springboard::InternalHAL::Initialise();
     Springboard::Kernel::Initialise();
 
-    /*
-    InputThread inputThread;
-    OutputThread outputThread;
+    static ToggleThread toggleThread;
+    toggleThread.Start();
 
-    inputThread.Start();
-    outputThread.Start();
-    */
-
-    DigitalInput Button(GPIOF, 10, PullConfiguration::PullDown);
-    DigitalOutput LED(GPIOH, 2, PullConfiguration::Floating,
-                      OutputConfiguration::PushPull,
-                      OutputSpeed::Low);
+    static ButtonThread buttonThread;
+    buttonThread.Start();
 
     while (true) {
-        bool state = Button.Get();
-        LED.Set(state);
-        Thread::Sleep_ms(10);
+        Thread::Sleep_ms(500);
     }
 
     return 0;
