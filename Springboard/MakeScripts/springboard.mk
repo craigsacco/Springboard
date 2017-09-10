@@ -2,7 +2,7 @@
 MCU = cortex-m4
 
 # Springboard folders, includes and source
-SPRINGBOARDDIRS = . Kernel InternalHAL
+SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL
 SPRINGBOARDINC = $(SPRINGBOARD)/Include
 SPRINGBOARDCSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.c))
 SPRINGBOARDCPPSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.cpp))

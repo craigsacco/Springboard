@@ -11,10 +11,10 @@ class ButtonThread : public StaticThread<256>
 public:
     ButtonThread()
         : StaticThread<256>("ButtonThread", NORMALPRIO),
-          mButton(GPIOE, 6, PullConfiguration::PullDown),
-          mLED(GPIOH, 2, PullConfiguration::Floating,
-               OutputConfiguration::PushPull,
-               OutputSpeed::Low)
+          mButton(GPIOE, 6, GPIOPullConfiguration::PullDown),
+          mLED(GPIOH, 2, GPIOPullConfiguration::Floating,
+               GPIOOutputConfiguration::PushPull,
+               GPIOOutputSpeed::Low)
     {
     }
 
@@ -36,9 +36,9 @@ class ToggleThread : public StaticThread<256>
 public:
     ToggleThread()
         : StaticThread<256>("ToggleThread", NORMALPRIO-1),
-          mLED(GPIOI, 10, PullConfiguration::Floating,
-               OutputConfiguration::PushPull,
-               OutputSpeed::Low)
+          mLED(GPIOI, 10, GPIOPullConfiguration::Floating,
+               GPIOOutputConfiguration::PushPull,
+               GPIOOutputSpeed::Low)
     {
     }
 

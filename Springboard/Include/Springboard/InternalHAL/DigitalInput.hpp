@@ -1,25 +1,19 @@
 #pragma once
 
-#include <Springboard/Common.hpp>
+#include <Springboard/CommonHAL/IDigitalInput.hpp>
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <hal.h>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class IDigitalInput
-{
-public:
-    virtual bool Get() const = 0;
-};
-
-class DigitalInput : public IDigitalInput
+class DigitalInput : public Springboard::CommonHAL::IDigitalInput
 {
 public:
     typedef ioportid_t Port;
 
     DigitalInput(const Port port, const uint8_t pin,
-                 const PullConfiguration pullConfiguration)
+                 const GPIOPullConfiguration pullConfiguration)
         : mPort(port), mPin(pin)
     {
         palSetPadMode(port, pin, PAL_STM32_MODE_INPUT | pullConfiguration);

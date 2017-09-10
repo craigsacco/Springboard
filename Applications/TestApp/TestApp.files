@@ -214,8 +214,11 @@
 ../../Libraries/ChibiOS/17.6.x/os/various/evtimer.h
 ../../Libraries/ChibiOS/17.6.x/os/various/syscalls.c
 ../../Springboard/Include/Springboard/Common.hpp
+../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
+../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp
+../../Springboard/Include/Springboard/InternalHAL/I2CBus.hpp
 ../../Springboard/Include/Springboard/InternalHAL/InternalHAL.hpp
 ../../Springboard/Include/Springboard/InternalHAL/PortMacros.h
 ../../Springboard/Include/Springboard/Kernel/Kernel.hpp

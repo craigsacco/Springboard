@@ -1,30 +1,21 @@
 #pragma once
 
-#include <Springboard/Common.hpp>
+#include <Springboard/CommonHAL/IDigitalOutput.hpp>
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <hal.h>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class IDigitalOutput
-{
-public:
-    virtual bool Get() const = 0;
-    virtual void Set(bool state = true) = 0;
-    virtual void Clear() = 0;
-    virtual void Toggle() = 0;
-};
-
-class DigitalOutput : public IDigitalOutput
+class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput
 {
 public:
     typedef ioportid_t Port;
 
     DigitalOutput(const Port port, const uint8_t pin,
-                  const PullConfiguration pullConfiguration,
-                  const OutputConfiguration outputConfiguration,
-                  const OutputSpeed outputSpeed)
+                  const GPIOPullConfiguration pullConfiguration,
+                  const GPIOOutputConfiguration outputConfiguration,
+                  const GPIOOutputSpeed outputSpeed)
         : mPort(port), mPin(pin)
     {
         palSetPadMode(port, pin, PAL_STM32_MODE_OUTPUT | pullConfiguration |
