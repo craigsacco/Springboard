@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ch.h>
 #include <Springboard/Common.hpp>
+#include <ch.h>
 
 namespace Springboard {
 namespace Kernel {

@@ -1,25 +1,23 @@
 #pragma once
 
 #include <Springboard/CommonHAL/IDigitalOutput.hpp>
-#include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <hal.h>
+#include <Springboard/InternalHAL/InternalGPIOPin.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput
+class DigitalOutput : public InternalGPIOPin,
+                      public Springboard::CommonHAL::IDigitalOutput
 {
 public:
-    typedef ioportid_t Port;
-
     DigitalOutput(const Port port, const uint8_t pin,
                   const GPIOPullConfiguration pullConfiguration,
                   const GPIOOutputConfiguration outputConfiguration,
                   const GPIOOutputSpeed outputSpeed)
-        : mPort(port), mPin(pin)
+        : InternalGPIOPin(port, pin)
     {
-        palSetPadMode(port, pin, PAL_STM32_MODE_OUTPUT | pullConfiguration |
-                                 outputConfiguration | outputSpeed);
+        SetPinConfiguration(port, pin, GPIOPinMode::Input, pullConfiguration,
+                            outputConfiguration, outputSpeed);
     }
 
     inline bool Get() const override final
@@ -41,10 +39,6 @@ public:
     {
         palTogglePad(mPort, mPin);
     }
-
-private:
-    const Port mPort;
-    const uint8_t mPin;
 };
 
 }

@@ -1,4 +1,7 @@
-#ifndef SPRINGBOARDCOMMON_HPP
-#define SPRINGBOARDCOMMON_HPP
+#pragma once
 
-#endif // SPRINGBOARDCOMMON_HPP
+#include <cstdint>
+#include <sbconf.h>
+
+//! \section Assertion checking
+#define ASSERT(cond, msg)

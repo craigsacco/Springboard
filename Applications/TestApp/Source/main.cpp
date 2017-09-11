@@ -14,7 +14,7 @@ public:
           mButton(GPIOE, 6, GPIOPullConfiguration::PullDown),
           mLED(GPIOH, 2, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
-               GPIOOutputSpeed::Low)
+               GPIOOutputSpeed::Low_2MHz)
     {
     }
 
@@ -38,7 +38,7 @@ public:
         : StaticThread<256>("ToggleThread", NORMALPRIO-1),
           mLED(GPIOI, 10, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
-               GPIOOutputSpeed::Low)
+               GPIOOutputSpeed::Low_2MHz)
     {
     }
 
