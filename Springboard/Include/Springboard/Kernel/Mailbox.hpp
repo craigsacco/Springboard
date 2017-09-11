@@ -12,7 +12,7 @@ class Mailbox
 public:
     Mailbox()
     {
-        chMBObjectInit(&mMailbox, (msg_t*)*mData, Size);
+        chMBObjectInit(&mMailbox, mData, Size);
     }
 
     inline void Reset()
@@ -23,6 +23,11 @@ public:
     inline void ResetI()
     {
         chMBResetI(&mMailbox);
+    }
+
+    inline void Resume()
+    {
+        chMBResumeX(&mMailbox);
     }
 
     inline void Post(T& data)
@@ -51,23 +56,23 @@ public:
 
     inline T& Fetch()
     {
-        T* data = nullptr;
-        msg_t result = chMBFetch(&mMailbox, (msg_t*)&data, TIME_INFINITE);
+        msg_t data = 0;
+        msg_t result = chMBFetch(&mMailbox, &data, TIME_INFINITE);
         ASSERT(result == MSG_OK, "cannot fetch from mailbox");
-        return *data;
+        return *((T*)data);
     }
 
     inline T& FetchI()
     {
-        T* data = nullptr;
-        msg_t result = chMBFetchI(&mMailbox, (msg_t*)&data);
+        msg_t data = 0;
+        msg_t result = chMBFetchI(&mMailbox, &data);
         ASSERT(result == MSG_OK, "cannot fetch from mailbox");
-        return *data;
+        return *((T*)data);
     }
 
 private:
     mailbox_t mMailbox;
-    T* mData[Size];
+    msg_t mData[Size];
 };
 
 }

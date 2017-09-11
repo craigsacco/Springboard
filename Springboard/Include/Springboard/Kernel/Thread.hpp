@@ -69,8 +69,6 @@ public:
         chThdSleepMilliseconds(milliseconds);
     }
 
-    virtual void Run() = 0;
-
 protected:
     Thread() = delete;
 
@@ -81,6 +79,8 @@ protected:
         (void)name;
         (void)priority;
     }
+
+    virtual void Run() = 0;
 
     inline void Exit(ExitCode exitcode = 0)
     {

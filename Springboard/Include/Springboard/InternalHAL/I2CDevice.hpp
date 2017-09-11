@@ -17,11 +17,16 @@ public:
     typedef i2caddr_t Address;
     typedef uint32_t Speed;
 
-    I2CDevice(I2CBus* bus, const Address address);
+    I2CDevice(I2CBus* bus, const Address address, const Speed speed);
 
     inline Address GetAddress() const
     {
         return mAddress;
+    }
+
+    inline Speed GetSpeed() const
+    {
+        return mSpeed;
     }
 
 protected:
@@ -47,6 +52,7 @@ private:
 
     I2CBus* mBus;
     Address mAddress;
+    Speed mSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
 };
 

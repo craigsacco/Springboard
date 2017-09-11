@@ -16,7 +16,7 @@ public:
                   const GPIOOutputSpeed outputSpeed)
         : InternalGPIOPin(port, pin)
     {
-        SetPinConfiguration(port, pin, GPIOPinMode::Input, pullConfiguration,
+        SetPinConfiguration(port, pin, GPIOPinMode::Output, pullConfiguration,
                             outputConfiguration, outputSpeed);
     }
 

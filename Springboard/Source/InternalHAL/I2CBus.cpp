@@ -5,20 +5,31 @@ namespace Springboard {
 namespace InternalHAL {
 
 I2CBus::I2CBus(Bus* bus, I2CMode mode)
-    : mBus(bus), mConfig()
+    : StaticThread<SPRINGBOARD_I2C_THREAD_SIZE>("I2CBus", SPRINGBOARD_I2C_THREAD_PRIORITY),
+      mBus(bus), mConfig()
 {
     mConfig.op_mode = (i2copmode_t)mode;
 }
 
-void I2CBus::Start()
+void I2CBus::Run()
 {
-    // start the bus using a default configuration
-    mConfig.clock_speed = DefaultSpeed_Hz;
-    mConfig.duty_cycle = (i2cdutycycle_t)DefaultDutyCycle;
-    i2cStart(mBus, &mConfig);
+    mConfig.clock_speed = 0;
 
     while (true) {
         I2CTransaction& transaction = mTransactionQueue.Fetch();
+
+        I2CDevice::Speed speed = transaction.device->GetSpeed();
+        if (mConfig.clock_speed != speed) {
+            if (mConfig.clock_speed > 0) {
+                i2cStop(mBus);
+            }
+            ASSERT(speed > 0, "I2C device speed cannot be zero");
+            mConfig.clock_speed = speed;
+            mConfig.duty_cycle = (i2cdutycycle_t)(speed <= 100000 ?
+                                                      I2CDutyCycle::Standard :
+                                                      I2CDutyCycle::Fast_16_9);
+            i2cStart(mBus, &mConfig);
+        }
 
         if (transaction.txlen == 0) {
             transaction.result = i2cMasterReceive(mBus,
@@ -34,6 +45,7 @@ void I2CBus::Start()
                                                    transaction.rxlen);
         }
 
+        transaction.errors = mBus->errors;
         transaction.completion->Signal();
     }
 }

@@ -19,12 +19,10 @@ public:
         const Port port, const uint8_t pin, const GPIOPinMode mode,
         const GPIOPullConfiguration pullConfiguration = GPIOPullConfiguration::Floating,
         const GPIOOutputConfiguration outputConfiguration = GPIOOutputConfiguration::PushPull,
-        const GPIOOutputSpeed outputSpeed = GPIOOutputSpeed::Low_2MHz,
-        const GPIOAlternateFunction alternateFunction = GPIOAlternateFunction::AF_SYS)
+        const GPIOOutputSpeed outputSpeed = GPIOOutputSpeed::Low_2MHz)
     {
         palSetPadMode(port, pin, mode | pullConfiguration |
-                                 outputConfiguration | outputSpeed |
-                                 PAL_STM32_ALTERNATE(alternateFunction));
+                                 outputConfiguration | outputSpeed);
     }
 
 protected:

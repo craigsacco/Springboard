@@ -9,7 +9,7 @@ namespace Kernel {
 class BinarySemaphore
 {
 public:
-    BinarySemaphore(bool taken = false)
+    BinarySemaphore(bool taken)
     {
         chBSemObjectInit(&mSemaphore, taken);
     }

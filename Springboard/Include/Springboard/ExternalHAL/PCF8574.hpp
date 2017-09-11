@@ -10,7 +10,9 @@ namespace ExternalHAL {
 
 class PCF8574 : public Springboard::InternalHAL::I2CDevice
 {
-    PCF8574(Springboard::InternalHAL::I2CBus* bus, const Address address);
+public:
+    PCF8574(Springboard::InternalHAL::I2CBus* bus, const Address address,
+            const Speed speed);
 
     uint8_t ReadPort();
     void WritePort(uint8_t outputs);
