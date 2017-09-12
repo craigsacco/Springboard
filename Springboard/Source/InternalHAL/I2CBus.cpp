@@ -1,29 +1,31 @@
 #include <Springboard/InternalHAL/I2CBus.hpp>
 #include <Springboard/InternalHAL/I2CDevice.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_I2C
+
 namespace Springboard {
 namespace InternalHAL {
 
-I2CBus::I2CBus(Bus* bus, I2CMode mode)
-    : StaticThread<SPRINGBOARD_I2C_THREAD_SIZE>("I2CBus", SPRINGBOARD_I2C_THREAD_PRIORITY),
+I2CBusBase::I2CBusBase(Bus* bus, I2CMode mode, const char* name, Priority priority)
+    : Thread(name, SPRINGBOARD_HAL_I2C_THREAD_SIZE, priority),
       mBus(bus), mConfig()
 {
     mConfig.op_mode = (i2copmode_t)mode;
 }
 
-void I2CBus::Run()
+void I2CBusBase::Run()
 {
     mConfig.clock_speed = 0;
 
     while (true) {
-        I2CTransaction& transaction = mTransactionQueue.Fetch();
+        I2CTransaction& transaction = Dequeue();
 
         I2CDevice::Speed speed = transaction.device->GetSpeed();
         if (mConfig.clock_speed != speed) {
             if (mConfig.clock_speed > 0) {
                 i2cStop(mBus);
             }
-            ASSERT(speed > 0, "I2C device speed cannot be zero");
+            ASSERT(speed > 0);
             mConfig.clock_speed = speed;
             mConfig.duty_cycle = (i2cdutycycle_t)(speed <= 100000 ?
                                                       I2CDutyCycle::Standard :
@@ -50,10 +52,7 @@ void I2CBus::Run()
     }
 }
 
-void I2CBus::Enqueue(I2CTransaction& transaction)
-{
-    mTransactionQueue.Post(transaction);
+}
 }
 
-}
-}
+#endif // SPRINGBOARD_HAL_ENABLE_I2C

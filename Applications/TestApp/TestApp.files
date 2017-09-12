@@ -223,6 +223,7 @@
 ../../Springboard/Include/Springboard/InternalHAL/I2CDevice.hpp
 ../../Springboard/Include/Springboard/InternalHAL/InternalGPIOPin.hpp
 ../../Springboard/Include/Springboard/InternalHAL/InternalHAL.hpp
+../../Springboard/Include/Springboard/InternalHAL/PeripheralFactory.hpp
 ../../Springboard/Include/Springboard/InternalHAL/PortMacros.h
 ../../Springboard/Include/Springboard/Kernel/BinarySemaphore.hpp
 ../../Springboard/Include/Springboard/Kernel/Kernel.hpp
@@ -232,7 +233,9 @@
 ../../Springboard/Source/InternalHAL/I2CBus.cpp
 ../../Springboard/Source/InternalHAL/I2CDevice.cpp
 ../../Springboard/Source/InternalHAL/InternalHAL.cpp
+../../Springboard/Source/InternalHAL/PeripheralFactory.cpp
 ../../Springboard/Source/Kernel/Kernel.cpp
+../../Springboard/Source/Kernel/Thread.cpp
 Include/board.h
 Include/chconf.h
 Include/halconf.h

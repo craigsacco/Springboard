@@ -33,32 +33,32 @@ public:
     inline void Post(T& data)
     {
         msg_t result = chMBPost(&mMailbox, (msg_t)&data, TIME_INFINITE);
-        ASSERT(result == MSG_OK, "cannot post into mailbox");
+        ASSERT(result == MSG_OK);
     }
 
     inline void PostI(T& data)
     {
         msg_t result = chMBPostI(&mMailbox, (msg_t)&data);
-        ASSERT(result == MSG_OK, "cannot post into mailbox");
+        ASSERT(result == MSG_OK);
     }
 
     inline void PostAhead(T& data)
     {
         msg_t result = chMBPostAhead(&mMailbox, (msg_t)&data, TIME_INFINITE);
-        ASSERT(result == MSG_OK, "cannot post into mailbox");
+        ASSERT(result == MSG_OK);
     }
 
     inline void PostAheadI(T& data)
     {
         msg_t result = chMBPostAheadI(&mMailbox, (msg_t)&data);
-        ASSERT(result == MSG_OK, "cannot post into mailbox");
+        ASSERT(result == MSG_OK);
     }
 
     inline T& Fetch()
     {
         msg_t data = 0;
         msg_t result = chMBFetch(&mMailbox, &data, TIME_INFINITE);
-        ASSERT(result == MSG_OK, "cannot fetch from mailbox");
+        ASSERT(result == MSG_OK);
         return *((T*)data);
     }
 
@@ -66,7 +66,7 @@ public:
     {
         msg_t data = 0;
         msg_t result = chMBFetchI(&mMailbox, &data);
-        ASSERT(result == MSG_OK, "cannot fetch from mailbox");
+        ASSERT(result == MSG_OK);
         return *((T*)data);
     }
 

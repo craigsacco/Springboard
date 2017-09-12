@@ -5,7 +5,11 @@
 #include <Springboard/Kernel/Thread.hpp>
 #include <Springboard/Kernel/Mailbox.hpp>
 
-//#if SPRINGBOARD_HAL_ENABLE_I2C
+#if SPRINGBOARD_HAL_ENABLE_I2C
+
+#if !defined(SPRINGBOARD_HAL_I2C_THREAD_SIZE)
+#define SPRINGBOARD_HAL_I2C_THREAD_SIZE     512
+#endif
 
 namespace Springboard {
 
@@ -27,23 +31,48 @@ struct I2CTransaction
     Springboard::Kernel::BinarySemaphore* completion;
 };
 
-class I2CBus : public Springboard::Kernel::StaticThread<SPRINGBOARD_I2C_THREAD_SIZE>
+class I2CBusBase : public Springboard::Kernel::Thread
 {
 public:
     typedef I2CDriver Bus;
     typedef I2CConfig Config;
 
-    I2CBus(Bus* bus, I2CMode mode);
+    I2CBusBase(Bus* bus, I2CMode mode, const char* name, Priority priority);
     void Run();
-    void Enqueue(I2CTransaction& transaction);
+    virtual void Enqueue(I2CTransaction& transaction) = 0;
+
+protected:
+    virtual I2CTransaction& Dequeue() = 0;
 
 private:
     Bus* mBus;
     Config mConfig;
-    Springboard::Kernel::Mailbox<I2CTransaction, SPRINGBOARD_I2C_MAILBOX_DEPTH> mTransactionQueue;
+};
+
+template <int TransactionDepth>
+class I2CBus : public I2CBusBase
+{
+public:
+    I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority) :
+        I2CBusBase(bus, mode, name, priority)
+    {
+    }
+
+    inline void Enqueue(I2CTransaction& transaction) override final
+    {
+        mTransactionQueue.Post(transaction);
+    }
+
+private:
+    inline I2CTransaction& Dequeue() override final
+    {
+        return mTransactionQueue.Fetch();
+    }
+
+    Springboard::Kernel::Mailbox<I2CTransaction, TransactionDepth> mTransactionQueue;
 };
 
 }
 }
 
-//#endif // SPRINGBOARD_HAL_ENABLE_I2C
+#endif // SPRINGBOARD_HAL_ENABLE_I2C

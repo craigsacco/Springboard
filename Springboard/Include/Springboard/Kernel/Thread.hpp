@@ -12,6 +12,8 @@ public:
     typedef tprio_t Priority;
     typedef msg_t ExitCode;
 
+    Thread(const char* name, size_t size, Priority priority);
+
     inline const char* GetName() const
     {
 #if CH_VERSION == 1706
@@ -70,16 +72,6 @@ public:
     }
 
 protected:
-    Thread() = delete;
-
-    Thread(const char* name, Priority priority)
-        : mThread(nullptr)
-    {
-        // shut the compiler up
-        (void)name;
-        (void)priority;
-    }
-
     virtual void Run() = 0;
 
     inline void Exit(ExitCode exitcode = 0)
@@ -97,42 +89,13 @@ protected:
         return chThdShouldTerminateX();
     }
 
-    thread_t* mThread;
-};
-
-template <int ThreadSize>
-class StaticThread : public Thread
-{
-public:
-    StaticThread(const char* name, Priority priority)
-        : Thread(name, priority)
-    {
-#if CH_VERSION == 1706
-        thread_descriptor_t tdp {
-            name,
-            THD_WORKING_AREA_BASE(mWorkingArea),
-            THD_WORKING_AREA_END(mWorkingArea),
-            priority,
-            StaticThread<ThreadSize>::InternalStart,
-            this
-        };
-        mThread = chThdCreateSuspended(&tdp);
-#else
-        chSysLock();
-        mThread = chThdCreateI(mWorkingArea, ThreadSize, priority,
-                               StaticThread<ThreadSize>::InternalStart,
-                               this);
-        chSysUnlock();
-#endif
-    }
-
 private:
     static inline void InternalStart(void* ptr)
     {
-        static_cast<StaticThread<ThreadSize>*>(ptr)->Run();
+        static_cast<Thread*>(ptr)->Run();
     }
 
-    THD_WORKING_AREA(mWorkingArea, ThreadSize);
+    thread_t* mThread;
 };
 
 }

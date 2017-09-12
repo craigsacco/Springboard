@@ -1,12 +1,15 @@
 #include <Springboard/ExternalHAL/PCF8574.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_I2C
+
 namespace Springboard {
 namespace ExternalHAL {
 
-PCF8574::PCF8574(Springboard::InternalHAL::I2CBus* bus, const Address address,
+PCF8574::PCF8574(Springboard::InternalHAL::I2CBusBase* bus, const Address address,
                  const Speed speed)
     : Springboard::InternalHAL::I2CDevice(bus, address, speed)
 {
+    ASSERT(address >= 0x20 && address <= 0x27);
 }
 
 uint8_t PCF8574::ReadPort()
@@ -23,3 +26,5 @@ void PCF8574::WritePort(uint8_t outputs)
 
 }
 }
+
+#endif // #if SPRINGBOARD_HAL_ENABLE_I2C

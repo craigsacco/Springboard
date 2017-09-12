@@ -4,6 +4,9 @@
 #include <hal.h>
 
 #define SPRINGBOARD_HAL_ENABLE_I2C      HAL_USE_I2C
+#define SPRINGBOARD_HAL_USE_I2C1        STM32_I2C_USE_I2C1
+#define SPRINGBOARD_HAL_USE_I2C2        STM32_I2C_USE_I2C2
+#define SPRINGBOARD_HAL_USE_I2C3        STM32_I2C_USE_I2C3
 
 namespace Springboard {
 namespace InternalHAL {

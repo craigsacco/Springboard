@@ -1,6 +1,5 @@
 #pragma once
 
-//! \section I2C transaction mailbox depth
-#define SPRINGBOARD_I2C_MAILBOX_DEPTH       10
-#define SPRINGBOARD_I2C_THREAD_SIZE         512
-#define SPRINGBOARD_I2C_THREAD_PRIORITY     NORMALPRIO+1
+//! \section I2C3 bus thread properties
+#define SPRINGBOARD_HAL_I2C3_XACTION_DEPTH      10
+#define SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY    NORMALPRIO+1

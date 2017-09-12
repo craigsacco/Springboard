@@ -1,7 +1,7 @@
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/DigitalInput.hpp>
 #include <Springboard/InternalHAL/DigitalOutput.hpp>
-#include <Springboard/InternalHAL/I2CBus.hpp>
+#include <Springboard/InternalHAL/PeripheralFactory.hpp>
 #include <Springboard/ExternalHAL/PCF8574.hpp>
 #include <Springboard/Kernel/Kernel.hpp>
 
@@ -9,11 +9,11 @@ using namespace Springboard::Kernel;
 using namespace Springboard::InternalHAL;
 using namespace Springboard::ExternalHAL;
 
-class ButtonThread : public StaticThread<256>
+class ButtonThread : public Thread
 {
 public:
     ButtonThread()
-        : StaticThread<256>("ButtonThread", NORMALPRIO-3),
+        : Thread("ButtonThread", 256, NORMALPRIO-3),
           mButton(GPIOE, 6, GPIOPullConfiguration::PullDown),
           mLED(GPIOH, 2, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
@@ -34,11 +34,11 @@ private:
     DigitalOutput mLED;
 };
 
-class ToggleThread : public StaticThread<256>
+class ToggleThread : public Thread
 {
 public:
     ToggleThread()
-        : StaticThread<256>("ToggleThread", NORMALPRIO-2),
+        : Thread("ToggleThread", 256, NORMALPRIO-2),
           mLED(GPIOI, 10, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
                GPIOOutputSpeed::Low_2MHz)
@@ -57,11 +57,11 @@ private:
     DigitalOutput mLED;
 };
 
-class ExpanderThread : public StaticThread<256>
+class ExpanderThread : public Thread
 {
 public:
     ExpanderThread(PCF8574* expander)
-        : StaticThread<256>("ExpanderThread", NORMALPRIO-1),
+        : Thread("ExpanderThread", 256, NORMALPRIO-1),
           mExpander(expander),
           mLED(GPIOH, 3, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
@@ -94,7 +94,7 @@ int main(void)
     static ButtonThread buttonThread;
     buttonThread.Start();
 
-    // Setup I2C3_SDA on PC9, and I2C3_SCL on PH7
+    // setup I2C3_SDA on PC9, and I2C3_SCL on PH7
     InternalGPIOPin::SetPinConfiguration(GPIOC, 9, GPIOPinMode::AlternateFunction_I2C3,
                                          GPIOPullConfiguration::Floating,
                                          GPIOOutputConfiguration::OpenDrain,
@@ -104,10 +104,11 @@ int main(void)
                                          GPIOOutputConfiguration::OpenDrain,
                                          GPIOOutputSpeed::Low_2MHz);
 
-    static I2CBus i2c3Bus(&I2CD3, I2CMode::I2C);
-    i2c3Bus.Start();
+    // start peripheral factory
+    static PeripheralFactory peripheralFactory;
+    peripheralFactory.Start();
 
-    PCF8574 expander(&i2c3Bus, 0x20, 100000);
+    PCF8574 expander(peripheralFactory.GetI2CBus(3), 0x20, 100000);
     static ExpanderThread expanderThread(&expander);
     expanderThread.Start();
 
