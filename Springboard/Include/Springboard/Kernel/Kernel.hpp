@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/Common.hpp>
@@ -8,5 +12,5 @@ namespace Kernel {
 
 void Initialise();
 
-}
-}
+}  // namespace Kernel
+}  // namespace Springboard

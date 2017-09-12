@@ -1,7 +1,11 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
-#include <Springboard/Common.hpp>
 #include <ch.h>
+#include <Springboard/Common.hpp>
 
 namespace Springboard {
 namespace Kernel {
@@ -30,25 +34,25 @@ public:
         chMBResumeX(&mMailbox);
     }
 
-    inline void Post(T& data)
+    inline void Post(const T& data)
     {
         msg_t result = chMBPost(&mMailbox, (msg_t)&data, TIME_INFINITE);
         ASSERT(result == MSG_OK);
     }
 
-    inline void PostI(T& data)
+    inline void PostI(const T& data)
     {
         msg_t result = chMBPostI(&mMailbox, (msg_t)&data);
         ASSERT(result == MSG_OK);
     }
 
-    inline void PostAhead(T& data)
+    inline void PostAhead(const T& data)
     {
         msg_t result = chMBPostAhead(&mMailbox, (msg_t)&data, TIME_INFINITE);
         ASSERT(result == MSG_OK);
     }
 
-    inline void PostAheadI(T& data)
+    inline void PostAheadI(const T& data)
     {
         msg_t result = chMBPostAheadI(&mMailbox, (msg_t)&data);
         ASSERT(result == MSG_OK);
@@ -59,7 +63,7 @@ public:
         msg_t data = 0;
         msg_t result = chMBFetch(&mMailbox, &data, TIME_INFINITE);
         ASSERT(result == MSG_OK);
-        return *((T*)data);
+        return *reinterpret_cast<T*>(data);
     }
 
     inline T& FetchI()
@@ -67,7 +71,7 @@ public:
         msg_t data = 0;
         msg_t result = chMBFetchI(&mMailbox, &data);
         ASSERT(result == MSG_OK);
-        return *((T*)data);
+        return *reinterpret_cast<T*>(data);
     }
 
 private:
@@ -75,5 +79,5 @@ private:
     msg_t mData[Size];
 };
 
-}
-}
+}  // namespace Kernel
+}  // namespace Springboard

@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/CommonHAL/IDigitalOutput.hpp>
@@ -20,26 +24,26 @@ public:
                             outputConfiguration, outputSpeed);
     }
 
-    inline bool Get() const override final
+    inline bool Get() const final
     {
         return palReadLatch(mPort) & (1UL << mPin);
     }
 
-    inline void Set(bool state = true) override final
+    inline void Set(bool state = true) final
     {
         palWritePad(mPort, mPin, state);
     }
 
-    inline void Clear() override final
+    inline void Clear() final
     {
         palClearPad(mPort, mPin);
     }
 
-    inline void Toggle() override final
+    inline void Toggle() final
     {
         palTogglePad(mPort, mPin);
     }
 };
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

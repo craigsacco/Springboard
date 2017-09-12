@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
@@ -39,7 +43,7 @@ public:
 
     I2CBusBase(Bus* bus, I2CMode mode, const char* name, Priority priority);
     void Run();
-    virtual void Enqueue(I2CTransaction& transaction) = 0;
+    virtual void Enqueue(const I2CTransaction& transaction) = 0;
 
 protected:
     virtual I2CTransaction& Dequeue() = 0;
@@ -58,21 +62,22 @@ public:
     {
     }
 
-    inline void Enqueue(I2CTransaction& transaction) override final
+    inline void Enqueue(const I2CTransaction& transaction) final
     {
         mTransactionQueue.Post(transaction);
     }
 
 private:
-    inline I2CTransaction& Dequeue() override final
+    inline I2CTransaction& Dequeue() final
     {
         return mTransactionQueue.Fetch();
     }
 
-    Springboard::Kernel::Mailbox<I2CTransaction, TransactionDepth> mTransactionQueue;
+    Springboard::Kernel::Mailbox<I2CTransaction, TransactionDepth>
+        mTransactionQueue;
 };
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard
 
-#endif // SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

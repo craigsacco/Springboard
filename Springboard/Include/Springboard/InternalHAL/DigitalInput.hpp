@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/CommonHAL/IDigitalInput.hpp>
@@ -17,11 +21,11 @@ public:
         SetPinConfiguration(port, pin, GPIOPinMode::Input, pullConfiguration);
     }
 
-    inline bool Get() const override final
+    inline bool Get() const final
     {
         return palReadPad(mPort, mPin);
     }
 };
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

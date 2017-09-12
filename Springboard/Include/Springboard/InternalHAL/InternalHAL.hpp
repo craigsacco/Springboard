@@ -1,7 +1,11 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
-#include <Springboard/Common.hpp>
 #include <hal.h>
+#include <Springboard/Common.hpp>
 
 #define SPRINGBOARD_HAL_ENABLE_I2C      HAL_USE_I2C
 #define SPRINGBOARD_HAL_USE_I2C1        STM32_I2C_USE_I2C1
@@ -31,29 +35,47 @@ enum GPIOPinMode
     AlternateFunction_SPI1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
     AlternateFunction_SPI2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
     AlternateFunction_I2S2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
-    AlternateFunction_I2S3ext_AF5 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+    AlternateFunction_I2S3ext_AF5 = PAL_STM32_MODE_ALTERNATE |
+                                    PAL_STM32_ALTERNATE(5),
     AlternateFunction_SPI3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
-    AlternateFunction_I2S2ext = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
+    AlternateFunction_I2S2ext = PAL_STM32_MODE_ALTERNATE |
+                                PAL_STM32_ALTERNATE(6),
     AlternateFunction_I2S3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
-    AlternateFunction_USART1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(7),
-    AlternateFunction_USART2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(7),
-    AlternateFunction_USART3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(7),
-    AlternateFunction_I2S3ext_AF7 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(7),
-    AlternateFunction_UART4 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(8),
-    AlternateFunction_UART5 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(8),
-    AlternateFunction_USART6 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(8),
+    AlternateFunction_USART1 = PAL_STM32_MODE_ALTERNATE |
+                               PAL_STM32_ALTERNATE(7),
+    AlternateFunction_USART2 = PAL_STM32_MODE_ALTERNATE |
+                               PAL_STM32_ALTERNATE(7),
+    AlternateFunction_USART3 = PAL_STM32_MODE_ALTERNATE |
+                               PAL_STM32_ALTERNATE(7),
+    AlternateFunction_I2S3ext_AF7 = PAL_STM32_MODE_ALTERNATE |
+                                    PAL_STM32_ALTERNATE(7),
+    AlternateFunction_UART4 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(8),
+    AlternateFunction_UART5 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(8),
+    AlternateFunction_USART6 = PAL_STM32_MODE_ALTERNATE |
+                               PAL_STM32_ALTERNATE(8),
     AlternateFunction_CAN1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
     AlternateFunction_CAN2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
-    AlternateFunction_TIM12 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
-    AlternateFunction_TIM13 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
-    AlternateFunction_TIM14 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
-    AlternateFunction_OTG_FS = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(10),
-    AlternateFunction_OTG_HS_AF10 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(10),
+    AlternateFunction_TIM12 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(9),
+    AlternateFunction_TIM13 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(9),
+    AlternateFunction_TIM14 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(9),
+    AlternateFunction_OTG_FS = PAL_STM32_MODE_ALTERNATE |
+                               PAL_STM32_ALTERNATE(10),
+    AlternateFunction_OTG_HS_AF10 = PAL_STM32_MODE_ALTERNATE |
+                                    PAL_STM32_ALTERNATE(10),
     AlternateFunction_ETH = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(11),
-    AlternateFunction_FSMC = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(12),
-    AlternateFunction_SDIO = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(12),
-    AlternateFunction_OTG_FS_AF12 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(12),
-    AlternateFunction_DCMI = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(13),
+    AlternateFunction_FSMC = PAL_STM32_MODE_ALTERNATE |
+                             PAL_STM32_ALTERNATE(12),
+    AlternateFunction_SDIO = PAL_STM32_MODE_ALTERNATE |
+                             PAL_STM32_ALTERNATE(12),
+    AlternateFunction_OTG_FS_AF12 = PAL_STM32_MODE_ALTERNATE |
+                                    PAL_STM32_ALTERNATE(12),
+    AlternateFunction_DCMI = PAL_STM32_MODE_ALTERNATE |
+                             PAL_STM32_ALTERNATE(13),
     AnalogInput = PAL_STM32_MODE_ANALOG,
 };
 
@@ -94,5 +116,5 @@ enum I2CDutyCycle
 
 void Initialise();
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

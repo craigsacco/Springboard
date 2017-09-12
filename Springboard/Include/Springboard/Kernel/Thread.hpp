@@ -1,7 +1,11 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
-#include <Springboard/Common.hpp>
 #include <ch.h>
+#include <Springboard/Common.hpp>
 
 namespace Springboard {
 namespace Kernel {
@@ -98,5 +102,5 @@ private:
     thread_t* mThread;
 };
 
-}
-}
+}  // namespace Kernel
+}  // namespace Springboard

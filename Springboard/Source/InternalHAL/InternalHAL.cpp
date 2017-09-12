@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <hal.h>
 
@@ -9,5 +13,5 @@ void Initialise()
     halInit();
 }
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

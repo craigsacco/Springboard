@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/DigitalInput.hpp>
 #include <Springboard/InternalHAL/DigitalOutput.hpp>
@@ -5,9 +9,16 @@
 #include <Springboard/ExternalHAL/PCF8574.hpp>
 #include <Springboard/Kernel/Kernel.hpp>
 
-using namespace Springboard::Kernel;
-using namespace Springboard::InternalHAL;
-using namespace Springboard::ExternalHAL;
+using Springboard::Kernel::Thread;
+using Springboard::InternalHAL::GPIOPinMode;
+using Springboard::InternalHAL::GPIOPullConfiguration;
+using Springboard::InternalHAL::GPIOOutputConfiguration;
+using Springboard::InternalHAL::GPIOOutputSpeed;
+using Springboard::InternalHAL::InternalGPIOPin;
+using Springboard::InternalHAL::DigitalInput;
+using Springboard::InternalHAL::DigitalOutput;
+using Springboard::InternalHAL::PeripheralFactory;
+using Springboard::ExternalHAL::PCF8574;
 
 class ButtonThread : public Thread
 {
@@ -22,7 +33,7 @@ public:
     }
 
 private:
-    void Run() override final
+    void Run() final
     {
         while (!ShouldTerminate()) {
             mLED.Set(mButton.Get());
@@ -46,7 +57,7 @@ public:
     }
 
 private:
-    void Run() override final
+    void Run() final
     {
         while (!ShouldTerminate()) {
             mLED.Toggle();
@@ -60,7 +71,7 @@ private:
 class ExpanderThread : public Thread
 {
 public:
-    ExpanderThread(PCF8574* expander)
+    explicit ExpanderThread(PCF8574* expander)
         : Thread("ExpanderThread", 256, NORMALPRIO-1),
           mExpander(expander),
           mLED(GPIOH, 3, GPIOPullConfiguration::Floating,
@@ -70,7 +81,7 @@ public:
     }
 
 private:
-    void Run() override final
+    void Run() final
     {
         while (!ShouldTerminate()) {
             uint8_t value = mExpander->ReadPort();
@@ -95,11 +106,13 @@ int main(void)
     buttonThread.Start();
 
     // setup I2C3_SDA on PC9, and I2C3_SCL on PH7
-    InternalGPIOPin::SetPinConfiguration(GPIOC, 9, GPIOPinMode::AlternateFunction_I2C3,
+    InternalGPIOPin::SetPinConfiguration(GPIOC, 9,
+                                         GPIOPinMode::AlternateFunction_I2C3,
                                          GPIOPullConfiguration::Floating,
                                          GPIOOutputConfiguration::OpenDrain,
                                          GPIOOutputSpeed::Low_2MHz);
-    InternalGPIOPin::SetPinConfiguration(GPIOH, 7, GPIOPinMode::AlternateFunction_I2C3,
+    InternalGPIOPin::SetPinConfiguration(GPIOH, 7,
+                                         GPIOPinMode::AlternateFunction_I2C3,
                                          GPIOPullConfiguration::Floating,
                                          GPIOOutputConfiguration::OpenDrain,
                                          GPIOOutputSpeed::Low_2MHz);

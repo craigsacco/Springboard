@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #include <Springboard/InternalHAL/PeripheralFactory.hpp>
 
 namespace Springboard {
@@ -26,5 +30,5 @@ I2CBusBase* PeripheralFactory::GetI2CBus(size_t index)
 }
 #endif
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

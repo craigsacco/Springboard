@@ -1,6 +1,14 @@
 # Architecture setting
 MCU = cortex-m4
 
+# Project folders, includes and source
+PROJECTINC = ./Include
+PROJECTCSRC = $(wildcard ./Source/*.c)
+PROJECTCPPSRC = $(wildcard ./Source/*.cpp)
+PROJECTASMSRC = $(wildcard ./Source/*.s)
+PROJECTASMXSRC = $(wildcard ./Source/*.S)
+PROJECTHEADERS = $(wildcard $(PROJECTINC)/*.h) $(wildcard $(PROJECTINC)/*.hpp)
+
 # Springboard folders, includes and source
 SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL
 SPRINGBOARDINC = $(SPRINGBOARD)/Include
@@ -68,27 +76,26 @@ VARIOUSCPPSRC = $(VARIOUSINC)/cpp_wrappers/syscalls_cpp.cpp
 # C sources
 CSRC = $(STARTUPSRC) $(KERNSRC) $(PORTSRC) $(OSALSRC) $(HALSRC) \
        $(PLATFORMSRC) $(VARIOUSCSRC) $(SPRINGBOARDCSRC) \
-       $(wildcard Source/*.c)
+       $(PROJECTCSRC)
 
 # C++ sources
-CPPSRC = $(VARIOUSCPPSRC) $(SPRINGBOARDCPPSRC) \
-         $(wildcard Source/*.cpp)
+CPPSRC = $(VARIOUSCPPSRC) $(SPRINGBOARDCPPSRC) $(PROJECTCPPSRC)
 
 # ASM sources
 ifeq ($(CHIBIOSVERSION),17.6.x)
-	ASMSRC = $(SPRINGBOARDASMSRC) $(wildcard Source/*.s)
+	ASMSRC = $(SPRINGBOARDASMSRC) $(PROJECTASMSRC)
 	ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMXSRC) \
-	          $(wildcard Source/*.S)
+	          $(PROJECTASMXSRC)
 else
 	ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMSRC) \
-	         $(wildcard Source/*.s)
-	ASMXSRC = $(SPRINGBOARDASMXSRC) $(wildcard Source/*.S)
+	         $(PROJECTASMSRC)
+	ASMXSRC = $(SPRINGBOARDASMXSRC) $(PROJECTASMXSRC)
 endif
 
 # Includes folders
 INCDIR = $(CHIBIOS)/os/license $(STARTUPINC) $(KERNINC) $(PORTINC) \
          $(OSALINC) $(HALINC) $(PLATFORMINC) $(VARIOUSINC) \
-         $(SPRINGBOARDINC) Include
+         $(SPRINGBOARDINC) $(PROJECTINC)
 
 # Tools
 CC   = arm-none-eabi-gcc
@@ -126,7 +133,15 @@ define update_qt_creator_project
 	@$(foreach dir,$(QTGENPRJ_INCLUDES_LIST),echo `realpath --relative-to=. $(dir)` >> $(QTGENPRJ_INCLUDES);)
 endef
 
+define generate_cpplint_report
+	@cpplint --filter=-whitespace/braces,-whitespace/indent \
+             $(PROJECTCSRC) $(PROJECTCPPSRC) $(PROJECTHEADERS) \
+		     $(SPRINGBOARDCSRC) $(SPRINGBOARDCPPSRC) $(SPRINGBOARDHEADERS) || true
+endef
+
 # ChibiOS pre/post make hooks
 PRE_MAKE_ALL_RULE_HOOK:
 	$(call update_qt_creator_project)
 
+POST_MAKE_ALL_RULE_HOOK:
+	$(call generate_cpplint_report)

@@ -1,7 +1,11 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
-#include <Springboard/Common.hpp>
 #include <ch.h>
+#include <Springboard/Common.hpp>
 
 namespace Springboard {
 namespace Kernel {
@@ -9,7 +13,7 @@ namespace Kernel {
 class BinarySemaphore
 {
 public:
-    BinarySemaphore(bool taken)
+    explicit BinarySemaphore(bool taken)
     {
         chBSemObjectInit(&mSemaphore, taken);
     }
@@ -38,5 +42,5 @@ private:
     binary_semaphore_t mSemaphore;
 };
 
-}
-}
+}  // namespace Kernel
+}  // namespace Springboard

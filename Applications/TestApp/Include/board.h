@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/InternalHAL/PortMacros.h>
@@ -32,8 +36,10 @@
                                      PIN_PUPDR_FLOATING(DEBUG_SWCLK_PAD))
 #define VAL_GPIOA_ODR               (0U)
 #define VAL_GPIOA_AFRL              (0U)
-#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(DEBUG_SWDIO_PAD, DEBUG_SWDIO_AF) | \
-                                     PIN_AFIO_AF(DEBUG_SWCLK_PAD, DEBUG_SWCLK_AF))
+#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(DEBUG_SWDIO_PAD, \
+                                                 DEBUG_SWDIO_AF) | \
+                                     PIN_AFIO_AF(DEBUG_SWCLK_PAD, \
+                                                 DEBUG_SWCLK_AF))
 
 //! \section GPIOB configuration
 #define VAL_GPIOB_MODER             (PIN_MODE_ALTERNATE(DEBUG_SWO_PAD))

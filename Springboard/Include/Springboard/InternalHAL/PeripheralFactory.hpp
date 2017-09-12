@@ -1,35 +1,45 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
+#include <hal.h>
+#include <sbconf.h>
 #include <Springboard/Common.hpp>
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/I2CBus.hpp>
-#include <hal.h>
-#include <sbconf.h>
 
 #if SPRINGBOARD_HAL_USE_I2C1
 #if !defined(SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY)
-#error "SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY must be defined when SPRINGBOARD_HAL_USE_I2C1 is set"
+#error "SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY must be defined when" \
+    "SPRINGBOARD_HAL_USE_I2C1 is set"
 #endif
 #if !defined(SPRINGBOARD_HAL_I2C1_XACTION_DEPTH)
-#error "SPRINGBOARD_HAL_I2C1_XACTION_DEPTH must be defined when SPRINGBOARD_HAL_USE_I2C1 is set"
+#error "SPRINGBOARD_HAL_I2C1_XACTION_DEPTH must be defined when" \
+    "SPRINGBOARD_HAL_USE_I2C1 is set"
 #endif
 #endif
 
 #if SPRINGBOARD_HAL_USE_I2C2
 #if !defined(SPRINGBOARD_HAL_I2C2_THREAD_PRIORITY)
-#error "SPRINGBOARD_HAL_I2C2_THREAD_PRIORITY must be defined when SPRINGBOARD_HAL_USE_I2C2 is set"
+#error "SPRINGBOARD_HAL_I2C2_THREAD_PRIORITY must be defined when" \
+    "SPRINGBOARD_HAL_USE_I2C2 is set"
 #endif
 #if !defined(SPRINGBOARD_HAL_I2C2_XACTION_DEPTH)
-#error "SPRINGBOARD_HAL_I2C2_XACTION_DEPTH must be defined when SPRINGBOARD_HAL_USE_I2C2 is set"
+#error "SPRINGBOARD_HAL_I2C2_XACTION_DEPTH must be defined when" \
+    "SPRINGBOARD_HAL_USE_I2C2 is set"
 #endif
 #endif
 
 #if SPRINGBOARD_HAL_USE_I2C3
 #if !defined(SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY)
-#error "SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY must be defined when SPRINGBOARD_HAL_USE_I2C3 is set"
+#error "SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY must be defined when" \
+    "SPRINGBOARD_HAL_USE_I2C3 is set"
 #endif
 #if !defined(SPRINGBOARD_HAL_I2C3_XACTION_DEPTH)
-#error "SPRINGBOARD_HAL_I2C3_XACTION_DEPTH must be defined when SPRINGBOARD_HAL_USE_I2C3 is set"
+#error "SPRINGBOARD_HAL_I2C3_XACTION_DEPTH must be defined when" \
+    "SPRINGBOARD_HAL_USE_I2C3 is set"
 #endif
 #endif
 
@@ -81,8 +91,8 @@ private:
         nullptr,
 #endif
     };
-#endif // SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C
 };
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

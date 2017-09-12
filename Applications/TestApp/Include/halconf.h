@@ -25,10 +25,9 @@
  * @{
  */
 
-#ifndef HALCONF_H
-#define HALCONF_H
+#pragma once
 
-#include "mcuconf.h"
+#include <mcuconf.h>
 
 /**
  * @brief   Enables the PAL subsystem.
@@ -382,7 +381,5 @@
 #if !defined(USB_USE_WAIT) || defined(__DOXYGEN__)
 #define USB_USE_WAIT                FALSE
 #endif
-
-#endif /* HALCONF_H */
 
 /** @} */

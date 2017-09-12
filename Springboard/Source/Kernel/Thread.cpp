@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #include <Springboard/Kernel/Thread.hpp>
 
 namespace Springboard {
@@ -14,8 +18,9 @@ Thread::Thread(const char* name, size_t size, Priority priority)
 
     thread_descriptor_t td = {
         .name = name,
-        .wbase = (stkalign_t*)wsp,
-        .wend = (stkalign_t*)((uint8_t*)wsp + size),
+        .wbase = reinterpret_cast<stkalign_t*>(wsp),
+        .wend = reinterpret_cast<stkalign_t*>(
+            reinterpret_cast<uint8_t*>(wsp) + size),
         .prio = priority,
         .funcp = Thread::InternalStart,
         .arg = this
@@ -26,5 +31,5 @@ Thread::Thread(const char* name, size_t size, Priority priority)
     chSysUnlock();
 }
 
-}
-}
+}  // namespace Kernel
+}  // namespace Springboard

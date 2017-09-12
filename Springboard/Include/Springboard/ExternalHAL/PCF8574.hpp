@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/InternalHAL/I2CDevice.hpp>
@@ -5,7 +9,6 @@
 #if SPRINGBOARD_HAL_ENABLE_I2C
 
 namespace Springboard {
-
 namespace ExternalHAL {
 
 class PCF8574 : public Springboard::InternalHAL::I2CDevice
@@ -18,7 +21,7 @@ public:
     void WritePort(uint8_t outputs);
 };
 
-}
-}
+}  // namespace ExternalHAL
+}  // namespace Springboard
 
-#endif // SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

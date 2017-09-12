@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #include <Springboard/InternalHAL/I2CDevice.hpp>
 #include <Springboard/InternalHAL/I2CBus.hpp>
 
@@ -28,7 +32,7 @@ void I2CDevice::PerformTransaction(const uint8_t* txbuf, size_t txlen,
     mCompletion.Wait();
 }
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard
 
-#endif // SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

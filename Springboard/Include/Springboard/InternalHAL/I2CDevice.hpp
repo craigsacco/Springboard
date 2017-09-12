@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
@@ -56,7 +60,7 @@ private:
     Springboard::Kernel::BinarySemaphore mCompletion;
 };
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard
 
-#endif // SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

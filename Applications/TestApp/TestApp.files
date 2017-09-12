@@ -241,6 +241,6 @@ Include/chconf.h
 Include/halconf.h
 Include/mcuconf.h
 Include/sbconf.h
-Makefile
 Source/board.c
 Source/main.cpp
+Makefile

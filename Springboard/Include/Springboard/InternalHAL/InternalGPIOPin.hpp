@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #pragma once
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
@@ -17,8 +21,10 @@ public:
 
     inline static void SetPinConfiguration(
         const Port port, const uint8_t pin, const GPIOPinMode mode,
-        const GPIOPullConfiguration pullConfiguration = GPIOPullConfiguration::Floating,
-        const GPIOOutputConfiguration outputConfiguration = GPIOOutputConfiguration::PushPull,
+        const GPIOPullConfiguration pullConfiguration =
+            GPIOPullConfiguration::Floating,
+        const GPIOOutputConfiguration outputConfiguration =
+            GPIOOutputConfiguration::PushPull,
         const GPIOOutputSpeed outputSpeed = GPIOOutputSpeed::Low_2MHz)
     {
         palSetPadMode(port, pin, mode | pullConfiguration |
@@ -30,5 +36,5 @@ protected:
     const uint8_t mPin;
 };
 
-}
-}
+}  // namespace InternalHAL
+}  // namespace Springboard

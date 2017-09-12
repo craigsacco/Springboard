@@ -1,3 +1,7 @@
+/*****************************************
+ * Copyright 2017 - Craig Sacco
+ *****************************************/
+
 #include <Springboard/Kernel/Kernel.hpp>
 #include <ch.h>
 
@@ -9,5 +13,5 @@ void Initialise()
     chSysInit();
 }
 
-}
-}
+}  // namespace Kernel
+}  // namespace Springboard
