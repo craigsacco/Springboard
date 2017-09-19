@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Springboard/InternalHAL/PortMacros.h>
+#include <board-common.h>
 
 //! \section Voltage and external oscillator config
 #define STM32_LSECLK                32768U

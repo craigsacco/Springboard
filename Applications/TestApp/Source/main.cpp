@@ -72,7 +72,7 @@ class ExpanderThread : public Thread
 {
 public:
     explicit ExpanderThread(PCF8574* expander)
-        : Thread("ExpanderThread", 256, NORMALPRIO-1),
+        : Thread("ExpanderThread", 512, NORMALPRIO-1),
           mExpander(expander),
           mLED(GPIOH, 3, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,

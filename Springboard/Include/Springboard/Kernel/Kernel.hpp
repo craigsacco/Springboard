@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <Springboard/Common.hpp>
+#include <Springboard/Common.h>
 #include <Springboard/Kernel/Thread.hpp>
 
 namespace Springboard {

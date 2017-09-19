@@ -1,3 +1,4 @@
+../../Libraries/ChibiOS/Include
 ../../Libraries/ChibiOS/17.6.x/os/common/ext/CMSIS/ST/STM32F4xx
 ../../Libraries/ChibiOS/17.6.x/os/common/ext/CMSIS/include
 ../../Libraries/ChibiOS/17.6.x/os/common/oslib/include

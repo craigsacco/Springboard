@@ -24,35 +24,16 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/InternalHAL/PeripheralFactory.hpp>
+#pragma once
 
-namespace Springboard {
-namespace InternalHAL {
-
-PeripheralFactory::PeripheralFactory()
-{
-}
-
-void PeripheralFactory::Start()
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    for (I2CBusBase* bus : mI2CBuses) {
-        if (bus != nullptr) {
-            bus->Start();
-        }
-    }
-#endif
-}
-
-I2CBusBase* PeripheralFactory::GetI2CBus(size_t index)
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);
-    return mI2CBuses[index-1];
+#include <sbconf.h>
+#include <ch.h>
+#ifdef __cplusplus
+#include <cstdint>
 #else
-    return nullptr;
+#include <stdint.h>
 #endif
-}
 
-}  // namespace InternalHAL
-}  // namespace Springboard
+//! \section Assertion checking
+#define ASSERT(cond)                chDbgAssert(cond, #cond)
+#define ASSERT_MSG(cond, msg)       chDbgAssert(cond, msg)

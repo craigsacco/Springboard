@@ -27,6 +27,8 @@
 
 #pragma once
 
+#include <chconf-common.h>
+
 #define _CHIBIOS_RT_CONF_
 
 /*===========================================================================*/

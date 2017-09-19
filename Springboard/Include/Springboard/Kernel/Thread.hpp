@@ -27,7 +27,7 @@
 #pragma once
 
 #include <ch.h>
-#include <Springboard/Common.hpp>
+#include <Springboard/Common.h>
 
 namespace Springboard {
 namespace Kernel {

@@ -10,7 +10,7 @@ PROJECTASMXSRC = $(wildcard ./Source/*.S)
 PROJECTHEADERS = $(wildcard $(PROJECTINC)/*.h) $(wildcard $(PROJECTINC)/*.hpp)
 
 # Springboard folders, includes and source
-SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL
+SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL Core
 SPRINGBOARDINC = $(SPRINGBOARD)/Include
 SPRINGBOARDCSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.c))
 SPRINGBOARDCPPSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.cpp))
@@ -93,8 +93,8 @@ else
 endif
 
 # Includes folders
-INCDIR = $(CHIBIOS)/os/license $(STARTUPINC) $(KERNINC) $(PORTINC) \
-         $(OSALINC) $(HALINC) $(PLATFORMINC) $(VARIOUSINC) \
+INCDIR = $(CHIBIOS)/os/license $(CHIBIOS)/../Include $(STARTUPINC) $(KERNINC) \
+         $(PORTINC) $(OSALINC) $(HALINC) $(PLATFORMINC) $(VARIOUSINC) \
          $(SPRINGBOARDINC) $(PROJECTINC)
 
 # Tools

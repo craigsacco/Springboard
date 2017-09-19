@@ -28,7 +28,7 @@
 
 #include <hal.h>
 #include <sbconf.h>
-#include <Springboard/Common.hpp>
+#include <Springboard/Common.h>
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/I2CBus.hpp>
 
@@ -70,16 +70,17 @@
 namespace Springboard {
 namespace InternalHAL {
 
+#if !SPRINGBOARD_HAL_ENABLE_I2C
+class I2CBusBase;
+#endif
+
 class PeripheralFactory
 {
 public:
     PeripheralFactory();
 
     void Start();
-
-#if SPRINGBOARD_HAL_ENABLE_I2C
     I2CBusBase* GetI2CBus(size_t index);
-#endif
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C

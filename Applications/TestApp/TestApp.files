@@ -1,3 +1,7 @@
+../../Libraries/ChibiOS/Include/board-common.h
+../../Libraries/ChibiOS/Include/chconf-common.h
+../../Libraries/ChibiOS/Include/halconf-common.h
+../../Libraries/ChibiOS/Include/mcuconf-common.h
 ../../Libraries/ChibiOS/17.6.x/os/common/ext/CMSIS/ST/STM32F4xx/stm32f401xc.h
 ../../Libraries/ChibiOS/17.6.x/os/common/ext/CMSIS/ST/STM32F4xx/stm32f401xe.h
 ../../Libraries/ChibiOS/17.6.x/os/common/ext/CMSIS/ST/STM32F4xx/stm32f405xx.h
@@ -213,9 +217,10 @@
 ../../Libraries/ChibiOS/17.6.x/os/various/cpp_wrappers/syscalls_cpp.cpp
 ../../Libraries/ChibiOS/17.6.x/os/various/evtimer.h
 ../../Libraries/ChibiOS/17.6.x/os/various/syscalls.c
-../../Springboard/Include/Springboard/Common.hpp
+../../Springboard/Include/Springboard/Common.h
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
+../../Springboard/Include/Springboard/Core/ExceptionHandling.h
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp
@@ -224,11 +229,11 @@
 ../../Springboard/Include/Springboard/InternalHAL/InternalGPIOPin.hpp
 ../../Springboard/Include/Springboard/InternalHAL/InternalHAL.hpp
 ../../Springboard/Include/Springboard/InternalHAL/PeripheralFactory.hpp
-../../Springboard/Include/Springboard/InternalHAL/PortMacros.h
 ../../Springboard/Include/Springboard/Kernel/BinarySemaphore.hpp
 ../../Springboard/Include/Springboard/Kernel/Kernel.hpp
 ../../Springboard/Include/Springboard/Kernel/Mailbox.hpp
 ../../Springboard/Include/Springboard/Kernel/Thread.hpp
+../../Springboard/Source/Core/ExceptionHandling.c
 ../../Springboard/Source/ExternalHAL/PCF8574.cpp
 ../../Springboard/Source/InternalHAL/I2CBus.cpp
 ../../Springboard/Source/InternalHAL/I2CDevice.cpp

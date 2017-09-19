@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include <mcuconf.h>
+#include <halconf-common.h>
 
 /**
  * @brief   Enables the PAL subsystem.

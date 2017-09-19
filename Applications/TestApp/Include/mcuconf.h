@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <mcuconf-common.h>
+
 /*
  * STM32F4xx drivers configuration.
  * The following settings override the default settings present in

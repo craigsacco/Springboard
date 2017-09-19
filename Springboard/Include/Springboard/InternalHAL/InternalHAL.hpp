@@ -27,7 +27,7 @@
 #pragma once
 
 #include <hal.h>
-#include <Springboard/Common.hpp>
+#include <Springboard/Common.h>
 
 #define SPRINGBOARD_HAL_ENABLE_I2C      HAL_USE_I2C
 #define SPRINGBOARD_HAL_USE_I2C1        STM32_I2C_USE_I2C1
