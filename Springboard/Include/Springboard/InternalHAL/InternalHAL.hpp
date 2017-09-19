@@ -37,7 +37,7 @@
 namespace Springboard {
 namespace InternalHAL {
 
-enum GPIOPinMode
+enum class GPIOPinMode : iomode_t
 {
     Input = PAL_STM32_MODE_INPUT,
     Output = PAL_STM32_MODE_OUTPUT,
@@ -101,20 +101,20 @@ enum GPIOPinMode
     AnalogInput = PAL_STM32_MODE_ANALOG,
 };
 
-enum GPIOPullConfiguration
+enum class GPIOPullConfiguration : iomode_t
 {
     Floating = PAL_STM32_PUPDR_FLOATING,
     PullUp = PAL_STM32_PUPDR_PULLUP,
     PullDown = PAL_STM32_PUPDR_PULLDOWN,
 };
 
-enum GPIOOutputConfiguration
+enum class GPIOOutputConfiguration : iomode_t
 {
     PushPull = PAL_STM32_OTYPE_PUSHPULL,
     OpenDrain = PAL_STM32_OTYPE_OPENDRAIN,
 };
 
-enum GPIOOutputSpeed
+enum class GPIOOutputSpeed : iomode_t
 {
     Low_2MHz = PAL_STM32_OSPEED_LOWEST,
     Medium_25MHz = PAL_STM32_OSPEED_MID1,
@@ -122,14 +122,14 @@ enum GPIOOutputSpeed
     VeryHigh_100MHz = PAL_STM32_OSPEED_HIGHEST,
 };
 
-enum I2CMode
+enum class I2CMode
 {
     I2C = OPMODE_I2C,
     SMBusSlave = OPMODE_SMBUS_DEVICE,
     SMBusHost = OPMODE_SMBUS_HOST,
 };
 
-enum I2CDutyCycle
+enum class I2CDutyCycle
 {
     Standard = STD_DUTY_CYCLE,
     Fast_2 = FAST_DUTY_CYCLE_2,

@@ -37,7 +37,7 @@ I2CBusBase::I2CBusBase(Bus* bus, I2CMode mode, const char* name,
     : Thread(name, SPRINGBOARD_HAL_I2C_THREAD_SIZE, priority),
       mBus(bus), mConfig()
 {
-    mConfig.op_mode = (i2copmode_t)mode;
+    mConfig.op_mode = static_cast<i2copmode_t>(mode);
 }
 
 void I2CBusBase::Run()
@@ -54,9 +54,10 @@ void I2CBusBase::Run()
             }
             ASSERT(speed > 0);
             mConfig.clock_speed = speed;
-            mConfig.duty_cycle = (i2cdutycycle_t)(speed <= 100000 ?
-                                                      I2CDutyCycle::Standard :
-                                                      I2CDutyCycle::Fast_16_9);
+            mConfig.duty_cycle =
+                static_cast<i2cdutycycle_t>(speed <= 100000 ?
+                                            I2CDutyCycle::Standard :
+                                            I2CDutyCycle::Fast_16_9);
             i2cStart(mBus, &mConfig);
         }
 

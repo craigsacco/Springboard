@@ -49,8 +49,10 @@ public:
             GPIOOutputConfiguration::PushPull,
         const GPIOOutputSpeed outputSpeed = GPIOOutputSpeed::Low_2MHz)
     {
-        palSetPadMode(port, pin, mode | pullConfiguration |
-                                 outputConfiguration | outputSpeed);
+        palSetPadMode(port, pin, static_cast<iomode_t>(mode) |
+                                 static_cast<iomode_t>(pullConfiguration) |
+                                 static_cast<iomode_t>(outputConfiguration) |
+                                 static_cast<iomode_t>(outputSpeed));
     }
 
 protected:

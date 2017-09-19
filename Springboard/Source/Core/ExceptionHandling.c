@@ -88,7 +88,27 @@ static_assert(sizeof(ExceptionStackFrame) % 8 == 0,
 
 void UnhandledException(volatile struct ExceptionStackFrame* frame)
 {
+    // capture some vital data
+    //  * exception number (3 = hard fault, 4 = MM fault, etc...)
+    //  * CFSR register value
+    //  * fault address (for MM and bus faults)
+    volatile uint8_t exceptionNumber = (uint8_t)(SCB->ICSR & 0xff);
+    volatile uint32_t cfsrValue = SCB->CFSR;
+    volatile uint32_t faultAddress = 0;
+    if (cfsrValue & (1UL << 7)) {
+        faultAddress = SCB->MMFAR;
+    } else if (cfsrValue & (1UL << 15)) {
+        faultAddress = SCB->BFAR;
+    }
+
+    // force an FPU operation so that the FPU registers are
+    // populated in the stack frame
+    volatile float dummy = 2.0f;
+    dummy *= 2.5f;
+
     (void)frame;
+    (void)exceptionNumber;
+    (void)faultAddress;
 
     // if running a debug session, trigger a software breakpoint
     if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) {
