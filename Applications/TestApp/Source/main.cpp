@@ -7,6 +7,8 @@
 #include <Springboard/InternalHAL/DigitalOutput.hpp>
 #include <Springboard/InternalHAL/PeripheralFactory.hpp>
 #include <Springboard/ExternalHAL/PCF8574.hpp>
+#include <Springboard/ExternalHAL/PCF8574DigitalInput.hpp>
+#include <Springboard/Drivers/PCF8574Driver.hpp>
 #include <Springboard/Kernel/Kernel.hpp>
 
 using Springboard::Kernel::Thread;
@@ -19,6 +21,8 @@ using Springboard::InternalHAL::DigitalInput;
 using Springboard::InternalHAL::DigitalOutput;
 using Springboard::InternalHAL::PeripheralFactory;
 using Springboard::ExternalHAL::PCF8574;
+using Springboard::ExternalHAL::PCF8574DigitalInput;
+using Springboard::Drivers::PCF8574Driver;
 
 class ButtonThread : public Thread
 {
@@ -71,9 +75,9 @@ private:
 class ExpanderThread : public Thread
 {
 public:
-    explicit ExpanderThread(PCF8574* expander)
+    explicit ExpanderThread(PCF8574DigitalInput* input)
         : Thread("ExpanderThread", 512, NORMALPRIO-1),
-          mExpander(expander),
+          mInput(input),
           mLED(GPIOH, 3, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
                GPIOOutputSpeed::Low_2MHz)
@@ -84,13 +88,12 @@ private:
     void Run() final
     {
         while (!ShouldTerminate()) {
-            uint8_t value = mExpander->ReadPort();
-            mLED.Set(value & 0x01);
+            mLED.Set(mInput->Get());
             Sleep_ms(500);
         }
     }
 
-    PCF8574* mExpander;
+    PCF8574DigitalInput* mInput;
     DigitalOutput mLED;
 };
 
@@ -122,8 +125,11 @@ int main(void)
     peripheralFactory.Start();
 
     PCF8574 expander(peripheralFactory.GetI2CBus(3), 0x20, 100000);
-    static ExpanderThread expanderThread(&expander);
+    PCF8574DigitalInput expanderInput(&expander, 0);
+    static ExpanderThread expanderThread(&expanderInput);
     expanderThread.Start();
+
+    static PCF8574Driver expanderDriver(1, &expander);
 
     while (true) {
         Thread::Sleep_ms(500);

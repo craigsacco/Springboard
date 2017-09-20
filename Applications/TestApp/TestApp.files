@@ -221,7 +221,12 @@
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
 ../../Springboard/Include/Springboard/Core/ExceptionHandling.h
+../../Springboard/Include/Springboard/Drivers/PCF8574Driver.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574.hpp
+../../Springboard/Include/Springboard/ExternalHAL/PCF8574DigitalInput.hpp
+../../Springboard/Include/Springboard/ExternalHAL/PCF8574DigitalOutput.hpp
+../../Springboard/Include/Springboard/ExternalHAL/PCF8574GPIOPin.hpp
+../../Springboard/Include/Springboard/Infrastructure/Resource.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/I2CBus.hpp
@@ -234,7 +239,9 @@
 ../../Springboard/Include/Springboard/Kernel/Mailbox.hpp
 ../../Springboard/Include/Springboard/Kernel/Thread.hpp
 ../../Springboard/Source/Core/ExceptionHandling.c
+../../Springboard/Source/Drivers/PCF8574Driver.cpp
 ../../Springboard/Source/ExternalHAL/PCF8574.cpp
+../../Springboard/Source/Infrastructure/Resource.cpp
 ../../Springboard/Source/InternalHAL/I2CBus.cpp
 ../../Springboard/Source/InternalHAL/I2CDevice.cpp
 ../../Springboard/Source/InternalHAL/InternalHAL.cpp

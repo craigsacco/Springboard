@@ -10,7 +10,7 @@ PROJECTASMXSRC = $(wildcard ./Source/*.S)
 PROJECTHEADERS = $(wildcard $(PROJECTINC)/*.h) $(wildcard $(PROJECTINC)/*.hpp)
 
 # Springboard folders, includes and source
-SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL Core
+SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL Core Drivers Infrastructure
 SPRINGBOARDINC = $(SPRINGBOARD)/Include
 SPRINGBOARDCSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.c))
 SPRINGBOARDCPPSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.cpp))
@@ -23,7 +23,7 @@ SPRINGBOARDHEADERS = $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboar
 CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
 # ChibiOS make options
-USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb -DTHUMB
+USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb -DTHUMB --specs=nano.specs
 USE_COPT = -Wall -Wextra -Wundef -Wstrict-prototypes
 USE_CPPOPT = -fno-rtti -Wall -Wextra -Wundef
 USE_LINK_GC = yes
@@ -37,18 +37,12 @@ USE_EXCEPTIONS_STACKSIZE = 0x400
 USE_FPU = hard
 
 # ChibiOS make includes
-CHIBIOSMKHAL = $(CHIBIOS)/os/hal/hal.mk
-CHIBIOSMKPLATFORM = $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
-CHIBIOSMKOSAL = $(CHIBIOS)/os/hal/osal/rt/osal.mk
-CHIBIOSMKRT = $(CHIBIOS)/os/rt/rt.mk
-CHIBIOSMKSTARTUP = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
-CHIBIOSMKPORT = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-include $(CHIBIOSMKSTARTUP)
-include $(CHIBIOSMKHAL)
-include $(CHIBIOSMKPLATFORM)
-include $(CHIBIOSMKOSAL)
-include $(CHIBIOSMKRT)
-include $(CHIBIOSMKPORT)
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 
 # Define linker script file here
 LDSCRIPT = $(STARTUPLD)/STM32F407xG.ld
