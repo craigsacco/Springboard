@@ -32,20 +32,20 @@
 namespace Springboard {
 namespace InternalHAL {
 
-I2CBusBase::I2CBusBase(Bus* bus, I2CMode mode, const char* name,
-                       Priority priority)
+I2CBus::I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority,
+               size_t transactionDepth)
     : Thread(name, SPRINGBOARD_HAL_I2C_THREAD_SIZE, priority),
-      mBus(bus), mConfig()
+      mBus(bus), mConfig(), mTransactionQueue(transactionDepth)
 {
     mConfig.op_mode = static_cast<i2copmode_t>(mode);
 }
 
-void I2CBusBase::Run()
+void I2CBus::Run()
 {
     mConfig.clock_speed = 0;
 
     while (!ShouldTerminate()) {
-        I2CTransaction& transaction = Dequeue();
+        I2CTransaction& transaction = mTransactionQueue.Fetch<I2CTransaction>();
 
         I2CDevice::Speed speed = transaction.device->GetSpeed();
         if (mConfig.clock_speed != speed) {

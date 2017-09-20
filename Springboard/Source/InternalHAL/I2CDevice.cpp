@@ -32,7 +32,7 @@
 namespace Springboard {
 namespace InternalHAL {
 
-I2CDevice::I2CDevice(I2CBusBase* bus, const Address address,
+I2CDevice::I2CDevice(I2CBus* bus, const Address address,
                      const Speed speed)
     : mBus(bus), mAddress(address), mSpeed(speed),
       mCompletion(true)

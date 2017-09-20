@@ -31,7 +31,7 @@
 namespace Springboard {
 namespace ExternalHAL {
 
-PCF8574::PCF8574(Springboard::InternalHAL::I2CBusBase* bus,
+PCF8574::PCF8574(Springboard::InternalHAL::I2CBus* bus,
                  const Address address, const Speed speed)
     : Springboard::InternalHAL::I2CDevice(bus, address, speed)
 {

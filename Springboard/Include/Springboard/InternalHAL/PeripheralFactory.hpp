@@ -71,7 +71,7 @@ namespace Springboard {
 namespace InternalHAL {
 
 #if !SPRINGBOARD_HAL_ENABLE_I2C
-class I2CBusBase;
+class I2CBus;
 #endif
 
 class PeripheralFactory
@@ -80,14 +80,15 @@ public:
     PeripheralFactory();
 
     void Start();
-    I2CBusBase* GetI2CBus(size_t index);
+    I2CBus* GetI2CBus(size_t index);
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C
 #define SPRINGBOARD_HAL_PF_I2C_DECL(n)                              \
-    I2CBus<SPRINGBOARD_HAL_I2C##n##_XACTION_DEPTH> mI2C##n##Bus     \
+    I2CBus mI2C##n##Bus                                             \
         { &I2CD##n, I2CMode::I2C, "I2C" #n "Bus",                   \
-          SPRINGBOARD_HAL_I2C##n##_THREAD_PRIORITY }
+          SPRINGBOARD_HAL_I2C##n##_THREAD_PRIORITY,                 \
+          SPRINGBOARD_HAL_I2C##n##_XACTION_DEPTH }
 #if SPRINGBOARD_HAL_USE_I2C1
     SPRINGBOARD_HAL_PF_I2C_DECL(1);
 #endif
@@ -97,7 +98,7 @@ private:
 #if SPRINGBOARD_HAL_USE_I2C3
     SPRINGBOARD_HAL_PF_I2C_DECL(3);
 #endif
-    I2CBusBase* mI2CBuses[SPRINGBOARD_HAL_I2C_COUNT] = {
+    I2CBus* mI2CBuses[SPRINGBOARD_HAL_I2C_COUNT] = {
 #if SPRINGBOARD_HAL_USE_I2C1
         &mI2C1Bus,
 #else

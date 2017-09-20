@@ -57,46 +57,25 @@ struct I2CTransaction
     Springboard::Kernel::BinarySemaphore* completion;
 };
 
-class I2CBusBase : public Springboard::Kernel::Thread
+class I2CBus : public Springboard::Kernel::Thread
 {
 public:
     typedef I2CDriver Bus;
     typedef I2CConfig Config;
 
-    I2CBusBase(Bus* bus, I2CMode mode, const char* name, Priority priority);
+    I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority,
+           size_t transactionDepth);
     void Run();
-    virtual void Enqueue(const I2CTransaction& transaction) = 0;
 
-protected:
-    virtual I2CTransaction& Dequeue() = 0;
-
-private:
-    Bus* mBus;
-    Config mConfig;
-};
-
-template <int TransactionDepth>
-class I2CBus : public I2CBusBase
-{
-public:
-    I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority) :
-        I2CBusBase(bus, mode, name, priority)
-    {
-    }
-
-    inline void Enqueue(const I2CTransaction& transaction) final
+    inline void Enqueue(const I2CTransaction& transaction)
     {
         mTransactionQueue.Post(transaction);
     }
 
 private:
-    inline I2CTransaction& Dequeue() final
-    {
-        return mTransactionQueue.Fetch();
-    }
-
-    Springboard::Kernel::Mailbox<I2CTransaction, TransactionDepth>
-        mTransactionQueue;
+    Bus* mBus;
+    Config mConfig;
+    Springboard::Kernel::Mailbox mTransactionQueue;
 };
 
 }  // namespace InternalHAL

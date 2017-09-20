@@ -23,8 +23,7 @@ SPRINGBOARDHEADERS = $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboar
 CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
 # ChibiOS make options
-USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb \
-          -DTHUMB -DPORT_ENABLE_GUARD_PAGES=TRUE
+USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb -DTHUMB
 USE_COPT = -Wall -Wextra -Wundef -Wstrict-prototypes
 USE_CPPOPT = -fno-rtti -Wall -Wextra -Wundef
 USE_LINK_GC = yes

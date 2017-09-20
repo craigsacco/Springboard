@@ -38,53 +38,8 @@ struct ExceptionStackFrame
     uint32_t lr;
     uint32_t pc;
     uint32_t xpsr;
-#if CORTEX_USE_FPU
-    union vfpu
-    {
-        struct spfp
-        {
-            float s0;
-            float s1;
-            float s2;
-            float s3;
-            float s4;
-            float s5;
-            float s6;
-            float s7;
-            float s8;
-            float s9;
-            float s10;
-            float s11;
-            float s12;
-            float s13;
-            float s14;
-            float s15;
-        } spfp;
-        struct dpfp
-        {
-            double d0;
-            double d1;
-            double d2;
-            double d3;
-            double d4;
-            double d5;
-            double d6;
-            double d7;
-        } dpfp;
-    } vfpu;
-    uint32_t fpscr;
-    uint32_t aligner;
-#endif  // CORTEX_USE_FPU
 };
 #pragma pack()
-
-#ifdef __cplusplus
-static_assert(sizeof(ExceptionStackFrame.vfpu.spfp) ==
-              sizeof(ExceptionStackFrame.vfpu.dpfp),
-              "Space for float and double register storage must be identical");
-static_assert(sizeof(ExceptionStackFrame) % 8 == 0,
-              "Stack frame must have an 8-byte alignment");
-#endif
 
 void UnhandledException(volatile struct ExceptionStackFrame* frame)
 {
@@ -100,11 +55,6 @@ void UnhandledException(volatile struct ExceptionStackFrame* frame)
     } else if (cfsrValue & (1UL << 15)) {
         faultAddress = SCB->BFAR;
     }
-
-    // force an FPU operation so that the FPU registers are
-    // populated in the stack frame
-    volatile float dummy = 2.0f;
-    dummy *= 2.5f;
 
     (void)frame;
     (void)exceptionNumber;

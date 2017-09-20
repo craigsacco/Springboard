@@ -32,13 +32,16 @@
 namespace Springboard {
 namespace Kernel {
 
-template <typename T, int Size>
 class Mailbox
 {
 public:
-    Mailbox()
+    explicit Mailbox(size_t size)
     {
-        chMBObjectInit(&mMailbox, mData, Size);
+        mData = reinterpret_cast<msg_t*>(chHeapAlloc(nullptr,
+                                                     size * sizeof(msg_t)));
+        ASSERT(mData != nullptr);
+
+        chMBObjectInit(&mMailbox, mData, size);
     }
 
     inline void Reset()
@@ -56,30 +59,35 @@ public:
         chMBResumeX(&mMailbox);
     }
 
+    template <typename T>
     inline void Post(const T& data)
     {
         msg_t result = chMBPost(&mMailbox, (msg_t)&data, TIME_INFINITE);
         ASSERT(result == MSG_OK);
     }
 
+    template <typename T>
     inline void PostI(const T& data)
     {
         msg_t result = chMBPostI(&mMailbox, (msg_t)&data);
         ASSERT(result == MSG_OK);
     }
 
+    template <typename T>
     inline void PostAhead(const T& data)
     {
         msg_t result = chMBPostAhead(&mMailbox, (msg_t)&data, TIME_INFINITE);
         ASSERT(result == MSG_OK);
     }
 
+    template <typename T>
     inline void PostAheadI(const T& data)
     {
         msg_t result = chMBPostAheadI(&mMailbox, (msg_t)&data);
         ASSERT(result == MSG_OK);
     }
 
+    template <typename T>
     inline T& Fetch()
     {
         msg_t data = 0;
@@ -88,6 +96,7 @@ public:
         return *reinterpret_cast<T*>(data);
     }
 
+    template <typename T>
     inline T& FetchI()
     {
         msg_t data = 0;
@@ -98,7 +107,7 @@ public:
 
 private:
     mailbox_t mMailbox;
-    msg_t mData[Size];
+    msg_t* mData;
 };
 
 }  // namespace Kernel

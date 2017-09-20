@@ -36,7 +36,7 @@ PeripheralFactory::PeripheralFactory()
 void PeripheralFactory::Start()
 {
 #if SPRINGBOARD_HAL_ENABLE_I2C
-    for (I2CBusBase* bus : mI2CBuses) {
+    for (I2CBus* bus : mI2CBuses) {
         if (bus != nullptr) {
             bus->Start();
         }
@@ -44,7 +44,7 @@ void PeripheralFactory::Start()
 #endif
 }
 
-I2CBusBase* PeripheralFactory::GetI2CBus(size_t index)
+I2CBus* PeripheralFactory::GetI2CBus(size_t index)
 {
 #if SPRINGBOARD_HAL_ENABLE_I2C
     ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);

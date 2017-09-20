@@ -35,7 +35,7 @@ namespace Springboard {
 
 namespace InternalHAL {
 
-class I2CBusBase;
+class I2CBus;
 
 class I2CDevice
 {
@@ -43,7 +43,7 @@ public:
     typedef i2caddr_t Address;
     typedef uint32_t Speed;
 
-    I2CDevice(I2CBusBase* bus, const Address address, const Speed speed);
+    I2CDevice(I2CBus* bus, const Address address, const Speed speed);
 
     inline Address GetAddress() const
     {
@@ -76,7 +76,7 @@ private:
     void PerformTransaction(const uint8_t* txbuf, size_t txlen, uint8_t* rxbuf,
                             size_t rxlen);
 
-    I2CBusBase* mBus;
+    I2CBus* mBus;
     Address mAddress;
     Speed mSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
