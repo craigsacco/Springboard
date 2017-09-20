@@ -42,20 +42,12 @@ public:
 
     inline const char* GetName() const
     {
-#if CH_VERSION == 1706
         return mThread->name;
-#else
-        return mThread->p_name;
-#endif
     }
 
     inline Priority GetPriority() const
     {
-#if CH_VERSION == 1706
         return mThread->prio;
-#else
-        return mThread->p_prio;
-#endif
     }
 
     inline void SetPriority(Priority priority)
@@ -75,11 +67,7 @@ public:
 
     inline bool IsStarted() const
     {
-#if CH_VERSION == 1706
         return mThread->state != CH_STATE_WTSTART;
-#else
-        return mThread->p_state != CH_STATE_WTSTART;
-#endif
     }
 
     inline void Terminate()

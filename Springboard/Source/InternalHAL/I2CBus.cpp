@@ -44,7 +44,7 @@ void I2CBusBase::Run()
 {
     mConfig.clock_speed = 0;
 
-    while (true) {
+    while (!ShouldTerminate()) {
         I2CTransaction& transaction = Dequeue();
 
         I2CDevice::Speed speed = transaction.device->GetSpeed();
@@ -52,7 +52,6 @@ void I2CBusBase::Run()
             if (mConfig.clock_speed > 0) {
                 i2cStop(mBus);
             }
-            ASSERT(speed > 0);
             mConfig.clock_speed = speed;
             mConfig.duty_cycle =
                 static_cast<i2cdutycycle_t>(speed <= 100000 ?

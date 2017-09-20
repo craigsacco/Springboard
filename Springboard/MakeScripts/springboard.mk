@@ -19,22 +19,12 @@ SPRINGBOARDASMXSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBO
 SPRINGBOARDHEADERS = $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboard/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.h)) \
                      $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboard/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.hpp))
 
-# ChibiOS version and location
-CHIBIOSVERSION = 17.6.x
-ifeq ($(filter $(CHIBIOSVERSION),16.1.x 17.6.x),)
-	$(error Unknown ChibiOS version - only 16.1.x and 17.6.x are supported)
-endif
-ifeq ($(CHIBIOSVERSION),17.6.x)
-	CHIBIOSVERSIONDEF = 1706
-else
-	CHIBIOSVERSIONDEF = 1601
-endif
-CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/$(CHIBIOSVERSION)
+# ChibiOS location
+CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
 # ChibiOS make options
 USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb \
-          -DTHUMB -DCH_VERSION=$(CHIBIOSVERSIONDEF) \
-          -DPORT_ENABLE_GUARD_PAGES=TRUE
+          -DTHUMB -DPORT_ENABLE_GUARD_PAGES=TRUE
 USE_COPT = -Wall -Wextra -Wundef -Wstrict-prototypes
 USE_CPPOPT = -fno-rtti -Wall -Wextra -Wundef
 USE_LINK_GC = yes
@@ -52,13 +42,8 @@ CHIBIOSMKHAL = $(CHIBIOS)/os/hal/hal.mk
 CHIBIOSMKPLATFORM = $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
 CHIBIOSMKOSAL = $(CHIBIOS)/os/hal/osal/rt/osal.mk
 CHIBIOSMKRT = $(CHIBIOS)/os/rt/rt.mk
-ifeq ($(CHIBIOSVERSION),17.6.x)
-	CHIBIOSMKSTARTUP = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
-	CHIBIOSMKPORT = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-else
-	CHIBIOSMKSTARTUP = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
-	CHIBIOSMKPORT = $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-endif
+CHIBIOSMKSTARTUP = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
+CHIBIOSMKPORT = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 include $(CHIBIOSMKSTARTUP)
 include $(CHIBIOSMKHAL)
 include $(CHIBIOSMKPLATFORM)
@@ -83,15 +68,9 @@ CSRC = $(STARTUPSRC) $(KERNSRC) $(PORTSRC) $(OSALSRC) $(HALSRC) \
 CPPSRC = $(VARIOUSCPPSRC) $(SPRINGBOARDCPPSRC) $(PROJECTCPPSRC)
 
 # ASM sources
-ifeq ($(CHIBIOSVERSION),17.6.x)
-	ASMSRC = $(SPRINGBOARDASMSRC) $(PROJECTASMSRC)
-	ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMXSRC) \
-	          $(PROJECTASMXSRC)
-else
-	ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMSRC) \
-	         $(PROJECTASMSRC)
-	ASMXSRC = $(SPRINGBOARDASMXSRC) $(PROJECTASMXSRC)
-endif
+ASMSRC = $(SPRINGBOARDASMSRC) $(PROJECTASMSRC)
+ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMXSRC) \
+          $(PROJECTASMXSRC)
 
 # Includes folders
 INCDIR = $(CHIBIOS)/os/license $(CHIBIOS)/../Include $(STARTUPINC) $(KERNINC) \
@@ -111,11 +90,7 @@ HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
 # ChibiOS build rules
-ifeq ($(CHIBIOSVERSION),17.6.x)
-	RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC
-else
-	RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
-endif
+RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 # Qt Generic project file generation
