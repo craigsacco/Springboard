@@ -30,10 +30,6 @@
 namespace Springboard {
 namespace Drivers {
 
-PROPERTY_TABLE_START(PCF8574Driver)
-PROPERTY_ENTRY_UINT8(PCF8574Driver, 100, "ReadPort", ReadPort)
-PROPERTY_TABLE_END()
-
 PCF8574Driver::PCF8574Driver(const PCF8574Driver::ResourceIdentifier identifier,
                              Springboard::ExternalHAL::PCF8574* driver) :
     Resource(identifier),
@@ -41,9 +37,16 @@ PCF8574Driver::PCF8574Driver(const PCF8574Driver::ResourceIdentifier identifier,
 {
 }
 
-uint8_t PCF8574Driver::ReadPort() const
+ResultCode PCF8574Driver::ReadPort(uint8_t* value)
 {
-    return mDriver->ReadPort();
+    *value = mDriver->ReadPort();
+    return RC_OK;
+}
+
+ResultCode PCF8574Driver::WritePort(const uint8_t value)
+{
+    mDriver->WritePort(value);
+    return RC_OK;
 }
 
 }  // namespace Drivers

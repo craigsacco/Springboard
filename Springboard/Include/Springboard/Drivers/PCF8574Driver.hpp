@@ -40,11 +40,18 @@ public:
     PCF8574Driver(const ResourceIdentifier identifier,
                   Springboard::ExternalHAL::PCF8574* driver);
 
-    uint8_t ReadPort() const;
+    ResultCode ReadPort(uint8_t* value);
+    ResultCode WritePort(const uint8_t value);
+
+    PROPERTY_GET_HANDLER(PCF8574Driver)
+    PROPERTY_SET_HANDLER(PCF8574Driver)
 
 private:
     Springboard::ExternalHAL::PCF8574* mDriver;
-    PROPERTY_TABLE_DECL(PCF8574Driver);
+
+    PROPERTY_TABLE_START(PCF8574Driver, 1)
+    PROPERTY_ENTRY_UINT8_RW(PCF8574Driver, 100, "Port", ReadPort, WritePort)
+    PROPERTY_TABLE_END()
 };
 
 }  // namespace Drivers

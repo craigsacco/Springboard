@@ -75,9 +75,9 @@ private:
 class ExpanderThread : public Thread
 {
 public:
-    explicit ExpanderThread(PCF8574DigitalInput* input)
-        : Thread("ExpanderThread", 512, NORMALPRIO-1),
-          mInput(input),
+    explicit ExpanderThread(PCF8574Driver* driver)
+        : Thread("ExpanderThread", 1024, NORMALPRIO-1),
+          mDriver(driver),
           mLED(GPIOH, 3, GPIOPullConfiguration::Floating,
                GPIOOutputConfiguration::PushPull,
                GPIOOutputSpeed::Low_2MHz)
@@ -88,12 +88,16 @@ private:
     void Run() final
     {
         while (!ShouldTerminate()) {
-            mLED.Set(mInput->Get());
+            uint8_t value = 0;
+            size_t len = 0;
+            ResultCode result = mDriver->GetProperty(100, &value, &len);
+            ASSERT(result == RC_OK && len == 1);
+            mLED.Set(value & 0x01);
             Sleep_ms(500);
         }
     }
 
-    PCF8574DigitalInput* mInput;
+    PCF8574Driver* mDriver;
     DigitalOutput mLED;
 };
 
@@ -125,11 +129,9 @@ int main(void)
     peripheralFactory.Start();
 
     PCF8574 expander(peripheralFactory.GetI2CBus(3), 0x20, 100000);
-    PCF8574DigitalInput expanderInput(&expander, 0);
-    static ExpanderThread expanderThread(&expanderInput);
+    PCF8574Driver expanderDriver(1, &expander);
+    static ExpanderThread expanderThread(&expanderDriver);
     expanderThread.Start();
-
-    static PCF8574Driver expanderDriver(1, &expander);
 
     while (true) {
         Thread::Sleep_ms(500);

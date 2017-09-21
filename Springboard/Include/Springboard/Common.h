@@ -34,6 +34,15 @@
 #include <stdint.h>
 #endif
 
+//! \section Common type definitions
+typedef uint32_t ResultCode;
+#define RC_OK                               ((ResultCode)0)
+#define RC_MASK_RESOURCE                    ((ResultCode)0x10000000)
+#define RC_RESOURCE_INVALID_TYPE            ((ResultCode)(RC_MASK_RESOURCE + 1))
+#define RC_RESOURCE_INVALID_PROPERTY_ID     ((ResultCode)(RC_MASK_RESOURCE + 2))
+#define RC_RESOURCE_PROPERTY_NOT_SETABLE    ((ResultCode)(RC_MASK_RESOURCE + 3))
+#define RC_RESOURCE_INVALID_PROPERTY_LENGTH ((ResultCode)(RC_MASK_RESOURCE + 4))
+
 //! \section Assertion checking
 #define ASSERT(cond)                chDbgAssert(cond, #cond)
 #define ASSERT_MSG(cond, msg)       chDbgAssert(cond, msg)
