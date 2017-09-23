@@ -50,17 +50,17 @@ public:
     uint16_t ReadINTCAPx();
     uint16_t ReadPORTx();
     uint16_t ReadOLATx();
-    void WriteIODIRx(uint16_t value);
-    void WriteIPOLx(uint16_t value);
-    void WriteGPINTENx(uint16_t value);
-    void WriteDEFVALx(uint16_t value);
-    void WriteINTCONx(uint16_t value);
-    void WriteIOCON(uint8_t value);
-    void WriteGPPUx(uint16_t value);
-    void WriteINTFx(uint16_t value);
-    void WriteINTCAPx(uint16_t value);
-    void WritePORTx(uint16_t value);
-    void WriteOLATx(uint16_t value);
+    void WriteIODIRx(const uint16_t value);
+    void WriteIPOLx(const uint16_t value);
+    void WriteGPINTENx(const uint16_t value);
+    void WriteDEFVALx(const uint16_t value);
+    void WriteINTCONx(const uint16_t value);
+    void WriteIOCON(const uint8_t value);
+    void WriteGPPUx(const uint16_t value);
+    void WriteINTFx(const uint16_t value);
+    void WriteINTCAPx(const uint16_t value);
+    void WritePORTx(const uint16_t value);
+    void WriteOLATx(const uint16_t value);
 
 private:
     enum class Register : uint8_t

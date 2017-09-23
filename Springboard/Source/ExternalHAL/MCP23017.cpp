@@ -93,32 +93,32 @@ uint16_t MCP23017::ReadOLATx()
     return ReadRegisterPair(Register::OLATA);
 }
 
-void MCP23017::WriteIODIRx(uint16_t value)
+void MCP23017::WriteIODIRx(const uint16_t value)
 {
     return WriteRegisterPair(Register::IODIRA, value);
 }
 
-void MCP23017::WriteIPOLx(uint16_t value)
+void MCP23017::WriteIPOLx(const uint16_t value)
 {
     return WriteRegisterPair(Register::IPOLA, value);
 }
 
-void MCP23017::WriteGPINTENx(uint16_t value)
+void MCP23017::WriteGPINTENx(const uint16_t value)
 {
     return WriteRegisterPair(Register::GPINTENA, value);
 }
 
-void MCP23017::WriteDEFVALx(uint16_t value)
+void MCP23017::WriteDEFVALx(const uint16_t value)
 {
     return WriteRegisterPair(Register::DEFVALA, value);
 }
 
-void MCP23017::WriteINTCONx(uint16_t value)
+void MCP23017::WriteINTCONx(const uint16_t value)
 {
     return WriteRegisterPair(Register::INTCONA, value);
 }
 
-void MCP23017::WriteIOCON(uint8_t value)
+void MCP23017::WriteIOCON(const uint8_t value)
 {
     // only INTPOL, ODR and MIRROR pins are settable
     static const uint8_t mask = (static_cast<uint8_t>(IOCONBits::INTPOL) |
@@ -127,27 +127,27 @@ void MCP23017::WriteIOCON(uint8_t value)
     return WriteRegister(Register::IOCON, value & mask);
 }
 
-void MCP23017::WriteGPPUx(uint16_t value)
+void MCP23017::WriteGPPUx(const uint16_t value)
 {
     return WriteRegisterPair(Register::GPPUA, value);
 }
 
-void MCP23017::WriteINTFx(uint16_t value)
+void MCP23017::WriteINTFx(const uint16_t value)
 {
     return WriteRegisterPair(Register::INTFA, value);
 }
 
-void MCP23017::WriteINTCAPx(uint16_t value)
+void MCP23017::WriteINTCAPx(const uint16_t value)
 {
     return WriteRegisterPair(Register::INTCAPA, value);
 }
 
-void MCP23017::WritePORTx(uint16_t value)
+void MCP23017::WritePORTx(const uint16_t value)
 {
     return WriteRegisterPair(Register::PORTA, value);
 }
 
-void MCP23017::WriteOLATx(uint16_t value)
+void MCP23017::WriteOLATx(const uint16_t value)
 {
     return WriteRegisterPair(Register::OLATA, value);
 }

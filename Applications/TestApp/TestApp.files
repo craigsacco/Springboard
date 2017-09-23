@@ -221,6 +221,7 @@
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
 ../../Springboard/Include/Springboard/Core/ExceptionHandling.h
+../../Springboard/Include/Springboard/Drivers/MCP23017Driver.hpp
 ../../Springboard/Include/Springboard/Drivers/PCF8574Driver.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/MCP23017.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574.hpp
@@ -240,6 +241,7 @@
 ../../Springboard/Include/Springboard/Kernel/Mailbox.hpp
 ../../Springboard/Include/Springboard/Kernel/Thread.hpp
 ../../Springboard/Source/Core/ExceptionHandling.c
+../../Springboard/Source/Drivers/MCP23017Driver.cpp
 ../../Springboard/Source/Drivers/PCF8574Driver.cpp
 ../../Springboard/Source/ExternalHAL/MCP23017.cpp
 ../../Springboard/Source/ExternalHAL/PCF8574.cpp
