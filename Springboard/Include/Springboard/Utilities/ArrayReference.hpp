@@ -92,19 +92,14 @@ public:
         return ArrayReference<T>(nullptr);
     }
 
-    static constexpr ArrayReference<T> FromReference(T& value)
+    static constexpr ArrayReference<T> FromSingleRef(T& value)
     {
         return ArrayReference<T>(&value, 1);
     }
 
-    static constexpr ArrayReference<T> FromPointer(T* ptr)
+    static constexpr ArrayReference<T> FromSinglePtr(T* ptr)
     {
         return ArrayReference<T>(ptr, 1);
-    }
-
-    static constexpr ArrayReference<T> FromPointerWithSize(T* ptr, size_t size)
-    {
-        return ArrayReference<T>(ptr, size);
     }
 
 private:

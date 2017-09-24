@@ -90,8 +90,7 @@ private:
         while (!ShouldTerminate()) {
             uint8_t value = 0;
             size_t len = 0;
-            ResultCode result = mDriver->GetProperty(100, &value, &len);
-            ASSERT(result == RC_OK && len == 1);
+            mDriver->GetProperty(100, &value, &len);
             mLED.Set(value & 0x01);
             Sleep_ms(500);
         }

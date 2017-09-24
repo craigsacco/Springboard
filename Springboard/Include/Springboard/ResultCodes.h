@@ -31,14 +31,11 @@
 
 //! \section Construction macros
 #define RC_BASE_INFRASTRUCTURE              ((ResultCode)0x10000000)
-#define RC_BASE_INFRASTRUCTURE_BLOCK(x)     ((ResultCode)(RC_BASE_INFRASTRUCTURE + \
-                                                          (x << 16)))
+#define RC_BASE_INFRASTRUCTURE_BLOCK(x)     (RC_BASE_INFRASTRUCTURE + (x << 16))
 #define RC_BASE_HAL                         ((ResultCode)0x20000000)
-#define RC_BASE_HAL_BLOCK(x)                ((ResultCode)(RC_BASE_HAL + \
-                                                          (x << 16)))
+#define RC_BASE_HAL_BLOCK(x)                (RC_BASE_HAL + (x << 16))
 #define RC_BASE_DRIVERS                     ((ResultCode)0x30000000)
-#define RC_BASE_DRIVERS_BLOCK(x)            ((ResultCode)(RC_BASE_INFRASTRUCTURE + \
-                                                          (x << 16)))
+#define RC_BASE_DRIVERS_BLOCK(x)            (RC_BASE_INFRASTRUCTURE + (x << 16))
 
 //! \section Resource result codes
 #define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(0))

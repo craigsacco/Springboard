@@ -27,15 +27,18 @@
 #pragma once
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <Springboard/InternalHAL/I2CDevice.hpp>
 #include <Springboard/Kernel/Thread.hpp>
 #include <Springboard/Kernel/Mailbox.hpp>
+#include <Springboard/Utilities/ArrayReference.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_I2C
 
 #if !defined(SPRINGBOARD_HAL_I2C_THREAD_SIZE)
 #define SPRINGBOARD_HAL_I2C_THREAD_SIZE     512
 #endif
+
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
 

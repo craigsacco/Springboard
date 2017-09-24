@@ -42,6 +42,14 @@ void PeripheralFactory::Start()
         }
     }
 #endif
+
+#if SPRINGBOARD_HAL_ENABLE_UART
+    for (UARTBus* bus : mUARTBuses) {
+        if (bus != nullptr) {
+            bus->Start();
+        }
+    }
+#endif
 }
 
 I2CBus* PeripheralFactory::GetI2CBus(size_t index)
@@ -49,6 +57,16 @@ I2CBus* PeripheralFactory::GetI2CBus(size_t index)
 #if SPRINGBOARD_HAL_ENABLE_I2C
     ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);
     return mI2CBuses[index-1];
+#else
+    return nullptr;
+#endif
+}
+
+UARTBus* PeripheralFactory::GetUARTBus(size_t index)
+{
+#if SPRINGBOARD_HAL_ENABLE_UART
+    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_UART_COUNT);
+    return mUARTBuses[index-1];
 #else
     return nullptr;
 #endif

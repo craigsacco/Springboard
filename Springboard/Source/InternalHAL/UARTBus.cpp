@@ -4,7 +4,7 @@
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -24,31 +24,53 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/ExternalHAL/PCF8574.hpp>
+#include <Springboard/InternalHAL/UARTBus.hpp>
 
-#if SPRINGBOARD_HAL_ENABLE_I2C
+#if SPRINGBOARD_HAL_ENABLE_UART
 
 namespace Springboard {
-namespace ExternalHAL {
+namespace InternalHAL {
 
-PCF8574::PCF8574(Springboard::InternalHAL::I2CBus* bus,
-                 const Address address, const Speed speed)
-    : Springboard::InternalHAL::I2CDevice(bus, address, speed)
+UARTBus::UARTBus(Bus* bus)
+    : mBus(bus), mConfig()
 {
-    ASSERT(address >= 0x20 && address <= 0x27);
+    mConfig.speed = 0;
+    mConfig.cr1 = 0;
+    mConfig.cr2 = 0;
+    mConfig.cr3 = 0;
 }
 
-ResultCode PCF8574::ReadPort(uint8_t* inputs)
+void UARTBus::Start()
 {
-    return Receive(ByteArray::FromSinglePtr(inputs));
+    sdStart(mBus, &mConfig);
 }
 
-ResultCode PCF8574::WritePort(uint8_t outputs)
+void UARTBus::SetSpeed(Speed speed)
 {
-    return Transmit(ConstByteArray::FromSingleRef(outputs));
+    mConfig.speed = speed;
 }
 
-}  // namespace ExternalHAL
+void UARTBus::Read(ByteArray buffer)
+{
+    sdRead(mBus, buffer.GetData(), buffer.GetSize());
+}
+
+size_t UARTBus::ReadAsync(ByteArray buffer)
+{
+    return sdAsynchronousRead(mBus, buffer.GetData(), buffer.GetSize());
+}
+
+void UARTBus::Write(ConstByteArray buffer)
+{
+    sdWrite(mBus, buffer.GetData(), buffer.GetSize());
+}
+
+size_t UARTBus::ReadAsync(ConstByteArray buffer)
+{
+    return sdAsynchronousWrite(mBus, buffer.GetData(), buffer.GetSize());
+}
+
+}  // namespace InternalHAL
 }  // namespace Springboard
 
-#endif  // #if SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_UART

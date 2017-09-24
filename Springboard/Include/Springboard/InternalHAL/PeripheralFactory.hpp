@@ -31,6 +31,7 @@
 #include <Springboard/Common.h>
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/I2CBus.hpp>
+#include <Springboard/InternalHAL/UARTBus.hpp>
 
 #if SPRINGBOARD_HAL_USE_I2C1
 #if !defined(SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY)
@@ -66,12 +67,17 @@
 #endif
 
 #define SPRINGBOARD_HAL_I2C_COUNT           3
+#define SPRINGBOARD_HAL_UART_COUNT          8
 
 namespace Springboard {
 namespace InternalHAL {
 
 #if !SPRINGBOARD_HAL_ENABLE_I2C
 class I2CBus;
+#endif
+
+#if !SPRINGBOARD_HAL_ENABLE_UART
+class UARTBus;
 #endif
 
 class PeripheralFactory
@@ -81,6 +87,7 @@ public:
 
     void Start();
     I2CBus* GetI2CBus(size_t index);
+    UARTBus* GetUARTBus(size_t index);
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C
@@ -116,6 +123,76 @@ private:
 #endif
     };
 #endif  // SPRINGBOARD_HAL_ENABLE_I2C
+
+#if SPRINGBOARD_HAL_ENABLE_UART
+#define SPRINGBOARD_HAL_PF_UART_DECL(n) UARTBus mUART##n##Bus { &SD##n }
+#if SPRINGBOARD_HAL_USE_UART1
+    SPRINGBOARD_HAL_PF_UART_DECL(1);
+#endif
+#if SPRINGBOARD_HAL_USE_UART2
+    SPRINGBOARD_HAL_PF_UART_DECL(2);
+#endif
+#if SPRINGBOARD_HAL_USE_UART3
+    SPRINGBOARD_HAL_PF_UART_DECL(3);
+#endif
+#if SPRINGBOARD_HAL_USE_UART4
+    SPRINGBOARD_HAL_PF_UART_DECL(4);
+#endif
+#if SPRINGBOARD_HAL_USE_UART5
+    SPRINGBOARD_HAL_PF_UART_DECL(5);
+#endif
+#if SPRINGBOARD_HAL_USE_UART6
+    SPRINGBOARD_HAL_PF_UART_DECL(6);
+#endif
+#if SPRINGBOARD_HAL_USE_UART7
+    SPRINGBOARD_HAL_PF_UART_DECL(7);
+#endif
+#if SPRINGBOARD_HAL_USE_UART8
+    SPRINGBOARD_HAL_PF_UART_DECL(8);
+#endif
+    UARTBus* mUARTBuses[SPRINGBOARD_HAL_UART_COUNT] = {
+#if SPRINGBOARD_HAL_USE_UART1
+        &mUART1Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART2
+        &mUART2Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART3
+        &mUART3Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART4
+        &mUART4Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART5
+        &mUART5Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART6
+        &mUART6Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART7
+        &mUART7Bus,
+#else
+        nullptr,
+#endif
+#if SPRINGBOARD_HAL_USE_UART8
+        &mUART8Bus,
+#else
+        nullptr,
+#endif
+    };
+#endif  // SPRINGBOARD_HAL_ENABLE_UART
 };
 
 }  // namespace InternalHAL
