@@ -10,7 +10,7 @@ PROJECTASMXSRC = $(wildcard ./Source/*.S)
 PROJECTHEADERS = $(wildcard $(PROJECTINC)/*.h) $(wildcard $(PROJECTINC)/*.hpp)
 
 # Springboard folders, includes and source
-SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL Core Drivers Infrastructure
+SPRINGBOARDDIRS = . Kernel CommonHAL InternalHAL ExternalHAL Core Drivers Infrastructure Comms Utilities
 SPRINGBOARDINC = $(SPRINGBOARD)/Include
 SPRINGBOARDCSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.c))
 SPRINGBOARDCPPSRC = $(foreach dir,$(addprefix $(SPRINGBOARD)/Source/,$(SPRINGBOARDDIRS)),$(wildcard $(dir)/*.cpp))

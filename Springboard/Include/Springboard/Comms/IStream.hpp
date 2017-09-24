@@ -4,7 +4,7 @@
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -24,53 +24,26 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/InternalHAL/PeripheralFactory.hpp>
+#pragma once
+
+#include <Springboard/Utilities/ArrayReference.hpp>
+
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
-namespace InternalHAL {
+namespace Comms {
 
-PeripheralFactory::PeripheralFactory()
+class IStream
 {
-}
+public:
+    virtual uint8_t Read() = 0;
+    virtual void Read(ByteArray buffer) = 0;
+    virtual size_t ReadAsync(ByteArray buffer) = 0;
+    virtual void Write(uint8_t b) = 0;
+    virtual void Write(ConstByteArray buffer) = 0;
+    virtual size_t ReadAsync(ConstByteArray buffer) = 0;
+};
 
-void PeripheralFactory::Start()
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    for (I2CBus* bus : mI2CBuses) {
-        if (bus != nullptr) {
-            bus->Start();
-        }
-    }
-#endif
-
-#if SPRINGBOARD_HAL_ENABLE_UART
-    for (UARTBus* bus : mUARTBuses) {
-        if (bus != nullptr) {
-            bus->Start();
-        }
-    }
-#endif
-}
-
-I2CBus* PeripheralFactory::GetI2CBus(size_t index) const
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);
-    return mI2CBuses[index-1];
-#else
-    return nullptr;
-#endif
-}
-
-UARTBus* PeripheralFactory::GetUARTBus(size_t index) const
-{
-#if SPRINGBOARD_HAL_ENABLE_UART
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_UART_COUNT);
-    return mUARTBuses[index-1];
-#else
-    return nullptr;
-#endif
-}
-
-}  // namespace InternalHAL
+}  // namespace Comms
 }  // namespace Springboard

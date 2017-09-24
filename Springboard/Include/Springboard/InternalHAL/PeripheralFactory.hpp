@@ -86,8 +86,8 @@ public:
     PeripheralFactory();
 
     void Start();
-    I2CBus* GetI2CBus(size_t index);
-    UARTBus* GetUARTBus(size_t index);
+    I2CBus* GetI2CBus(size_t index) const;
+    UARTBus* GetUARTBus(size_t index) const;
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C

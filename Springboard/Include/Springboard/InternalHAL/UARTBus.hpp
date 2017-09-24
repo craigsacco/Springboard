@@ -26,13 +26,10 @@
 
 #pragma once
 
+#include <Springboard/Comms/IStream.hpp>
 #include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <Springboard/Utilities/ArrayReference.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_UART
-
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
 
@@ -40,7 +37,7 @@ namespace Kernel { class BinarySemaphore; }
 
 namespace InternalHAL {
 
-class UARTBus
+class UARTBus : public Springboard::Comms::IStream
 {
 public:
     typedef SerialDriver Bus;
@@ -51,11 +48,40 @@ public:
 
     void Start();
 
-    void SetSpeed(Speed speed);
-    void Read(ByteArray buffer);
-    size_t ReadAsync(ByteArray buffer);
-    void Write(ConstByteArray buffer);
-    size_t ReadAsync(ConstByteArray buffer);
+    inline void SetSpeed(Speed speed)
+    {
+        mConfig.speed = speed;
+    }
+
+    inline uint8_t Read() final
+    {
+        return sdGet(mBus);
+    }
+
+    inline void Read(ByteArray buffer) final
+    {
+        sdRead(mBus, buffer.GetData(), buffer.GetSize());
+    }
+
+    inline size_t ReadAsync(ByteArray buffer) final
+    {
+        return sdAsynchronousRead(mBus, buffer.GetData(), buffer.GetSize());
+    }
+
+    inline void Write(uint8_t b) final
+    {
+        sdPut(mBus, b);
+    }
+
+    inline void Write(ConstByteArray buffer) final
+    {
+        sdWrite(mBus, buffer.GetData(), buffer.GetSize());
+    }
+
+    inline size_t ReadAsync(ConstByteArray buffer) final
+    {
+        return sdAsynchronousWrite(mBus, buffer.GetData(), buffer.GetSize());
+    }
 
 private:
     Bus* mBus;

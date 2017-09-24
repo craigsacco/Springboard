@@ -45,31 +45,6 @@ void UARTBus::Start()
     sdStart(mBus, &mConfig);
 }
 
-void UARTBus::SetSpeed(Speed speed)
-{
-    mConfig.speed = speed;
-}
-
-void UARTBus::Read(ByteArray buffer)
-{
-    sdRead(mBus, buffer.GetData(), buffer.GetSize());
-}
-
-size_t UARTBus::ReadAsync(ByteArray buffer)
-{
-    return sdAsynchronousRead(mBus, buffer.GetData(), buffer.GetSize());
-}
-
-void UARTBus::Write(ConstByteArray buffer)
-{
-    sdWrite(mBus, buffer.GetData(), buffer.GetSize());
-}
-
-size_t UARTBus::ReadAsync(ConstByteArray buffer)
-{
-    return sdAsynchronousWrite(mBus, buffer.GetData(), buffer.GetSize());
-}
-
 }  // namespace InternalHAL
 }  // namespace Springboard
 

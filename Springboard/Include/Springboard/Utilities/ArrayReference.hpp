@@ -27,8 +27,8 @@
 #pragma once
 
 #include <ch.h>
-#include <cstddef>
 #include <Springboard/Common.h>
+#include <cstddef>
 
 namespace Springboard {
 namespace Utilities {
@@ -92,7 +92,7 @@ public:
         return ArrayReference<T>(nullptr);
     }
 
-    static constexpr ArrayReference<T> FromSingleRef(T& value)
+    static constexpr ArrayReference<T> FromSingleRef(const T& value)
     {
         return ArrayReference<T>(&value, 1);
     }
