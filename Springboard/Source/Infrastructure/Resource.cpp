@@ -29,9 +29,23 @@
 namespace Springboard {
 namespace Infrastructure {
 
-Resource::Resource(const ResourceIdentifier identifier) :
-    mIdentifier(identifier)
+Resource::Resource(const ResourceIdentifier identifier,
+                   const ResourceType type,
+                   const char* name) :
+    mIdentifier(identifier), mResourceType(type), mName(name)
 {
+}
+
+ResultCode Resource::GetProperty(PropertyIdentifier identifier,
+                                 void* data, size_t* len)
+{
+    return PROPERTY_GET_HANDLER_IMPL(Resource);
+}
+
+ResultCode Resource::SetProperty(PropertyIdentifier identifier,
+                                 const void* data, size_t len)
+{
+    return PROPERTY_SET_HANDLER_IMPL(Resource);
 }
 
 }  // namespace Infrastructure

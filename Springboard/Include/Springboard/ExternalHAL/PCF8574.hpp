@@ -41,6 +41,12 @@ public:
 
     ResultCode ReadPort(uint8_t* inputs);
     ResultCode WritePort(uint8_t outputs);
+
+protected:
+    inline Speed GetMaximumDeviceSpeed() const final
+    {
+        return 100000U;
+    }
 };
 
 }  // namespace ExternalHAL

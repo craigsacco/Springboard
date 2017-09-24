@@ -27,50 +27,27 @@
 #pragma once
 
 #include <Springboard/Infrastructure/Resource.hpp>
+#include <Springboard/InternalHAL/PeripheralFactory.hpp>
 
 namespace Springboard {
+namespace Infrastructure {
 
-namespace ExternalHAL { class MCP23017; }
-
-namespace Drivers {
-
-class MCP23017Driver : public Springboard::Infrastructure::Resource
+class Controller : public Springboard::Infrastructure::Resource
 {
 public:
-    MCP23017Driver(const ResourceIdentifier identifier,
-                   const char* name,
-                   Springboard::ExternalHAL::MCP23017* driver);
+    Controller(const ResourceIdentifier identifier, const char* name);
 
-    ResultCode ReadIODIRx(uint16_t* value);
-    ResultCode ReadIPOLx(uint16_t* value);
-    ResultCode ReadGPINTENx(uint16_t* value);
-    ResultCode ReadDEFVALx(uint16_t* value);
-    ResultCode ReadINTCONx(uint16_t* value);
-    ResultCode ReadIOCON(uint8_t* value);
-    ResultCode ReadGPPUx(uint16_t* value);
-    ResultCode ReadINTFx(uint16_t* value);
-    ResultCode ReadINTCAPx(uint16_t* value);
-    ResultCode ReadPORTx(uint16_t* value);
-    ResultCode ReadOLATx(uint16_t* value);
-    ResultCode WriteIODIRx(const uint16_t value);
-    ResultCode WriteIPOLx(const uint16_t value);
-    ResultCode WriteGPINTENx(const uint16_t value);
-    ResultCode WriteDEFVALx(const uint16_t value);
-    ResultCode WriteINTCONx(const uint16_t value);
-    ResultCode WriteIOCON(const uint8_t value);
-    ResultCode WriteGPPUx(const uint16_t value);
-    ResultCode WriteINTFx(const uint16_t value);
-    ResultCode WriteINTCAPx(const uint16_t value);
-    ResultCode WritePORTx(const uint16_t value);
-    ResultCode WriteOLATx(const uint16_t value);
+    virtual void Start();
 
-    PROPERTY_GET_HANDLER(MCP23017Driver, Springboard::Infrastructure::Resource)
-    PROPERTY_SET_HANDLER(MCP23017Driver, Springboard::Infrastructure::Resource)
+    PROPERTY_GET_HANDLER(Controller, Resource)
+    PROPERTY_SET_HANDLER(Controller, Resource)
+
+protected:
+    Springboard::InternalHAL::PeripheralFactory mPeripheralFactory;
 
 private:
-    Springboard::ExternalHAL::MCP23017* mDriver;
-
-    PROPERTY_TABLE_START(MCP23017Driver, 11)
+    PROPERTY_TABLE_START(Controller, 0)
+    /*
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 100, "IODIR", ReadIODIRx,
                              WriteIODIRx)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 101, "IPOL", ReadIPOLx, WriteIPOLx)
@@ -87,8 +64,9 @@ private:
                              WriteINTCAPx)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 109, "PORT", ReadPORTx, WritePORTx)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 110, "OLAT", ReadOLATx, WriteOLATx)
+    */
     PROPERTY_TABLE_END()
 };
 
-}  // namespace Drivers
+}  // namespace Infrastructure
 }  // namespace Springboard

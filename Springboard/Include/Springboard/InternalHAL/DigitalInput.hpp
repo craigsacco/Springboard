@@ -38,9 +38,14 @@ class DigitalInput : public InternalGPIOPin,
 public:
     DigitalInput(const Port port, const uint8_t pin,
                  const GPIOPullConfiguration pullConfiguration)
-        : InternalGPIOPin(port, pin)
+        : InternalGPIOPin(port, pin, pullConfiguration)
     {
-        SetPinConfiguration(port, pin, GPIOPinMode::Input, pullConfiguration);
+    }
+
+    inline void Configure() const final
+    {
+        SetPinConfiguration(mPort, mPin, GPIOPinMode::Input,
+                            mPullConfiguration);
     }
 
     inline bool Get() const final

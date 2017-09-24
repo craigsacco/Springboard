@@ -34,10 +34,7 @@ namespace InternalHAL {
 UARTBus::UARTBus(Bus* bus)
     : mBus(bus), mConfig()
 {
-    mConfig.speed = 0;
-    mConfig.cr1 = 0;
-    mConfig.cr2 = 0;
-    mConfig.cr3 = 0;
+    SetConfig(9600, UARTDataBits::Eight, UARTParity::None, UARTStopBits::One);
 }
 
 void UARTBus::Start()
@@ -53,19 +50,15 @@ void UARTBus::Stop()
 void UARTBus::SetConfig(Speed speed, UARTDataBits databits,
                         UARTParity parity, UARTStopBits stopbits)
 {
-    bool started = IsStarted();
-    if (started) {
-        Stop();
-    }
-
     mConfig.speed = speed;
     mConfig.cr1 = static_cast<uint16_t>(databits) |
                   static_cast<uint16_t>(parity);
     mConfig.cr2 = static_cast<uint16_t>(stopbits);
     mConfig.cr3 = 0;
 
-    if (started) {
-        Start();
+    // immediately apply new configuration if it has already started
+    if (IsStarted()) {
+        sdStart(mBus, &mConfig);
     }
 }
 

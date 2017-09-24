@@ -59,6 +59,12 @@ public:
     }
 
 protected:
+    virtual Speed GetMaximumDeviceSpeed() const
+    {
+        // all I2C devices should safely run at 100kHz
+        return 100000U;
+    }
+
     inline ResultCode Receive(ByteArray rxbuf,
                               systime_t timeout = TIME_INFINITE)
     {

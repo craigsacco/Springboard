@@ -36,10 +36,13 @@ class InternalGPIOPin
 public:
     typedef ioportid_t Port;
 
-    InternalGPIOPin(const Port port, const uint8_t pin) :
-        mPort(port), mPin(pin)
+    InternalGPIOPin(const Port port, const uint8_t pin,
+                    const GPIOPullConfiguration pullConfiguration) :
+        mPort(port), mPin(pin), mPullConfiguration(pullConfiguration)
     {
     }
+
+    virtual void Configure() const = 0;
 
     inline static void SetPinConfiguration(
         const Port port, const uint8_t pin, const GPIOPinMode mode,
@@ -58,6 +61,7 @@ public:
 protected:
     const Port mPort;
     const uint8_t mPin;
+    const GPIOPullConfiguration mPullConfiguration;
 };
 
 }  // namespace InternalHAL

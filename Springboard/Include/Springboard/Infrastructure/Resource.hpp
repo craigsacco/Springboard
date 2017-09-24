@@ -38,6 +38,13 @@ class Resource
 public:
     typedef uint16_t ResourceIdentifier;
     typedef uint16_t PropertyIdentifier;
+
+    enum class ResourceType : uint16_t
+    {
+        Controller,
+        IOExpander,
+    };
+
     template <class TClass, typename TProp> using GetterFPtr =
         ResultCode(TClass::*)(TProp*);
     template <class TClass> using BoolGetterFPtr =
@@ -261,62 +268,60 @@ public:
 #define PROPERTY_TABLE_END()                                                \
     };
 
-    explicit Resource(const ResourceIdentifier identifier);
+    Resource(const ResourceIdentifier identifier,
+             const ResourceType type,
+             const char* name);
 
-    inline ResourceIdentifier GetID() const
+    inline ResourceIdentifier GetIdentifier() const
     {
         return mIdentifier;
     }
 
-    virtual ResultCode GetProperty(PropertyIdentifier identifier,
-                                   void* data, size_t* len) = 0;
-    virtual ResultCode SetProperty(PropertyIdentifier identifier,
-                                   const void* data, size_t len) = 0;
+    inline ResourceType GetResourceType() const
+    {
+        return mResourceType;
+    }
+
+    inline const char* GetName() const
+    {
+        return mName;
+    }
 
 #define PROPERTY_GET_HANDLER_IMPL(owner)                                    \
-    ResultCode result = GetPropertyInternal<owner>(                         \
+    GetPropertyInternal<owner>(                                             \
         this, sPropertyTable,                                               \
         sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
-        identifier, data, len);
+        identifier, data, len)
 #define PROPERTY_SET_HANDLER_IMPL(owner)                                    \
-    ResultCode result = SetPropertyInternal<owner>(                         \
+    SetPropertyInternal<owner>(                                             \
         this, sPropertyTable,                                               \
         sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
-        identifier, data, len);
-#define PROPERTY_GET_HANDLER(owner)                                         \
+        identifier, data, len)
+#define PROPERTY_GET_HANDLER(owner, base)                                   \
     ResultCode GetProperty(PropertyIdentifier identifier,                   \
                            void* data, size_t* len) final                   \
     {                                                                       \
-        PROPERTY_GET_HANDLER_IMPL(owner)                                    \
-        return result;                                                      \
-    }
-#define PROPERTY_SET_HANDLER(owner)                                         \
-    ResultCode SetProperty(PropertyIdentifier identifier,                   \
-                           const void* data, size_t len) final              \
-    {                                                                       \
-        PROPERTY_SET_HANDLER_IMPL(owner)                                    \
-        return result;                                                      \
-    }
-#define PROPERTY_GET_HANDLER_EX(owner, base)                                \
-    ResultCode GetProperty(PropertyIdentifier identifier,                   \
-                           void* data, size_t* len) final                   \
-    {                                                                       \
-        PROPERTY_GET_HANDLER_IMPL(owner)                                    \
+        ResultCode result = PROPERTY_GET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
             result = base::GetProperty(identifier, data, len);              \
         }                                                                   \
         return result;                                                      \
     }
-#define PROPERTY_SET_HANDLER_EX(owner, base)                                \
+#define PROPERTY_SET_HANDLER(owner, base)                                   \
     ResultCode SetProperty(PropertyIdentifier identifier,                   \
                            const void* data, size_t len) final              \
     {                                                                       \
-        PROPERTY_SET_HANDLER_IMPL(owner)                                    \
+        ResultCode result = PROPERTY_SET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
             result = base::SetProperty(identifier, data, len);              \
         }                                                                   \
         return result;                                                      \
     }
+
+    virtual ResultCode GetProperty(PropertyIdentifier identifier,
+                                   void* data, size_t* len);
+    virtual ResultCode SetProperty(PropertyIdentifier identifier,
+                                   const void* data, size_t len);
 
 protected:
     template <class TClass>
@@ -489,7 +494,28 @@ protected:
         return RC_RESOURCE_INVALID_PROPERTY_ID;
     }
 
-    ResourceIdentifier mIdentifier;
+    const ResourceIdentifier mIdentifier;
+    const ResourceType mResourceType;
+    const char* mName;
+
+private:
+    ResultCode GetResourceTypePropertyRequest(uint16_t* value)
+    {
+        *value = static_cast<uint16_t>(GetResourceType());
+        return RC_OK;
+    }
+
+    ResultCode GetNamePropertyRequest(char* value)
+    {
+        strcpy(value, GetName());
+        return RC_OK;
+    }
+
+    PROPERTY_TABLE_START(Resource, 2)
+    PROPERTY_ENTRY_UINT16_RO(Resource, 1, "Type",
+                             GetResourceTypePropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Resource, 2, "Name", GetNamePropertyRequest)
+    PROPERTY_TABLE_END()
 };
 
 }  // namespace Infrastructure

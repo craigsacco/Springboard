@@ -38,7 +38,7 @@ I2CDevice::I2CDevice(I2CBus* bus, const Address address,
       mCompletion(true)
 {
     ASSERT(bus != nullptr);
-    ASSERT(speed > 0);
+    ASSERT(speed > 0 && speed <= GetMaximumDeviceSpeed());
 }
 
 ResultCode I2CDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,

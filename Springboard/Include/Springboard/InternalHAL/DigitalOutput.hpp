@@ -39,11 +39,18 @@ public:
     DigitalOutput(const Port port, const uint8_t pin,
                   const GPIOPullConfiguration pullConfiguration,
                   const GPIOOutputConfiguration outputConfiguration,
-                  const GPIOOutputSpeed outputSpeed)
-        : InternalGPIOPin(port, pin)
+                  const GPIOOutputSpeed outputSpeed) :
+        InternalGPIOPin(port, pin, pullConfiguration),
+        mOutputConfiguration(outputConfiguration),
+        mOutputSpeed(outputSpeed)
     {
-        SetPinConfiguration(port, pin, GPIOPinMode::Output, pullConfiguration,
-                            outputConfiguration, outputSpeed);
+    }
+
+    inline void Configure() const final
+    {
+        SetPinConfiguration(mPort, mPin, GPIOPinMode::Output,
+                            mPullConfiguration, mOutputConfiguration,
+                            mOutputSpeed);
     }
 
     inline bool Get() const final
@@ -65,6 +72,10 @@ public:
     {
         palTogglePad(mPort, mPin);
     }
+
+private:
+    const GPIOOutputConfiguration mOutputConfiguration;
+    const GPIOOutputSpeed mOutputSpeed;
 };
 
 }  // namespace InternalHAL

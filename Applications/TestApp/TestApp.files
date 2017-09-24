@@ -231,6 +231,7 @@
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574DigitalInput.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574DigitalOutput.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574GPIOPin.hpp
+../../Springboard/Include/Springboard/Infrastructure/Controller.hpp
 ../../Springboard/Include/Springboard/Infrastructure/Resource.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp
@@ -251,6 +252,7 @@
 ../../Springboard/Source/Drivers/PCF8574Driver.cpp
 ../../Springboard/Source/ExternalHAL/MCP23017.cpp
 ../../Springboard/Source/ExternalHAL/PCF8574.cpp
+../../Springboard/Source/Infrastructure/Controller.cpp
 ../../Springboard/Source/Infrastructure/Resource.cpp
 ../../Springboard/Source/InternalHAL/I2CBus.cpp
 ../../Springboard/Source/InternalHAL/I2CDevice.cpp

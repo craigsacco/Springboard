@@ -24,30 +24,25 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/Drivers/PCF8574Driver.hpp>
-#include <Springboard/ExternalHAL/PCF8574.hpp>
-
-using Springboard::ExternalHAL::PCF8574;
+#include <Springboard/Infrastructure/Controller.hpp>
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/Kernel/Kernel.hpp>
 
 namespace Springboard {
-namespace Drivers {
+namespace Infrastructure {
 
-PCF8574Driver::PCF8574Driver(const ResourceIdentifier identifier,
-                             const char* name, PCF8574* driver) :
-    Resource(identifier, ResourceType::IOExpander, name),
-    mDriver(driver)
+Controller::Controller(const ResourceIdentifier identifier, const char* name) :
+    Resource(identifier, ResourceType::Controller, name),
+    mPeripheralFactory()
 {
+    Springboard::InternalHAL::Initialise();
+    Springboard::Kernel::Initialise();
 }
 
-ResultCode PCF8574Driver::ReadPort(uint8_t* value)
+void Controller::Start()
 {
-    return mDriver->ReadPort(value);
+    mPeripheralFactory.Start();
 }
 
-ResultCode PCF8574Driver::WritePort(const uint8_t value)
-{
-    return mDriver->WritePort(value);
-}
-
-}  // namespace Drivers
+}  // namespace Infrastructure
 }  // namespace Springboard

@@ -38,13 +38,14 @@ class PCF8574Driver : public Springboard::Infrastructure::Resource
 {
 public:
     PCF8574Driver(const ResourceIdentifier identifier,
+                  const char* name,
                   Springboard::ExternalHAL::PCF8574* driver);
 
     ResultCode ReadPort(uint8_t* value);
     ResultCode WritePort(const uint8_t value);
 
-    PROPERTY_GET_HANDLER(PCF8574Driver)
-    PROPERTY_SET_HANDLER(PCF8574Driver)
+    PROPERTY_GET_HANDLER(PCF8574Driver, Springboard::Infrastructure::Resource)
+    PROPERTY_SET_HANDLER(PCF8574Driver, Springboard::Infrastructure::Resource)
 
 private:
     Springboard::ExternalHAL::PCF8574* mDriver;
