@@ -79,6 +79,7 @@ void I2CBus::Run()
 
         if (result != MSG_OK) {
             transaction.result = RC_I2C_TIMED_OUT;
+            mConfig.clock_speed = 0;  // bus is locked - force bus restart
         } else if (mBus->errors != I2C_NO_ERROR) {
             transaction.result = RC_I2C_ERROR_BASE + mBus->errors;
         } else {

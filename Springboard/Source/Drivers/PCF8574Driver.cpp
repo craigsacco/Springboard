@@ -27,11 +27,13 @@
 #include <Springboard/Drivers/PCF8574Driver.hpp>
 #include <Springboard/ExternalHAL/PCF8574.hpp>
 
+using Springboard::ExternalHAL::PCF8574;
+
 namespace Springboard {
 namespace Drivers {
 
-PCF8574Driver::PCF8574Driver(const PCF8574Driver::ResourceIdentifier identifier,
-                             Springboard::ExternalHAL::PCF8574* driver) :
+PCF8574Driver::PCF8574Driver(
+    const PCF8574Driver::ResourceIdentifier identifier, PCF8574* driver) :
     Resource(identifier),
     mDriver(driver)
 {

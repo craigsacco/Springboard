@@ -50,7 +50,7 @@ private:
     Springboard::ExternalHAL::PCF8574* mDriver;
 
     PROPERTY_TABLE_START(PCF8574Driver, 1)
-    PROPERTY_ENTRY_UINT8_RW(PCF8574Driver, 100, "Port", ReadPort, WritePort)
+    PROPERTY_ENTRY_UINT8_RW(PCF8574Driver, 100, "PORT", ReadPort, WritePort)
     PROPERTY_TABLE_END()
 };
 
