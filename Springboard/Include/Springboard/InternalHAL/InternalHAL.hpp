@@ -146,6 +146,27 @@ enum class I2CDutyCycle
     Fast_16_9 = FAST_DUTY_CYCLE_16_9,
 };
 
+enum class UARTDataBits
+{
+    Eight = 0,
+    Nine = USART_CR1_M,
+};
+
+enum class UARTParity
+{
+    None = 0,
+    Even = USART_CR1_PCE,
+    Odd = USART_CR1_PCE | USART_CR1_PS,
+};
+
+enum class UARTStopBits
+{
+    ZeroPointFive = USART_CR2_STOP_0,
+    One = 0,
+    OnePointFive = USART_CR2_STOP_1 | USART_CR2_STOP_0,
+    Two = USART_CR2_STOP_1,
+};
+
 void Initialise();
 
 }  // namespace InternalHAL

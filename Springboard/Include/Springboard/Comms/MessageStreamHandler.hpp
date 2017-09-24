@@ -26,18 +26,118 @@
 
 #pragma once
 
+#include <Springboard/Kernel/Thread.hpp>
+
+#if !defined(SPRINGBOARD_MSG_STREAM_HDLR_THREAD_SIZE)
+#define SPRINGBOARD_MSG_STREAM_HDLR_THREAD_SIZE     2048
+#endif
+
 namespace Springboard {
 namespace Comms {
 
+#pragma pack(1)
+
+struct MessageGetPropertyRequest
+{
+    uint16_t resourceId;
+    uint16_t propertyId;
+
+    static constexpr size_t LENGTH = 4;
+};
+
+struct MessageGetPropertyResponse
+{
+    uint16_t resourceId;
+    uint16_t propertyId;
+    ResultCode resultCode;
+    uint8_t firstByte;
+
+    static constexpr size_t PREAMBLE_LENGTH = 8;
+    static constexpr size_t MIN_LENGTH = PREAMBLE_LENGTH + 1;
+};
+
+struct MessageSetPropertyRequest
+{
+    uint16_t resourceId;
+    uint16_t propertyId;
+    uint8_t firstByte;
+
+    static constexpr size_t PREAMBLE_LENGTH = 4;
+    static constexpr size_t MIN_LENGTH = PREAMBLE_LENGTH + 1;
+};
+
+struct MessageSetPropertyResponse
+{
+    uint16_t resourceId;
+    uint16_t propertyId;
+    ResultCode resultCode;
+
+    static constexpr size_t LENGTH = 8;
+};
+
+enum class MessageType : uint8_t
+{
+    GetPropertyRequest,
+    GetPropertyResponse,
+    SetPropertyRequest,
+    SetPropertyResponse,
+};
+
+union MessagePayload
+{
+    MessageGetPropertyRequest getPropertyRequest;
+    MessageGetPropertyResponse getPropertyResponse;
+    MessageSetPropertyRequest setPropertyRequest;
+    MessageSetPropertyResponse setPropertyResponse;
+};
+
+struct MessageHeader
+{
+    uint8_t size;
+    uint8_t sequence;
+    MessageType type;
+    MessagePayload payload;
+
+    static constexpr size_t MIN_LENGTH = 3;
+};
+
+#pragma pack()
+
 class IStream;
 
-class MessageStreamHandler
+class MessageStreamHandler : public Springboard::Kernel::Thread
 {
 public:
-    explicit MessageStreamHandler(IStream* stream);
+    MessageStreamHandler(IStream* stream, const char* name, Priority priority);
+    void Run() final;
 
 private:
+    bool ReceiveNextByte();
+    void HandleRxMessage();
+    void ResetRxBuffer();
+
+    enum class RxState
+    {
+        Idle,
+        GotSOFChar1,
+        GotSOFChar2,
+        GotSize,
+        GettingMessage,
+        GotMessage,
+        GotEOFChar1,
+        GotEOFChar2,
+    };
+    static constexpr uint8_t SOF_BYTES[2] = { 0xfd, 0x02 };
+    static constexpr uint8_t EOF_BYTES[2] = { 0x03, 0xfc };
+    static constexpr size_t BUFFER_SIZE = 256;
+    static constexpr uint8_t MAX_MSG_SIZE = 251;  // minus SOF/EOF/checksum
     IStream* mStream;
+    uint8_t mRxBuffer[BUFFER_SIZE];
+    uint8_t mRxPos;
+    RxState mRxState;
+    uint8_t mRxChecksum;
+    uint8_t mRxMsgBytesRemaining;
+    uint8_t mTxBuffer[BUFFER_SIZE];
 };
 
 }  // namespace Comms

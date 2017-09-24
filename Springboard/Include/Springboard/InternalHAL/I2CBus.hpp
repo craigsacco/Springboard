@@ -66,7 +66,7 @@ public:
 
     I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority,
            size_t transactionDepth);
-    void Run();
+    void Run() final;
 
     inline void Enqueue(const I2CTransaction& transaction)
     {

@@ -30,9 +30,142 @@
 namespace Springboard {
 namespace Comms {
 
-MessageStreamHandler::MessageStreamHandler(IStream* stream) :
+MessageStreamHandler::MessageStreamHandler(
+    IStream* stream, const char* name, Priority priority) :
+    Thread(name, SPRINGBOARD_MSG_STREAM_HDLR_THREAD_SIZE, priority),
     mStream(stream)
 {
+}
+
+void MessageStreamHandler::Run()
+{
+    ResetRxBuffer();
+
+    while (!ShouldTerminate()) {
+        bool gotMessage = ReceiveNextByte();
+        if (gotMessage) {
+            HandleRxMessage();
+            ResetRxBuffer();
+        }
+    }
+}
+
+bool MessageStreamHandler::ReceiveNextByte()
+{
+    bool byteOk = true;
+    bool gotMessage = false;
+    uint8_t b = mStream->Read();
+
+    switch (mRxState) {
+    case RxState::Idle:
+    {
+        if (b == SOF_BYTES[0]) {
+            mRxState = RxState::GotSOFChar1;
+        } else {
+            byteOk = false;
+        }
+        break;
+    }
+    case RxState::GotSOFChar1:
+    {
+        if (b == SOF_BYTES[1]) {
+            mRxState = RxState::GotSOFChar2;
+        } else {
+            byteOk = false;
+        }
+        break;
+    }
+    case RxState::GotSOFChar2:
+    {
+        if (b <= MAX_MSG_SIZE) {
+            mRxState = RxState::GotSize;
+            mRxMsgBytesRemaining = b;
+        } else {
+            byteOk = false;
+        }
+        break;
+    }
+    case RxState::GotSize:
+    case RxState::GettingMessage:
+    {
+        if (mRxMsgBytesRemaining > 0) {
+            mRxState = RxState::GettingMessage;
+        } else {
+            mRxState = RxState::GotMessage;
+        }
+        mRxMsgBytesRemaining--;
+        break;
+    }
+    case RxState::GotMessage:
+    {
+        if (b == EOF_BYTES[0]) {
+            mRxState = RxState::GotEOFChar1;
+        } else {
+            byteOk = false;
+        }
+        break;
+    }
+    case RxState::GotEOFChar1:
+    {
+        if (b == EOF_BYTES[1]) {
+            mRxState = RxState::GotEOFChar2;
+        } else {
+            byteOk = false;
+        }
+        break;
+    }
+    case RxState::GotEOFChar2:
+    {
+        if (b == mRxChecksum) {
+            gotMessage = true;
+        } else {
+            byteOk = false;
+        }
+        break;
+    }
+    }
+
+    if (byteOk) {
+        mRxBuffer[mRxPos++] = b;
+        mRxChecksum ^= b;
+    } else {
+        mRxPos = 0;
+        mRxChecksum = 0;
+    }
+
+    return gotMessage;
+}
+
+void MessageStreamHandler::HandleRxMessage()
+{
+    MessageHeader* header =
+        reinterpret_cast<MessageHeader*>(&(mRxBuffer[sizeof(SOF_BYTES)]));
+    switch (header->type) {
+    case MessageType::GetPropertyRequest:
+    {
+        break;
+    }
+    case MessageType::SetPropertyRequest:
+    {
+        ConstByteArray data(
+            &(header->payload.setPropertyRequest.firstByte),
+            header->size - (MessageHeader::MIN_LENGTH +
+                            MessageGetPropertyResponse::PREAMBLE_LENGTH));
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
+}
+
+void MessageStreamHandler::ResetRxBuffer()
+{
+    mRxPos = 0;
+    mRxState = RxState::Idle;
+    mRxChecksum = 0;
+    mRxMsgBytesRemaining = 0;
 }
 
 }  // namespace Comms

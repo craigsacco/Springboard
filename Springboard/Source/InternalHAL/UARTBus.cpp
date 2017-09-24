@@ -45,6 +45,30 @@ void UARTBus::Start()
     sdStart(mBus, &mConfig);
 }
 
+void UARTBus::Stop()
+{
+    sdStop(mBus);
+}
+
+void UARTBus::SetConfig(Speed speed, UARTDataBits databits,
+                        UARTParity parity, UARTStopBits stopbits)
+{
+    bool started = IsStarted();
+    if (started) {
+        Stop();
+    }
+
+    mConfig.speed = speed;
+    mConfig.cr1 = static_cast<uint16_t>(databits) |
+                  static_cast<uint16_t>(parity);
+    mConfig.cr2 = static_cast<uint16_t>(stopbits);
+    mConfig.cr3 = 0;
+
+    if (started) {
+        Start();
+    }
+}
+
 }  // namespace InternalHAL
 }  // namespace Springboard
 

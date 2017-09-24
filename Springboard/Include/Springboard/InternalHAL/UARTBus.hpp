@@ -47,10 +47,13 @@ public:
     explicit UARTBus(Bus* bus);
 
     void Start();
+    void Stop();
+    void SetConfig(Speed speed, UARTDataBits databits,
+                   UARTParity parity, UARTStopBits stopbits);
 
-    inline void SetSpeed(Speed speed)
+    inline bool IsStarted()
     {
-        mConfig.speed = speed;
+        return (mBus->state == SD_READY);
     }
 
     inline uint8_t Read() final
