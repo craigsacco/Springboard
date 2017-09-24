@@ -40,12 +40,12 @@ PCF8574::PCF8574(Springboard::InternalHAL::I2CBus* bus,
 
 ResultCode PCF8574::ReadPort(uint8_t* inputs)
 {
-    return Receive(inputs, 1);
+    return Receive(ByteArray::FromPointer(inputs));
 }
 
 ResultCode PCF8574::WritePort(uint8_t outputs)
 {
-    return Transmit(&outputs, 1);
+    return Transmit(ConstByteArray::FromReference(outputs));
 }
 
 }  // namespace ExternalHAL

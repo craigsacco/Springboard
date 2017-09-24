@@ -48,10 +48,8 @@ class I2CDevice;
 struct I2CTransaction
 {
     I2CDevice* device;
-    const uint8_t* txbuf;
-    size_t txlen;
-    uint8_t* rxbuf;
-    size_t rxlen;
+    ConstByteArray txbuf;
+    ByteArray rxbuf;
     systime_t timeout;
     ResultCode result;
     Springboard::Kernel::BinarySemaphore* completion;

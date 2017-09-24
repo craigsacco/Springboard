@@ -28,11 +28,14 @@
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/Kernel/BinarySemaphore.hpp>
+#include <Springboard/Utilities/ArrayReference.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_I2C
 
-namespace Springboard {
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
 
+namespace Springboard {
 namespace InternalHAL {
 
 class I2CBus;
@@ -56,28 +59,26 @@ public:
     }
 
 protected:
-    inline ResultCode Receive(uint8_t* rxbuf, size_t len,
+    inline ResultCode Receive(ByteArray rxbuf,
                               systime_t timeout = TIME_INFINITE)
     {
-        return PerformTransaction(nullptr, 0, rxbuf, len, timeout);
+        return PerformTransaction(nullptr, rxbuf, timeout);
     }
 
-    inline ResultCode Transmit(const uint8_t* txbuf, size_t len,
+    inline ResultCode Transmit(ConstByteArray txbuf,
                                systime_t timeout = TIME_INFINITE)
     {
-        return PerformTransaction(txbuf, len, nullptr, 0, timeout);
+        return PerformTransaction(txbuf, nullptr, timeout);
     }
 
-    inline ResultCode TransmitAndReceive(const uint8_t* txbuf, size_t txlen,
-                                         uint8_t* rxbuf, size_t rxlen,
+    inline ResultCode TransmitAndReceive(ConstByteArray txbuf, ByteArray rxbuf,
                                          systime_t timeout = TIME_INFINITE)
     {
-        return PerformTransaction(txbuf, txlen, rxbuf, rxlen, timeout);
+        return PerformTransaction(txbuf, rxbuf, timeout);
     }
 
 private:
-    ResultCode PerformTransaction(const uint8_t* txbuf, size_t txlen,
-                                  uint8_t* rxbuf, size_t rxlen,
+    ResultCode PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
                                   systime_t timeout);
 
     I2CBus* mBus;

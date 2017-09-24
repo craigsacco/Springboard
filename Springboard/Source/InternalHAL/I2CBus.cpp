@@ -61,19 +61,19 @@ void I2CBus::Run()
         }
 
         msg_t result = MSG_OK;
-        if (transaction.txlen == 0) {
+        if (transaction.txbuf.GetSize() == 0) {
             result = i2cMasterReceiveTimeout(mBus,
                                              transaction.device->GetAddress(),
-                                             transaction.rxbuf,
-                                             transaction.rxlen,
+                                             transaction.rxbuf.GetData(),
+                                             transaction.rxbuf.GetSize(),
                                              transaction.timeout);
         } else {
             result = i2cMasterTransmitTimeout(mBus,
                                               transaction.device->GetAddress(),
-                                              transaction.txbuf,
-                                              transaction.txlen,
-                                              transaction.rxbuf,
-                                              transaction.rxlen,
+                                              transaction.txbuf.GetData(),
+                                              transaction.txbuf.GetSize(),
+                                              transaction.rxbuf.GetData(),
+                                              transaction.rxbuf.GetSize(),
                                               transaction.timeout);
         }
 

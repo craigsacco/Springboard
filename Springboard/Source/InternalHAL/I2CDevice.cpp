@@ -41,14 +41,12 @@ I2CDevice::I2CDevice(I2CBus* bus, const Address address,
     ASSERT(speed > 0);
 }
 
-ResultCode I2CDevice::PerformTransaction(const uint8_t* txbuf, size_t txlen,
-                                         uint8_t* rxbuf, size_t rxlen,
+ResultCode I2CDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
                                          systime_t timeout)
 {
     I2CTransaction transaction {
         .device = this, .txbuf = txbuf,
-        .txlen = txlen, .rxbuf = rxbuf,
-        .rxlen = rxlen, .timeout = timeout,
+        .rxbuf = rxbuf, .timeout = timeout,
         .result = RC_OK, .completion = &mCompletion
     };
     mBus->Enqueue(transaction);
