@@ -39,30 +39,6 @@ public:
     MCP23017(Springboard::InternalHAL::I2CBus* bus, const Address address,
              const Speed speed);
 
-    uint16_t ReadIODIRx();
-    uint16_t ReadIPOLx();
-    uint16_t ReadGPINTENx();
-    uint16_t ReadDEFVALx();
-    uint16_t ReadINTCONx();
-    uint8_t ReadIOCON();
-    uint16_t ReadGPPUx();
-    uint16_t ReadINTFx();
-    uint16_t ReadINTCAPx();
-    uint16_t ReadPORTx();
-    uint16_t ReadOLATx();
-    void WriteIODIRx(const uint16_t value);
-    void WriteIPOLx(const uint16_t value);
-    void WriteGPINTENx(const uint16_t value);
-    void WriteDEFVALx(const uint16_t value);
-    void WriteINTCONx(const uint16_t value);
-    void WriteIOCON(const uint8_t value);
-    void WriteGPPUx(const uint16_t value);
-    void WriteINTFx(const uint16_t value);
-    void WriteINTCAPx(const uint16_t value);
-    void WritePORTx(const uint16_t value);
-    void WriteOLATx(const uint16_t value);
-
-private:
     enum class Register : uint8_t
     {
         IODIRA = 0x00,
@@ -99,10 +75,10 @@ private:
         BANK = (1 << 7U),
     };
 
-    uint8_t ReadRegister(const Register reg);
-    uint16_t ReadRegisterPair(const Register reg);
-    void WriteRegister(const Register reg, uint8_t value);
-    void WriteRegisterPair(const Register reg, uint16_t value);
+    ResultCode ReadRegister(const Register reg, uint8_t* value);
+    ResultCode ReadRegisterPair(const Register reg, uint16_t* value);
+    ResultCode WriteRegister(const Register reg, const uint8_t value);
+    ResultCode WriteRegisterPair(const Register reg, const uint16_t value);
 };
 
 }  // namespace ExternalHAL

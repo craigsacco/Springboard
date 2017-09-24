@@ -43,22 +43,30 @@ public:
 
     inline bool Get() const final
     {
-        return mDriver->ReadPort() & (1UL << mPin);
+        uint8_t value;
+        mDriver->ReadPort(&value);
+        return (value & (1UL << mPin));
     }
 
     inline void Set(bool state = true) final
     {
-        mDriver->WritePort(mDriver->ReadPort() | (1UL << mPin));
+        uint8_t value;
+        mDriver->ReadPort(&value);
+        mDriver->WritePort(value | (1UL << mPin));
     }
 
     inline void Clear() final
     {
-        mDriver->WritePort(mDriver->ReadPort() & (uint8_t)(~(1UL << mPin)));
+        uint8_t value;
+        mDriver->ReadPort(&value);
+        mDriver->WritePort(value & (uint8_t)(~(1UL << mPin)));
     }
 
     inline void Toggle() final
     {
-        mDriver->WritePort(mDriver->ReadPort() ^ (1UL << mPin));
+        uint8_t value;
+        mDriver->ReadPort(&value);
+        mDriver->WritePort(value ^ (1UL << mPin));
     }
 };
 

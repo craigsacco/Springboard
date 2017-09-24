@@ -52,8 +52,8 @@ struct I2CTransaction
     size_t txlen;
     uint8_t* rxbuf;
     size_t rxlen;
-    msg_t result;
-    i2cflags_t errors;
+    systime_t timeout;
+    ResultCode result;
     Springboard::Kernel::BinarySemaphore* completion;
 };
 

@@ -56,25 +56,29 @@ public:
     }
 
 protected:
-    inline void Receive(uint8_t* rxbuf, size_t len)
+    inline ResultCode Receive(uint8_t* rxbuf, size_t len,
+                              systime_t timeout = TIME_INFINITE)
     {
-        PerformTransaction(nullptr, 0, rxbuf, len);
+        return PerformTransaction(nullptr, 0, rxbuf, len, timeout);
     }
 
-    inline void Transmit(const uint8_t* txbuf, size_t len)
+    inline ResultCode Transmit(const uint8_t* txbuf, size_t len,
+                               systime_t timeout = TIME_INFINITE)
     {
-        PerformTransaction(txbuf, len, nullptr, 0);
+        return PerformTransaction(txbuf, len, nullptr, 0, timeout);
     }
 
-    inline void TransmitAndReceive(const uint8_t* txbuf, size_t txlen,
-                                   uint8_t* rxbuf, size_t rxlen)
+    inline ResultCode TransmitAndReceive(const uint8_t* txbuf, size_t txlen,
+                                         uint8_t* rxbuf, size_t rxlen,
+                                         systime_t timeout = TIME_INFINITE)
     {
-        PerformTransaction(txbuf, txlen, rxbuf, rxlen);
+        return PerformTransaction(txbuf, txlen, rxbuf, rxlen, timeout);
     }
 
 private:
-    void PerformTransaction(const uint8_t* txbuf, size_t txlen, uint8_t* rxbuf,
-                            size_t rxlen);
+    ResultCode PerformTransaction(const uint8_t* txbuf, size_t txlen,
+                                  uint8_t* rxbuf, size_t rxlen,
+                                  systime_t timeout);
 
     I2CBus* mBus;
     Address mAddress;

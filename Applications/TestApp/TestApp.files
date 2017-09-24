@@ -218,6 +218,7 @@
 ../../Libraries/ChibiOS/17.6.x/os/various/evtimer.h
 ../../Libraries/ChibiOS/17.6.x/os/various/syscalls.c
 ../../Springboard/Include/Springboard/Common.h
+../../Springboard/Include/Springboard/ResultCodes.h
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
 ../../Springboard/Include/Springboard/Core/ExceptionHandling.h

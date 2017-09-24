@@ -43,7 +43,9 @@ public:
 
     inline bool Get() const final
     {
-        return mDriver->ReadPort() & (1UL << mPin);
+        uint8_t value;
+        mDriver->ReadPort(&value);
+        return (value & (1UL << mPin));
     }
 };
 

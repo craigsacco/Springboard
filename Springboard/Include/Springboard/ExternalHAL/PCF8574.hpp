@@ -39,8 +39,8 @@ public:
     PCF8574(Springboard::InternalHAL::I2CBus* bus, const Address address,
             const Speed speed);
 
-    uint8_t ReadPort();
-    void WritePort(uint8_t outputs);
+    ResultCode ReadPort(uint8_t* inputs);
+    ResultCode WritePort(uint8_t outputs);
 };
 
 }  // namespace ExternalHAL

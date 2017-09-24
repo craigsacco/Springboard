@@ -4,7 +4,7 @@
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -34,14 +34,10 @@
 #include <stdint.h>
 #endif
 
+#include <Springboard/ResultCodes.h>
+
 //! \section Common type definitions
 typedef uint32_t ResultCode;
-#define RC_OK                               ((ResultCode)0)
-#define RC_MASK_RESOURCE                    ((ResultCode)0x10000000)
-#define RC_RESOURCE_INVALID_TYPE            ((ResultCode)(RC_MASK_RESOURCE + 1))
-#define RC_RESOURCE_INVALID_PROPERTY_ID     ((ResultCode)(RC_MASK_RESOURCE + 2))
-#define RC_RESOURCE_PROPERTY_NOT_SETABLE    ((ResultCode)(RC_MASK_RESOURCE + 3))
-#define RC_RESOURCE_INVALID_PROPERTY_LENGTH ((ResultCode)(RC_MASK_RESOURCE + 4))
 
 //! \section Assertion checking
 #define ASSERT(cond)                chDbgAssert(cond, #cond)

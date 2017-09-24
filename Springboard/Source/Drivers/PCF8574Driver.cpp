@@ -39,14 +39,12 @@ PCF8574Driver::PCF8574Driver(const PCF8574Driver::ResourceIdentifier identifier,
 
 ResultCode PCF8574Driver::ReadPort(uint8_t* value)
 {
-    *value = mDriver->ReadPort();
-    return RC_OK;
+    return mDriver->ReadPort(value);
 }
 
 ResultCode PCF8574Driver::WritePort(const uint8_t value)
 {
-    mDriver->WritePort(value);
-    return RC_OK;
+    return mDriver->WritePort(value);
 }
 
 }  // namespace Drivers

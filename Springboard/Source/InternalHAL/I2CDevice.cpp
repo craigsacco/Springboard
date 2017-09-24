@@ -41,17 +41,20 @@ I2CDevice::I2CDevice(I2CBus* bus, const Address address,
     ASSERT(speed > 0);
 }
 
-void I2CDevice::PerformTransaction(const uint8_t* txbuf, size_t txlen,
-                                   uint8_t* rxbuf, size_t rxlen)
+ResultCode I2CDevice::PerformTransaction(const uint8_t* txbuf, size_t txlen,
+                                         uint8_t* rxbuf, size_t rxlen,
+                                         systime_t timeout)
 {
     I2CTransaction transaction {
         .device = this, .txbuf = txbuf,
         .txlen = txlen, .rxbuf = rxbuf,
-        .rxlen = rxlen, .result = 0,
-        .errors = 0, .completion = &mCompletion
+        .rxlen = rxlen, .timeout = timeout,
+        .result = RC_OK, .completion = &mCompletion
     };
     mBus->Enqueue(transaction);
     mCompletion.Wait();
+
+    return transaction.result;
 }
 
 }  // namespace InternalHAL

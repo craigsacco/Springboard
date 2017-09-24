@@ -38,16 +38,14 @@ PCF8574::PCF8574(Springboard::InternalHAL::I2CBus* bus,
     ASSERT(address >= 0x20 && address <= 0x27);
 }
 
-uint8_t PCF8574::ReadPort()
+ResultCode PCF8574::ReadPort(uint8_t* inputs)
 {
-    uint8_t inputs;
-    Receive(&inputs, 1);
-    return inputs;
+    return Receive(inputs, 1);
 }
 
-void PCF8574::WritePort(uint8_t outputs)
+ResultCode PCF8574::WritePort(uint8_t outputs)
 {
-    Transmit(&outputs, 1);
+    return Transmit(&outputs, 1);
 }
 
 }  // namespace ExternalHAL

@@ -60,18 +60,31 @@ void I2CBus::Run()
             i2cStart(mBus, &mConfig);
         }
 
+        msg_t result = MSG_OK;
         if (transaction.txlen == 0) {
-            transaction.result =
-                i2cMasterReceive(mBus, transaction.device->GetAddress(),
-                                 transaction.rxbuf, transaction.rxlen);
+            result = i2cMasterReceiveTimeout(mBus,
+                                             transaction.device->GetAddress(),
+                                             transaction.rxbuf,
+                                             transaction.rxlen,
+                                             transaction.timeout);
         } else {
-            transaction.result =
-                i2cMasterTransmit(mBus, transaction.device->GetAddress(),
-                                  transaction.txbuf, transaction.txlen,
-                                  transaction.rxbuf, transaction.rxlen);
+            result = i2cMasterTransmitTimeout(mBus,
+                                              transaction.device->GetAddress(),
+                                              transaction.txbuf,
+                                              transaction.txlen,
+                                              transaction.rxbuf,
+                                              transaction.rxlen,
+                                              transaction.timeout);
         }
 
-        transaction.errors = mBus->errors;
+        if (result != MSG_OK) {
+            transaction.result = RC_I2C_TIMED_OUT;
+        } else if (mBus->errors != I2C_NO_ERROR) {
+            transaction.result = RC_I2C_ERROR_BASE + mBus->errors;
+        } else {
+            transaction.result = RC_OK;
+        }
+
         transaction.completion->Signal();
     }
 }
