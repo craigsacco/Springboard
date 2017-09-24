@@ -121,7 +121,13 @@ ResultCode MCP23017Driver::WriteINTCONx(const uint16_t value)
 
 ResultCode MCP23017Driver::WriteIOCON(const uint8_t value)
 {
-    return mDriver->WriteRegister(MCP23017::Register::IOCON, value);
+    // only INTPOL, ODR and MIRROR bits are settable - setting any other
+    // bits in this register will cause this driver to malfunction
+    static const uint8_t mask = (
+        static_cast<uint8_t>(MCP23017::IOCONBits::INTPOL) |
+        static_cast<uint8_t>(MCP23017::IOCONBits::ODR) |
+        static_cast<uint8_t>(MCP23017::IOCONBits::MIRROR));
+    return mDriver->WriteRegister(MCP23017::Register::IOCON, value & mask);
 }
 
 ResultCode MCP23017Driver::WriteGPPUx(const uint16_t value)
