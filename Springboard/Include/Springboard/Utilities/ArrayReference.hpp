@@ -1,0 +1,4 @@
+#ifndef BYTEARRAY_HPP
+#define BYTEARRAY_HPP
+
+#endif // BYTEARRAY_HPP
