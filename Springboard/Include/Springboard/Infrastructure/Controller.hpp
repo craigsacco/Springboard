@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <chversion.h>
 #include <Springboard/Infrastructure/Resource.hpp>
 #include <Springboard/Infrastructure/IResourceOwner.hpp>
 #include <Springboard/InternalHAL/PeripheralFactory.hpp>
@@ -55,7 +56,23 @@ protected:
     Springboard::InternalHAL::PeripheralFactory mPeripheralFactory;
 
 private:
-    PROPERTY_TABLE_START(Controller, 0)
+    ResultCode GetRTOSTypePropertyRequest(char* value)
+    {
+        strcpy(value, "ChibiOS");
+        return RC_OK;
+    }
+
+    ResultCode GetRTOSVersionPropertyRequest(char* value)
+    {
+        strcpy(value, CH_VERSION);
+        return RC_OK;
+    }
+
+    PROPERTY_TABLE_START(Controller, 2)
+    PROPERTY_ENTRY_STRING_RO(Controller, 10, "RTOSType",
+                             GetRTOSTypePropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 11, "RTOSVersion",
+                             GetRTOSVersionPropertyRequest)
     PROPERTY_TABLE_END()
 
     LinkedList<Resource> mResourceList;

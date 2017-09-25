@@ -180,6 +180,7 @@
 ../../Libraries/ChibiOS/17.6.x/os/hal/src/hal_wdg.c
 ../../Libraries/ChibiOS/17.6.x/os/license/chcustomer.h
 ../../Libraries/ChibiOS/17.6.x/os/license/chlicense.h
+../../Libraries/ChibiOS/17.6.x/os/license/chversion.h
 ../../Libraries/ChibiOS/17.6.x/os/rt/include/ch.h
 ../../Libraries/ChibiOS/17.6.x/os/rt/include/chalign.h
 ../../Libraries/ChibiOS/17.6.x/os/rt/include/chchecks.h
