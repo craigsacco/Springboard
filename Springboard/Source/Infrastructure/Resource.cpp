@@ -25,15 +25,20 @@
  *****************************************************************************/
 
 #include <Springboard/Infrastructure/Resource.hpp>
+#include <Springboard/Infrastructure/IResourceOwner.hpp>
 
 namespace Springboard {
 namespace Infrastructure {
 
-Resource::Resource(const ResourceIdentifier identifier,
+Resource::Resource(IResourceOwner* owner,
+                   const ResourceIdentifier identifier,
                    const ResourceType type,
                    const char* name) :
     mIdentifier(identifier), mResourceType(type), mName(name)
 {
+    if (owner != nullptr) {
+        owner->AddResource(this);
+    }
 }
 
 ResultCode Resource::GetProperty(PropertyIdentifier identifier,

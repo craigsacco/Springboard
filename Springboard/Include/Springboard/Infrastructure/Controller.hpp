@@ -27,17 +27,26 @@
 #pragma once
 
 #include <Springboard/Infrastructure/Resource.hpp>
+#include <Springboard/Infrastructure/IResourceOwner.hpp>
 #include <Springboard/InternalHAL/PeripheralFactory.hpp>
+#include <Springboard/Utilities/LinkedList.hpp>
+
+using Springboard::Infrastructure::Resource;
+using Springboard::Utilities::LinkedList;
 
 namespace Springboard {
 namespace Infrastructure {
 
-class Controller : public Springboard::Infrastructure::Resource
+class Controller : public Resource,
+                   public Springboard::Infrastructure::IResourceOwner
 {
 public:
     Controller(const ResourceIdentifier identifier, const char* name);
 
     virtual void Start();
+
+    void AddResource(Resource* resource) final;
+    Resource* FindResource(Resource::ResourceIdentifier identifier) final;
 
     PROPERTY_GET_HANDLER(Controller, Resource)
     PROPERTY_SET_HANDLER(Controller, Resource)
@@ -47,25 +56,9 @@ protected:
 
 private:
     PROPERTY_TABLE_START(Controller, 0)
-    /*
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 100, "IODIR", ReadIODIRx,
-                             WriteIODIRx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 101, "IPOL", ReadIPOLx, WriteIPOLx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 102, "GPINTEN", ReadGPINTENx,
-                             WriteGPINTENx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 103, "DEFVAL", ReadDEFVALx,
-                             WriteDEFVALx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 104, "INTCON", ReadINTCONx,
-                             WriteINTCONx)
-    PROPERTY_ENTRY_UINT8_RW(MCP23017Driver, 105, "IOCON", ReadIOCON, WriteIOCON)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 106, "GPPU", ReadGPPUx, WriteGPPUx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 107, "INTF", ReadINTFx, WriteINTFx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 108, "INTCAP", ReadINTCAPx,
-                             WriteINTCAPx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 109, "PORT", ReadPORTx, WritePORTx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 110, "OLAT", ReadOLATx, WriteOLATx)
-    */
     PROPERTY_TABLE_END()
+
+    LinkedList<Resource> mResourceList;
 };
 
 }  // namespace Infrastructure

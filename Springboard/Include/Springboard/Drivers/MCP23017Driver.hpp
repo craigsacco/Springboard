@@ -37,7 +37,8 @@ namespace Drivers {
 class MCP23017Driver : public Springboard::Infrastructure::Resource
 {
 public:
-    MCP23017Driver(const ResourceIdentifier identifier,
+    MCP23017Driver(Springboard::Infrastructure::IResourceOwner* owner,
+                   const ResourceIdentifier identifier,
                    const char* name,
                    Springboard::ExternalHAL::MCP23017* driver);
 

@@ -33,6 +33,8 @@
 namespace Springboard {
 namespace Infrastructure {
 
+class IResourceOwner;
+
 class Resource
 {
 public:
@@ -268,7 +270,8 @@ public:
 #define PROPERTY_TABLE_END()                                                \
     };
 
-    Resource(const ResourceIdentifier identifier,
+    Resource(IResourceOwner* owner,
+             const ResourceIdentifier identifier,
              const ResourceType type,
              const char* name);
 
@@ -299,7 +302,7 @@ public:
         identifier, data, len)
 #define PROPERTY_GET_HANDLER(owner, base)                                   \
     ResultCode GetProperty(PropertyIdentifier identifier,                   \
-                           void* data, size_t* len) final                   \
+                           void* data, size_t* len) override                \
     {                                                                       \
         ResultCode result = PROPERTY_GET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
@@ -309,7 +312,7 @@ public:
     }
 #define PROPERTY_SET_HANDLER(owner, base)                                   \
     ResultCode SetProperty(PropertyIdentifier identifier,                   \
-                           const void* data, size_t len) final              \
+                           const void* data, size_t len) override           \
     {                                                                       \
         ResultCode result = PROPERTY_SET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
@@ -378,6 +381,7 @@ protected:
                     break;
                 case PropertyType::Float:
                 {
+                    // floats must be aligned, or else a bus fault occurs
                     float f = 0.0f;
                     result = (owner->*(entry.getter.float_fn))(&f);
                     memcpy(data, &f, sizeof(float));
@@ -385,6 +389,7 @@ protected:
                 }
                 case PropertyType::Double:
                 {
+                    // doubles must be aligned, or else a bus fault occurs
                     double d = 0.0;
                     result = (owner->*(entry.getter.double_fn))(&d);
                     memcpy(data, &d, sizeof(double));
@@ -469,14 +474,16 @@ protected:
                         (*reinterpret_cast<const int64_t*>(data));
                 case PropertyType::Float:
                 {
+                    // floats must be aligned, or else a bus fault occurs
                     float f = 0.0f;
                     memcpy(&f, data, sizeof(float));
                     return (owner->*(entry.setter.float_fn))(f);
                 }
                 case PropertyType::Double:
                 {
+                    // doubles must be aligned, or else a bus fault occurs
                     double d = 0.0;
-                    memcpy(&d, data, sizeof(float));
+                    memcpy(&d, data, sizeof(double));
                     return (owner->*(entry.setter.double_fn))(d);
                 }
                 case PropertyType::String:

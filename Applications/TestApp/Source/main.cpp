@@ -2,10 +2,15 @@
  * Copyright 2017 - Craig Sacco
  *****************************************/
 
+#include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/DigitalInput.hpp>
 #include <Springboard/InternalHAL/DigitalOutput.hpp>
 #include <Springboard/Infrastructure/Controller.hpp>
+#include <Springboard/Kernel/Kernel.hpp>
 #include <Springboard/Kernel/Thread.hpp>
+#include <Springboard/Comms/MessageStreamHandler.hpp>
+#include <Springboard/ExternalHAL/MCP23017.hpp>
+#include <Springboard/Drivers/MCP23017Driver.hpp>
 
 using Springboard::Kernel::Thread;
 using Springboard::InternalHAL::GPIOPinMode;
@@ -16,64 +21,20 @@ using Springboard::InternalHAL::InternalGPIOPin;
 using Springboard::InternalHAL::DigitalInput;
 using Springboard::InternalHAL::DigitalOutput;
 using Springboard::Infrastructure::Controller;
+using Springboard::Comms::MessageStreamHandler;
+using Springboard::ExternalHAL::MCP23017;
+using Springboard::Drivers::MCP23017Driver;
 
-class ButtonThread : public Thread
-{
-public:
-    ButtonThread()
-        : Thread("ButtonThread", 256, NORMALPRIO-3),
-          mButton(GPIOE, 6, GPIOPullConfiguration::PullDown),
-          mLED(GPIOH, 2, GPIOPullConfiguration::Floating,
-               GPIOOutputConfiguration::PushPull,
-               GPIOOutputSpeed::Low_2MHz)
-    {
-    }
-
-private:
-    void Run() final
-    {
-        mButton.Configure();
-        mLED.Configure();
-
-        while (!ShouldTerminate()) {
-            mLED.Set(mButton.Get());
-            Sleep_ms(10);
-        }
-    }
-
-    DigitalInput mButton;
-    DigitalOutput mLED;
-};
-
-class ToggleThread : public Thread
-{
-public:
-    ToggleThread()
-        : Thread("ToggleThread", 256, NORMALPRIO-2),
-          mLED(GPIOI, 10, GPIOPullConfiguration::Floating,
-               GPIOOutputConfiguration::PushPull,
-               GPIOOutputSpeed::Low_2MHz)
-    {
-    }
-
-private:
-    void Run() final
-    {
-        mLED.Configure();
-
-        while (!ShouldTerminate()) {
-            mLED.Toggle();
-            Sleep_ms(100);
-        }
-    }
-
-    DigitalOutput mLED;
-};
 
 class TestController : public Controller
 {
 public:
-    TestController() : Controller(1, "TestController")
+    TestController() :
+        Controller(1, "TestController"),
+        mSerialMessaging(mPeripheralFactory.GetUARTBus(2), "SerialMessaging",
+                         NORMALPRIO-3),
+        mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 100000),
+        mExpanderDriver(this, 2, "MCP23017", &mExpander)
     {
     }
 
@@ -94,23 +55,30 @@ public:
             GPIOOutputSpeed::Low_2MHz);
 
         Controller::Start();
-
-        mToggleThread.Start();
-        mButtonThread.Start();
     }
 
 private:
-    ToggleThread mToggleThread;
-    ButtonThread mButtonThread;
+    MessageStreamHandler mSerialMessaging;
+    MCP23017 mExpander;
+    MCP23017Driver mExpanderDriver;
 };
 
 int main(void)
 {
+    Springboard::InternalHAL::Initialise();
+    Springboard::Kernel::Initialise();
+
     TestController testController;
     testController.Start();
 
+    DigitalOutput led(GPIOI, 10, GPIOPullConfiguration::Floating,
+                      GPIOOutputConfiguration::PushPull,
+                      GPIOOutputSpeed::Low_2MHz);
+    led.Configure();
+
     while (true) {
-        Thread::Sleep_ms(500);
+        led.Toggle();
+        Thread::Sleep_ms(250);
     }
 
     return 0;

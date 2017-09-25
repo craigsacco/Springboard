@@ -4,7 +4,7 @@
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -26,15 +26,17 @@
 
 #pragma once
 
-#include <Springboard/Common.h>
-#include <Springboard/Kernel/Thread.hpp>
+#include <Springboard/Infrastructure/Resource.hpp>
 
 namespace Springboard {
-namespace Kernel {
+namespace Infrastructure {
 
-void Initialise();
-void* AllocateMemoryFromHeap(size_t size);
-void FreeMemoryFromHeap(void* ptr);
+class IResourceOwner
+{
+public:
+    virtual void AddResource(Resource* resource) = 0;
+    virtual Resource* FindResource(Resource::ResourceIdentifier identifier) = 0;
+};
 
-}  // namespace Kernel
+}  // namespace Infrastructure
 }  // namespace Springboard

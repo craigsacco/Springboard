@@ -32,10 +32,11 @@ using Springboard::ExternalHAL::MCP23017;
 namespace Springboard {
 namespace Drivers {
 
-MCP23017Driver::MCP23017Driver(const ResourceIdentifier identifier,
-                               const char* name, MCP23017* driver) :
-    Resource(identifier, ResourceType::IOExpander, name),
-    mDriver(driver)
+MCP23017Driver::MCP23017Driver(
+    Springboard::Infrastructure::IResourceOwner* owner,
+    const ResourceIdentifier identifier, const char* name, MCP23017* driver)
+    : Resource(owner, identifier, ResourceType::IOExpander, name),
+      mDriver(driver)
 {
 }
 

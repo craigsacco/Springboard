@@ -37,7 +37,8 @@ namespace Drivers {
 class PCF8574Driver : public Springboard::Infrastructure::Resource
 {
 public:
-    PCF8574Driver(const ResourceIdentifier identifier,
+    PCF8574Driver(Springboard::Infrastructure::IResourceOwner* owner,
+                  const ResourceIdentifier identifier,
                   const char* name,
                   Springboard::ExternalHAL::PCF8574* driver);
 

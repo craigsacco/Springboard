@@ -25,6 +25,7 @@
  *****************************************************************************/
 
 #include <Springboard/Kernel/Thread.hpp>
+#include <Springboard/Kernel/Kernel.hpp>
 
 namespace Springboard {
 namespace Kernel {
@@ -35,7 +36,7 @@ Thread::Thread(const char* name, size_t size, Priority priority)
     // this function is a variation of chThdCreateFromHeap, except that
     // the thread remains suspended at the end of the call
 
-    void* wsp = chHeapAllocAligned(nullptr, size, PORT_WORKING_AREA_ALIGN);
+    void* wsp = Springboard::Kernel::AllocateMemoryFromHeap(size);
     ASSERT(wsp != nullptr);
 
     thread_descriptor_t td = {

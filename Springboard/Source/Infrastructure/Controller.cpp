@@ -32,16 +32,30 @@ namespace Springboard {
 namespace Infrastructure {
 
 Controller::Controller(const ResourceIdentifier identifier, const char* name) :
-    Resource(identifier, ResourceType::Controller, name),
-    mPeripheralFactory()
+    Resource(nullptr, identifier, ResourceType::Controller, name),
+    mPeripheralFactory(), mResourceList()
 {
-    Springboard::InternalHAL::Initialise();
-    Springboard::Kernel::Initialise();
+    AddResource(this);
 }
 
 void Controller::Start()
 {
     mPeripheralFactory.Start();
+}
+
+void Controller::AddResource(Resource* resource)
+{
+    mResourceList.Add(resource);
+}
+
+Resource* Controller::FindResource(Resource::ResourceIdentifier identifier)
+{
+    LinkedList<Resource>::FindDelegateFPtr fn =
+        [&identifier](Resource* resource) -> bool {
+            return resource->GetIdentifier() == identifier;
+        };
+
+    return mResourceList.Find(fn);
 }
 
 }  // namespace Infrastructure

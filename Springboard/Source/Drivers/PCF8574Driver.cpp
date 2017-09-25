@@ -32,10 +32,11 @@ using Springboard::ExternalHAL::PCF8574;
 namespace Springboard {
 namespace Drivers {
 
-PCF8574Driver::PCF8574Driver(const ResourceIdentifier identifier,
-                             const char* name, PCF8574* driver) :
-    Resource(identifier, ResourceType::IOExpander, name),
-    mDriver(driver)
+PCF8574Driver::PCF8574Driver(
+    Springboard::Infrastructure::IResourceOwner* owner,
+    const ResourceIdentifier identifier, const char* name, PCF8574* driver)
+    : Resource(owner, identifier, ResourceType::IOExpander, name),
+      mDriver(driver)
 {
 }
 

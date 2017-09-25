@@ -35,5 +35,15 @@ void Initialise()
     chSysInit();
 }
 
+void* AllocateMemoryFromHeap(size_t size)
+{
+    return chHeapAllocAligned(nullptr, size, PORT_WORKING_AREA_ALIGN);
+}
+
+void FreeMemoryFromHeap(void* ptr)
+{
+    chHeapFree(ptr);
+}
+
 }  // namespace Kernel
 }  // namespace Springboard

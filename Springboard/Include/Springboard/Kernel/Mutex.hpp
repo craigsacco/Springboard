@@ -4,7 +4,7 @@
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -26,15 +26,38 @@
 
 #pragma once
 
+#include <ch.h>
 #include <Springboard/Common.h>
-#include <Springboard/Kernel/Thread.hpp>
 
 namespace Springboard {
 namespace Kernel {
 
-void Initialise();
-void* AllocateMemoryFromHeap(size_t size);
-void FreeMemoryFromHeap(void* ptr);
+class Mutex
+{
+public:
+    Mutex()
+    {
+        chMtxObjectInit(&mMutex);
+    }
+
+    inline void Lock()
+    {
+        chMtxLock(&mMutex);
+    }
+
+    inline bool TryLock()
+    {
+        return chMtxTryLock(&mMutex);
+    }
+
+    inline void Unlock()
+    {
+        chMtxUnlock(&mMutex);
+    }
+
+private:
+    mutex_t mMutex;
+};
 
 }  // namespace Kernel
 }  // namespace Springboard

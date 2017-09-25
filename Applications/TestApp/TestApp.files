@@ -232,6 +232,7 @@
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574DigitalOutput.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574GPIOPin.hpp
 ../../Springboard/Include/Springboard/Infrastructure/Controller.hpp
+../../Springboard/Include/Springboard/Infrastructure/IResourceOwner.hpp
 ../../Springboard/Include/Springboard/Infrastructure/Resource.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp
@@ -244,8 +245,10 @@
 ../../Springboard/Include/Springboard/Kernel/BinarySemaphore.hpp
 ../../Springboard/Include/Springboard/Kernel/Kernel.hpp
 ../../Springboard/Include/Springboard/Kernel/Mailbox.hpp
+../../Springboard/Include/Springboard/Kernel/Mutex.hpp
 ../../Springboard/Include/Springboard/Kernel/Thread.hpp
 ../../Springboard/Include/Springboard/Utilities/ArrayReference.hpp
+../../Springboard/Include/Springboard/Utilities/LinkedList.hpp
 ../../Springboard/Source/Comms/MessageStreamHandler.cpp
 ../../Springboard/Source/Core/ExceptionHandling.c
 ../../Springboard/Source/Drivers/MCP23017Driver.cpp
