@@ -39,16 +39,16 @@
 
 //! \section Resource result codes
 #define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(0))
-#define RC_RESOURCE_INVALID_TYPE            ((ResultCode)(RC_RESOURCE_BASE + 0))
-#define RC_RESOURCE_INVALID_PROPERTY_ID     ((ResultCode)(RC_RESOURCE_BASE + 1))
-#define RC_RESOURCE_PROPERTY_NOT_SETABLE    ((ResultCode)(RC_RESOURCE_BASE + 2))
-#define RC_RESOURCE_INVALID_PROPERTY_LENGTH ((ResultCode)(RC_RESOURCE_BASE + 3))
+#define RC_RESOURCE_INVALID_TYPE            (RC_RESOURCE_BASE + 0)
+#define RC_RESOURCE_INVALID_PROPERTY_ID     (RC_RESOURCE_BASE + 1)
+#define RC_RESOURCE_PROPERTY_NOT_SETABLE    (RC_RESOURCE_BASE + 2)
+#define RC_RESOURCE_INVALID_PROPERTY_LENGTH (RC_RESOURCE_BASE + 3)
 
 //! \section Controller result codes
 #define RC_CONTROLLER_BASE                  (RC_BASE_INFRASTRUCTURE_BLOCK(1))
-#define RC_CONTROLLER_INVALID_RESOURCE_ID   ((ResultCode)(RC_CONTROLLER_BASE + 0))
+#define RC_CONTROLLER_INVALID_RESOURCE_ID   (RC_CONTROLLER_BASE + 0)
 
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(0))
-#define RC_I2C_TIMED_OUT                    ((ResultCode)(RC_I2C_BASE + 1))
-#define RC_I2C_ERROR_BASE                   ((ResultCode)(RC_I2C_BASE + 0x8000))
+#define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 1)
+#define RC_I2C_ERROR_BASE                   (RC_I2C_BASE + 0x8000)

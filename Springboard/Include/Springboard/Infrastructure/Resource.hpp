@@ -429,6 +429,25 @@ protected:
         return RC_RESOURCE_INVALID_PROPERTY_ID;
     }
 
+    template <class TClass, typename TProp>
+    inline ResultCode SetPropertyInternalTemplate2(TClass* owner,
+        SetterFPtr<TClass, TProp> setter, const TProp& data)
+    {
+        if (setter != nullptr) {
+            return (owner->*(setter))(data);
+        } else {
+            return RC_RESOURCE_PROPERTY_NOT_SETABLE;
+        }
+    }
+
+    template <class TClass, typename TProp>
+    inline ResultCode SetPropertyInternalTemplate(TClass* owner,
+        SetterFPtr<TClass, TProp> setter, ConstByteArray data)
+    {
+        return SetPropertyInternalTemplate2(
+            owner, setter, *reinterpret_cast<const TProp*>(data.GetData()));
+    }
+
     template <class TClass>
     ResultCode SetPropertyInternal(TClass* owner,
                                    const PropertyEntry<TClass> entries[],
@@ -452,51 +471,54 @@ protected:
                 switch (entry.type)
                 {
                 case PropertyType::Boolean:
-                    return (owner->*(entry.setter.bool_fn))
-                        (*reinterpret_cast<const bool*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.bool_fn, data);
                 case PropertyType::UInt8:
-                    return (owner->*(entry.setter.uint8_fn))
-                        (*reinterpret_cast<const uint8_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.uint8_fn, data);
                 case PropertyType::UInt16:
-                    return (owner->*(entry.setter.uint16_fn))
-                        (*reinterpret_cast<const uint16_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.uint16_fn, data);
                 case PropertyType::UInt32:
-                    return (owner->*(entry.setter.uint32_fn))
-                        (*reinterpret_cast<const uint32_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.uint32_fn, data);
                 case PropertyType::UInt64:
-                    return (owner->*(entry.setter.uint64_fn))
-                        (*reinterpret_cast<const uint64_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.uint64_fn, data);
                 case PropertyType::Int8:
-                    return (owner->*(entry.setter.int8_fn))
-                        (*reinterpret_cast<const int8_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.int8_fn, data);
                 case PropertyType::Int16:
-                    return (owner->*(entry.setter.int16_fn))
-                        (*reinterpret_cast<const int16_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.int16_fn, data);
                 case PropertyType::Int32:
-                    return (owner->*(entry.setter.int32_fn))
-                        (*reinterpret_cast<const int32_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.int32_fn, data);
                 case PropertyType::Int64:
-                    return (owner->*(entry.setter.int64_fn))
-                        (*reinterpret_cast<const int64_t*>(data.GetData()));
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.int64_fn, data);
                 case PropertyType::Float:
                 {
                     // floats must be aligned, or else a bus fault occurs
                     float f = 0.0f;
                     memcpy(&f, data.GetData(), sizeof(float));
-                    return (owner->*(entry.setter.float_fn))(f);
+                    return SetPropertyInternalTemplate2(
+                        owner, entry.setter.float_fn, f);
                 }
                 case PropertyType::Double:
                 {
                     // doubles must be aligned, or else a bus fault occurs
                     double d = 0.0;
                     memcpy(&d, data.GetData(), sizeof(double));
-                    return (owner->*(entry.setter.double_fn))(d);
+                    return SetPropertyInternalTemplate2(
+                        owner, entry.setter.double_fn, d);
                 }
                 case PropertyType::String:
-                    return (owner->*(entry.setter.string_fn))
-                        (data.CastTo<const char>());
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.string_fn, data);
                 case PropertyType::ByteArray:
-                    return (owner->*(entry.setter.bytearray_fn))(data);
+                    return SetPropertyInternalTemplate(
+                        owner, entry.setter.bytearray_fn, data);
                 default:
                     return RC_RESOURCE_INVALID_TYPE;
                 }

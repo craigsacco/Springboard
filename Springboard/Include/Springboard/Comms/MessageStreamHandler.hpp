@@ -53,7 +53,7 @@ struct MessageGetPropertyResponse
     uint16_t resourceId;
     uint16_t propertyId;
     ResultCode resultCode;
-    uint8_t responseData;
+    uint8_t propertyData;
 
     static constexpr size_t PREAMBLE_LENGTH = 8;
     static constexpr size_t MIN_LENGTH = PREAMBLE_LENGTH + 1;
@@ -63,7 +63,7 @@ struct MessageSetPropertyRequest
 {
     uint16_t resourceId;
     uint16_t propertyId;
-    uint8_t responseData;
+    uint8_t propertyData;
 
     static constexpr size_t PREAMBLE_LENGTH = 4;
     static constexpr size_t MIN_LENGTH = PREAMBLE_LENGTH + 1;
@@ -135,6 +135,9 @@ private:
     static constexpr uint8_t MAX_GET_PROPERTY_RSP_DATA_SIZE = MAX_MSG_SIZE -
         (MessageHeader::MIN_LENGTH +
          MessageGetPropertyResponse::PREAMBLE_LENGTH);
+    static constexpr uint8_t MAX_SET_PROPERTY_REQ_DATA_SIZE = MAX_MSG_SIZE -
+        (MessageHeader::MIN_LENGTH +
+         MessageSetPropertyRequest::PREAMBLE_LENGTH);
 
     enum class RxState
     {

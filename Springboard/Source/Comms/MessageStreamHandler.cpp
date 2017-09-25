@@ -186,8 +186,9 @@ void MessageStreamHandler::HandleRxGetPropertyRequest(MessageHeader* rxHeader)
 
     Resource* resource = mController->FindResource(
         rxHeader->payload.getPropertyRequest.resourceId);
-    ByteArray data(&txResponse.responseData, MAX_GET_PROPERTY_RSP_DATA_SIZE);
     if (resource != nullptr) {
+        ByteArray data(&txResponse.propertyData,
+                       MAX_GET_PROPERTY_RSP_DATA_SIZE);
         uint8_t len = 0;
         txResponse.resultCode = resource->GetProperty(txResponse.propertyId,
                                                       data, &len);
@@ -201,6 +202,31 @@ void MessageStreamHandler::HandleRxGetPropertyRequest(MessageHeader* rxHeader)
 
 void MessageStreamHandler::HandleRxSetPropertyResponse(MessageHeader* rxHeader)
 {
+    // start filling in TX buffer
+    MessageHeader* txHeader = reinterpret_cast<MessageHeader*>(&mTxBuffer[0]);
+    memcpy(txHeader->sof, MessageHeader::SOF_BYTES,
+           sizeof(MessageHeader::SOF_BYTES));
+    txHeader->size = MessageHeader::MIN_LENGTH +
+        MessageSetPropertyResponse::LENGTH;
+    txHeader->sequence = rxHeader->sequence;
+    txHeader->type = MessageType::SetPropertyResponse;
+    MessageSetPropertyResponse& txResponse =
+        txHeader->payload.setPropertyResponse;
+    txResponse.resourceId = rxHeader->payload.setPropertyRequest.resourceId;
+    txResponse.propertyId = rxHeader->payload.setPropertyRequest.propertyId;
+
+    Resource* resource = mController->FindResource(
+        rxHeader->payload.setPropertyRequest.resourceId);
+    if (resource != nullptr) {
+        ConstByteArray data(&rxHeader->payload.setPropertyRequest.propertyData,
+                            MAX_SET_PROPERTY_REQ_DATA_SIZE);
+        txResponse.resultCode = resource->SetProperty(txResponse.propertyId,
+                                                      data);
+    } else {
+        txResponse.resultCode = RC_CONTROLLER_INVALID_RESOURCE_ID;
+    }
+
+    FinaliseTxMessage();
 }
 
 void MessageStreamHandler::ResetRxBuffer()

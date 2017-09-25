@@ -36,6 +36,9 @@ template <typename T>
 class ArrayReference
 {
 public:
+    typedef T UnderlyingType;
+    typedef T* UnderlyingTypePtr;
+
     constexpr ArrayReference(std::nullptr_t) :
         mData(nullptr), mSize(0)
     {

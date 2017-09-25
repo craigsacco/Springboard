@@ -54,6 +54,23 @@ def get_property(iface, resid, propid):
         raise Exception("get property request returned 0x{0:08x}".format(resultcode))
     return rspdata[10:]
 
+def set_property(iface, resid, propid, propdata):
+    seqno = get_next_seqno()
+    msg = struct.pack("<BBHH", seqno, 2, resid, propid) + propdata
+    send_message(iface, msg)
+    rspdata = get_message(iface)
+    rspseqno, rsptype, rspresid, rsppropid, resultcode = struct.unpack("<BBHHI", rspdata)
+    if rsptype != 3:
+        raise Exception("unexpected type: 3 != {0}".format(rsptype))
+    if seqno != rspseqno:
+        raise Exception("unexpected seqno: {0} != {1}".format(seqno, rspseqno))
+    if resid != rspresid:
+        raise Exception("unexpected resid: {0} != {1}".format(resid, rspresid))
+    if propid != rsppropid:
+        raise Exception("unexpected propid: {0} != {1}".format(propid, rsppropid))
+    if resultcode != 0:
+        raise Exception("set property request returned 0x{0:08x}".format(resultcode))
+
 with serial.serial_for_url("spy:///dev/ttyUSB0", timeout=1) as iface:
     iface.baudrate = 9600
     print "controller resource type: {0}".format(struct.unpack("<H", get_property(iface, 1, 1))[0])
@@ -61,12 +78,20 @@ with serial.serial_for_url("spy:///dev/ttyUSB0", timeout=1) as iface:
     print "controller RTOS type: {0}".format(get_property(iface, 1, 10))
     print "controller RTOS version: {0}".format(get_property(iface, 1, 11))
     try:
+        print "attempt to query invalid resource"
         get_property(iface, 0xdead, 1)
         assert False
     except Exception, ex:
         print ex
     try:
+        print "attempt to query invalid property"
         get_property(iface, 1, 0xbeef)
+        assert False
+    except Exception, ex:
+        print ex
+    try:
+        print "attempt to write to readonly property"
+        set_property(iface, 1, 1, "www")
         assert False
     except Exception, ex:
         print ex
