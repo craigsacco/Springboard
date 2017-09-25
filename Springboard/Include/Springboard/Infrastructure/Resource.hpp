@@ -29,11 +29,15 @@
 #include <Springboard/Common.h>
 #include <functional>
 #include <cstring>
+#include <Springboard/Utilities/ArrayReference.hpp>
+
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
 namespace Infrastructure {
 
-class IResourceOwner;
+class Controller;
 
 class Resource
 {
@@ -250,7 +254,7 @@ public:
 #define PROPERTY_TABLE_END()                                                \
     };
 
-    Resource(IResourceOwner* owner,
+    Resource(Controller* controller,
              const ResourceIdentifier identifier,
              const ResourceType type,
              const char* name);
@@ -274,37 +278,37 @@ public:
     GetPropertyInternal<owner>(                                             \
         this, sPropertyTable,                                               \
         sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
-        identifier, data, len)
+        identifier, data, length)
 #define PROPERTY_SET_HANDLER_IMPL(owner)                                    \
     SetPropertyInternal<owner>(                                             \
         this, sPropertyTable,                                               \
         sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
-        identifier, data, len)
+        identifier, data)
 #define PROPERTY_GET_HANDLER(owner, base)                                   \
     ResultCode GetProperty(PropertyIdentifier identifier,                   \
-                           void* data, size_t* len) override                \
+                           ByteArray data, uint8_t* length) override        \
     {                                                                       \
         ResultCode result = PROPERTY_GET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
-            result = base::GetProperty(identifier, data, len);              \
+            result = base::GetProperty(identifier, data, length);           \
         }                                                                   \
         return result;                                                      \
     }
 #define PROPERTY_SET_HANDLER(owner, base)                                   \
     ResultCode SetProperty(PropertyIdentifier identifier,                   \
-                           const void* data, size_t len) override           \
+                           ConstByteArray data) override                    \
     {                                                                       \
         ResultCode result = PROPERTY_SET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
-            result = base::SetProperty(identifier, data, len);              \
+            result = base::SetProperty(identifier, data);                   \
         }                                                                   \
         return result;                                                      \
     }
 
     virtual ResultCode GetProperty(PropertyIdentifier identifier,
-                                   void* data, size_t* len);
+                                   ByteArray data, uint8_t* length);
     virtual ResultCode SetProperty(PropertyIdentifier identifier,
-                                   const void* data, size_t len);
+                                   ConstByteArray data);
 
 protected:
     template <class TClass>
@@ -312,7 +316,7 @@ protected:
                                    const PropertyEntry<TClass> entries[],
                                    size_t size,
                                    PropertyIdentifier identifier,
-                                   void* data, size_t* len)
+                                   ByteArray data, uint8_t* length)
     {
         for (size_t i = 0; i < size; i++)
         {
@@ -325,46 +329,46 @@ protected:
                 {
                 case PropertyType::Boolean:
                     result = (owner->*(entry.getter.bool_fn))
-                        (static_cast<bool*>(data));
+                        (reinterpret_cast<bool*>(data.GetData()));
                     break;
                 case PropertyType::UInt8:
                     result = (owner->*(entry.getter.uint8_fn))
-                        (static_cast<uint8_t*>(data));
+                        (reinterpret_cast<uint8_t*>(data.GetData()));
                     break;
                 case PropertyType::UInt16:
                     result = (owner->*(entry.getter.uint16_fn))
-                        (static_cast<uint16_t*>(data));
+                        (reinterpret_cast<uint16_t*>(data.GetData()));
                     break;
                 case PropertyType::UInt32:
                     result = (owner->*(entry.getter.uint32_fn))
-                        (static_cast<uint32_t*>(data));
+                        (reinterpret_cast<uint32_t*>(data.GetData()));
                     break;
                 case PropertyType::UInt64:
                     result = (owner->*(entry.getter.uint64_fn))
-                        (static_cast<uint64_t*>(data));
+                        (reinterpret_cast<uint64_t*>(data.GetData()));
                     break;
                 case PropertyType::Int8:
                     result = (owner->*(entry.getter.int8_fn))
-                        (static_cast<int8_t*>(data));
+                        (reinterpret_cast<int8_t*>(data.GetData()));
                     break;
                 case PropertyType::Int16:
                     result = (owner->*(entry.getter.int16_fn))
-                        (static_cast<int16_t*>(data));
+                        (reinterpret_cast<int16_t*>(data.GetData()));
                     break;
                 case PropertyType::Int32:
                     result = (owner->*(entry.getter.int32_fn))
-                        (static_cast<int32_t*>(data));
+                        (reinterpret_cast<int32_t*>(data.GetData()));
                     break;
                 case PropertyType::Int64:
                     result = (owner->*(entry.getter.int64_fn))
-                        (static_cast<int64_t*>(data));
+                        (reinterpret_cast<int64_t*>(data.GetData()));
                     break;
                 case PropertyType::Float:
                 {
                     // floats must be aligned, or else a bus fault occurs
                     float f = 0.0f;
                     result = (owner->*(entry.getter.float_fn))(&f);
-                    memcpy(data, &f, sizeof(float));
+                    memcpy(data.GetData(), &f, sizeof(float));
                     break;
                 }
                 case PropertyType::Double:
@@ -372,35 +376,38 @@ protected:
                     // doubles must be aligned, or else a bus fault occurs
                     double d = 0.0;
                     result = (owner->*(entry.getter.double_fn))(&d);
-                    memcpy(data, &d, sizeof(double));
+                    memcpy(data.GetData(), &d, sizeof(double));
                     break;
                 }
                 case PropertyType::String:
                     result = (owner->*(entry.getter.string_fn))
-                        (static_cast<char*>(data));
+                        (reinterpret_cast<char*>(data.GetData()));
                     break;
                 case PropertyType::ByteArray:
                     result = (owner->*(entry.getter.bytearray_fn))
-                        (static_cast<uint8_t*>(data));
+                        (data.GetData());
                     break;
                 default:
+                    *length = 0;
                     return RC_RESOURCE_INVALID_TYPE;
                 }
 
                 if (result != RC_OK) {
+                    *length = 0;
                     return result;
                 }
 
                 if (entry.type == PropertyType::String) {
-                    *len = strlen(static_cast<char*>(data));
+                    *length = strlen(reinterpret_cast<char*>(data.GetData()));
                 } else {
-                    *len = entry.length;
+                    *length = entry.length;
                 }
 
                 return RC_OK;
             }
         }
 
+        *length = 0;
         return RC_RESOURCE_INVALID_PROPERTY_ID;
     }
 
@@ -409,7 +416,7 @@ protected:
                                    const PropertyEntry<TClass> entries[],
                                    size_t size,
                                    PropertyIdentifier identifier,
-                                   const void* data, size_t len)
+                                   ConstByteArray data)
     {
         for (size_t i = 0; i < size; i++)
         {
@@ -418,7 +425,8 @@ protected:
             if (entry.identifier == identifier)
             {
                 if (PropertyTypeLengths[static_cast<size_t>(entry.type)] > 0 &&
-                    PropertyTypeLengths[static_cast<size_t>(entry.type)] != len)
+                    PropertyTypeLengths[static_cast<size_t>(entry.type)] !=
+                        data.GetSize())
                 {
                     return RC_RESOURCE_INVALID_PROPERTY_LENGTH;
                 }
@@ -427,51 +435,51 @@ protected:
                 {
                 case PropertyType::Boolean:
                     return (owner->*(entry.setter.bool_fn))
-                        (*reinterpret_cast<const bool*>(data));
+                        (*reinterpret_cast<const bool*>(data.GetData()));
                 case PropertyType::UInt8:
                     return (owner->*(entry.setter.uint8_fn))
-                        (*reinterpret_cast<const uint8_t*>(data));
+                        (*reinterpret_cast<const uint8_t*>(data.GetData()));
                 case PropertyType::UInt16:
                     return (owner->*(entry.setter.uint16_fn))
-                        (*reinterpret_cast<const uint16_t*>(data));
+                        (*reinterpret_cast<const uint16_t*>(data.GetData()));
                 case PropertyType::UInt32:
                     return (owner->*(entry.setter.uint32_fn))
-                        (*reinterpret_cast<const uint32_t*>(data));
+                        (*reinterpret_cast<const uint32_t*>(data.GetData()));
                 case PropertyType::UInt64:
                     return (owner->*(entry.setter.uint64_fn))
-                        (*reinterpret_cast<const uint64_t*>(data));
+                        (*reinterpret_cast<const uint64_t*>(data.GetData()));
                 case PropertyType::Int8:
                     return (owner->*(entry.setter.int8_fn))
-                        (*reinterpret_cast<const int8_t*>(data));
+                        (*reinterpret_cast<const int8_t*>(data.GetData()));
                 case PropertyType::Int16:
                     return (owner->*(entry.setter.int16_fn))
-                        (*reinterpret_cast<const int16_t*>(data));
+                        (*reinterpret_cast<const int16_t*>(data.GetData()));
                 case PropertyType::Int32:
                     return (owner->*(entry.setter.int32_fn))
-                        (*reinterpret_cast<const int32_t*>(data));
+                        (*reinterpret_cast<const int32_t*>(data.GetData()));
                 case PropertyType::Int64:
                     return (owner->*(entry.setter.int64_fn))
-                        (*reinterpret_cast<const int64_t*>(data));
+                        (*reinterpret_cast<const int64_t*>(data.GetData()));
                 case PropertyType::Float:
                 {
                     // floats must be aligned, or else a bus fault occurs
                     float f = 0.0f;
-                    memcpy(&f, data, sizeof(float));
+                    memcpy(&f, data.GetData(), sizeof(float));
                     return (owner->*(entry.setter.float_fn))(f);
                 }
                 case PropertyType::Double:
                 {
                     // doubles must be aligned, or else a bus fault occurs
                     double d = 0.0;
-                    memcpy(&d, data, sizeof(double));
+                    memcpy(&d, data.GetData(), sizeof(double));
                     return (owner->*(entry.setter.double_fn))(d);
                 }
                 case PropertyType::String:
                     return (owner->*(entry.setter.string_fn))
-                        (reinterpret_cast<const char*>(data));
+                        (reinterpret_cast<const char*>(data.GetData()));
                 case PropertyType::ByteArray:
                     return (owner->*(entry.setter.bytearray_fn))
-                        (reinterpret_cast<const uint8_t*>(data));
+                        (reinterpret_cast<const uint8_t*>(data.GetData()));
                 default:
                     return RC_RESOURCE_INVALID_TYPE;
                 }

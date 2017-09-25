@@ -25,30 +25,30 @@
  *****************************************************************************/
 
 #include <Springboard/Infrastructure/Resource.hpp>
-#include <Springboard/Infrastructure/IResourceOwner.hpp>
+#include <Springboard/Infrastructure/Controller.hpp>
 
 namespace Springboard {
 namespace Infrastructure {
 
-Resource::Resource(IResourceOwner* owner,
+Resource::Resource(Controller* controller,
                    const ResourceIdentifier identifier,
                    const ResourceType type,
                    const char* name) :
     mIdentifier(identifier), mResourceType(type), mName(name)
 {
-    if (owner != nullptr) {
-        owner->AddResource(this);
+    if (controller != nullptr) {
+        controller->AddResource(this);
     }
 }
 
 ResultCode Resource::GetProperty(PropertyIdentifier identifier,
-                                 void* data, size_t* len)
+                                 ByteArray data, uint8_t* length)
 {
     return PROPERTY_GET_HANDLER_IMPL(Resource);
 }
 
 ResultCode Resource::SetProperty(PropertyIdentifier identifier,
-                                 const void* data, size_t len)
+                                 ConstByteArray data)
 {
     return PROPERTY_SET_HANDLER_IMPL(Resource);
 }

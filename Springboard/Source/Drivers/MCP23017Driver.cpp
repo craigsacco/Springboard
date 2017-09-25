@@ -33,9 +33,9 @@ namespace Springboard {
 namespace Drivers {
 
 MCP23017Driver::MCP23017Driver(
-    Springboard::Infrastructure::IResourceOwner* owner,
+    Springboard::Infrastructure::Controller* controller,
     const ResourceIdentifier identifier, const char* name, MCP23017* driver)
-    : Resource(owner, identifier, ResourceType::IOExpander, name),
+    : Resource(controller, identifier, ResourceType::IOExpander, name),
       mDriver(driver)
 {
 }

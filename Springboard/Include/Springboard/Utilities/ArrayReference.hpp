@@ -101,6 +101,11 @@ public:
         return ArrayReference<T>(ptr, 1);
     }
 
+    static constexpr ArrayReference<T> Construct(T* data, size_t size)
+    {
+        return ArrayReference<T>(data, size);
+    }
+
 private:
     T* mData;
     size_t mSize;

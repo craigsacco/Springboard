@@ -25,15 +25,20 @@
  *****************************************************************************/
 
 #include <Springboard/Comms/MessageStreamHandler.hpp>
+#include <Springboard/Infrastructure/Controller.hpp>
 #include <Springboard/Comms/IStream.hpp>
 
 namespace Springboard {
 namespace Comms {
 
+constexpr uint8_t MessageHeader::SOF_BYTES[2];
+constexpr uint8_t MessageHeader::EOF_BYTES[2];
+
 MessageStreamHandler::MessageStreamHandler(
+    Springboard::Infrastructure::Controller* controller,
     IStream* stream, const char* name, Priority priority) :
     Thread(name, SPRINGBOARD_MSG_STREAM_HDLR_THREAD_SIZE, priority),
-    mStream(stream)
+    mController(controller), mStream(stream)
 {
 }
 
@@ -54,12 +59,12 @@ bool MessageStreamHandler::ReceiveNextByte()
 {
     bool byteOk = true;
     bool gotMessage = false;
-    uint8_t b = mStream->Read();
+    volatile uint8_t b = mStream->Read();
 
     switch (mRxState) {
     case RxState::Idle:
     {
-        if (b == SOF_BYTES[0]) {
+        if (b == MessageHeader::SOF_BYTES[0]) {
             mRxState = RxState::GotSOFChar1;
         } else {
             byteOk = false;
@@ -68,7 +73,7 @@ bool MessageStreamHandler::ReceiveNextByte()
     }
     case RxState::GotSOFChar1:
     {
-        if (b == SOF_BYTES[1]) {
+        if (b == MessageHeader::SOF_BYTES[1]) {
             mRxState = RxState::GotSOFChar2;
         } else {
             byteOk = false;
@@ -79,7 +84,7 @@ bool MessageStreamHandler::ReceiveNextByte()
     {
         if (b <= MAX_MSG_SIZE) {
             mRxState = RxState::GotSize;
-            mRxMsgBytesRemaining = b;
+            mRxMsgBytesRemaining = b - 1;
         } else {
             byteOk = false;
         }
@@ -88,17 +93,17 @@ bool MessageStreamHandler::ReceiveNextByte()
     case RxState::GotSize:
     case RxState::GettingMessage:
     {
-        if (mRxMsgBytesRemaining > 0) {
-            mRxState = RxState::GettingMessage;
-        } else {
+        if (mRxMsgBytesRemaining == 1) {
             mRxState = RxState::GotMessage;
+        } else {
+            mRxState = RxState::GettingMessage;
         }
         mRxMsgBytesRemaining--;
         break;
     }
     case RxState::GotMessage:
     {
-        if (b == EOF_BYTES[0]) {
+        if (b == MessageHeader::EOF_BYTES[0]) {
             mRxState = RxState::GotEOFChar1;
         } else {
             byteOk = false;
@@ -107,7 +112,7 @@ bool MessageStreamHandler::ReceiveNextByte()
     }
     case RxState::GotEOFChar1:
     {
-        if (b == EOF_BYTES[1]) {
+        if (b == MessageHeader::EOF_BYTES[1]) {
             mRxState = RxState::GotEOFChar2;
         } else {
             byteOk = false;
@@ -131,6 +136,7 @@ bool MessageStreamHandler::ReceiveNextByte()
     } else {
         mRxPos = 0;
         mRxChecksum = 0;
+        mRxState = RxState::Idle;
     }
 
     return gotMessage;
@@ -138,19 +144,16 @@ bool MessageStreamHandler::ReceiveNextByte()
 
 void MessageStreamHandler::HandleRxMessage()
 {
-    MessageHeader* header =
-        reinterpret_cast<MessageHeader*>(&(mRxBuffer[sizeof(SOF_BYTES)]));
-    switch (header->type) {
+    MessageHeader* rxHeader = reinterpret_cast<MessageHeader*>(&mRxBuffer[0]);
+    switch (rxHeader->type) {
     case MessageType::GetPropertyRequest:
     {
+        HandleRxGetPropertyRequest(rxHeader);
         break;
     }
     case MessageType::SetPropertyRequest:
     {
-        ConstByteArray data(
-            &(header->payload.setPropertyRequest.firstByte),
-            header->size - (MessageHeader::MIN_LENGTH +
-                            MessageGetPropertyResponse::PREAMBLE_LENGTH));
+        HandleRxSetPropertyResponse(rxHeader);
         break;
     }
     default:
@@ -160,12 +163,70 @@ void MessageStreamHandler::HandleRxMessage()
     }
 }
 
+void MessageStreamHandler::HandleRxGetPropertyRequest(MessageHeader* rxHeader)
+{
+    // size of request is unexpected
+    if (rxHeader->size != MessageHeader::MIN_LENGTH +
+        MessageGetPropertyRequest::LENGTH) {
+        return;
+    }
+
+    // start filling in TX buffer
+    MessageHeader* txHeader = reinterpret_cast<MessageHeader*>(&mTxBuffer[0]);
+    memcpy(txHeader->sof, MessageHeader::SOF_BYTES,
+           sizeof(MessageHeader::SOF_BYTES));
+    txHeader->size = MessageHeader::MIN_LENGTH +
+        MessageGetPropertyResponse::PREAMBLE_LENGTH;
+    txHeader->sequence = rxHeader->sequence;
+    txHeader->type = MessageType::GetPropertyResponse;
+    MessageGetPropertyResponse& txResponse =
+        txHeader->payload.getPropertyResponse;
+    txResponse.resourceId = rxHeader->payload.getPropertyRequest.resourceId;
+    txResponse.propertyId = rxHeader->payload.getPropertyRequest.propertyId;
+
+    Resource* resource = mController->FindResource(
+        rxHeader->payload.getPropertyRequest.resourceId);
+    ByteArray data(&txResponse.responseData, MAX_GET_PROPERTY_RSP_DATA_SIZE);
+    if (resource != nullptr) {
+        uint8_t len = 0;
+        txResponse.resultCode = resource->GetProperty(txResponse.propertyId,
+                                                      data, &len);
+        txHeader->size += len;
+    } else {
+        txResponse.resultCode = RC_CONTROLLER_INVALID_RESOURCE_ID;
+    }
+
+    FinaliseTxMessage();
+}
+
+void MessageStreamHandler::HandleRxSetPropertyResponse(MessageHeader* rxHeader)
+{
+
+}
+
 void MessageStreamHandler::ResetRxBuffer()
 {
     mRxPos = 0;
     mRxState = RxState::Idle;
     mRxChecksum = 0;
     mRxMsgBytesRemaining = 0;
+}
+
+void MessageStreamHandler::FinaliseTxMessage()
+{
+    MessageHeader* txHeader = reinterpret_cast<MessageHeader*>(&mTxBuffer[0]);
+    size_t length = sizeof(MessageHeader::SOF_BYTES) + txHeader->size;
+    memcpy(mTxBuffer + length, MessageHeader::EOF_BYTES,
+           sizeof(MessageHeader::EOF_BYTES));
+    length += sizeof(MessageHeader::EOF_BYTES);
+
+    uint8_t checksum = 0;
+    for (size_t i = 0; i < length; i++) {
+        checksum ^= mTxBuffer[i];
+    }
+    mTxBuffer[length++] = checksum;
+
+    mStream->Write(ConstByteArray::Construct(mTxBuffer, length));
 }
 
 }  // namespace Comms

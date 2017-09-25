@@ -28,7 +28,6 @@
 
 #include <chversion.h>
 #include <Springboard/Infrastructure/Resource.hpp>
-#include <Springboard/Infrastructure/IResourceOwner.hpp>
 #include <Springboard/InternalHAL/PeripheralFactory.hpp>
 #include <Springboard/Utilities/LinkedList.hpp>
 
@@ -38,16 +37,15 @@ using Springboard::Utilities::LinkedList;
 namespace Springboard {
 namespace Infrastructure {
 
-class Controller : public Resource,
-                   public Springboard::Infrastructure::IResourceOwner
+class Controller : public Resource
 {
 public:
     Controller(const ResourceIdentifier identifier, const char* name);
 
     virtual void Start();
 
-    void AddResource(Resource* resource) final;
-    Resource* FindResource(ResourceIdentifier identifier) final;
+    void AddResource(Resource* resource);
+    Resource* FindResource(ResourceIdentifier identifier);
 
     PROPERTY_GET_HANDLER(Controller, Resource)
     PROPERTY_SET_HANDLER(Controller, Resource)

@@ -39,10 +39,14 @@
 
 //! \section Resource result codes
 #define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(0))
-#define RC_RESOURCE_INVALID_TYPE            ((ResultCode)(RC_RESOURCE_BASE + 1))
-#define RC_RESOURCE_INVALID_PROPERTY_ID     ((ResultCode)(RC_RESOURCE_BASE + 2))
-#define RC_RESOURCE_PROPERTY_NOT_SETABLE    ((ResultCode)(RC_RESOURCE_BASE + 3))
-#define RC_RESOURCE_INVALID_PROPERTY_LENGTH ((ResultCode)(RC_RESOURCE_BASE + 4))
+#define RC_RESOURCE_INVALID_TYPE            ((ResultCode)(RC_RESOURCE_BASE + 0))
+#define RC_RESOURCE_INVALID_PROPERTY_ID     ((ResultCode)(RC_RESOURCE_BASE + 1))
+#define RC_RESOURCE_PROPERTY_NOT_SETABLE    ((ResultCode)(RC_RESOURCE_BASE + 2))
+#define RC_RESOURCE_INVALID_PROPERTY_LENGTH ((ResultCode)(RC_RESOURCE_BASE + 3))
+
+//! \section Controller result codes
+#define RC_CONTROLLER_BASE                  (RC_BASE_INFRASTRUCTURE_BLOCK(1))
+#define RC_CONTROLLER_INVALID_RESOURCE_ID   ((ResultCode)(RC_RESOURCE_BASE + 0))
 
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(0))

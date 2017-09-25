@@ -233,7 +233,6 @@
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574DigitalOutput.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/PCF8574GPIOPin.hpp
 ../../Springboard/Include/Springboard/Infrastructure/Controller.hpp
-../../Springboard/Include/Springboard/Infrastructure/IResourceOwner.hpp
 ../../Springboard/Include/Springboard/Infrastructure/Resource.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp

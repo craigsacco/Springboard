@@ -33,9 +33,9 @@ namespace Springboard {
 namespace Drivers {
 
 PCF8574Driver::PCF8574Driver(
-    Springboard::Infrastructure::IResourceOwner* owner,
+    Springboard::Infrastructure::Controller* controller,
     const ResourceIdentifier identifier, const char* name, PCF8574* driver)
-    : Resource(owner, identifier, ResourceType::IOExpander, name),
+    : Resource(controller, identifier, ResourceType::IOExpander, name),
       mDriver(driver)
 {
 }

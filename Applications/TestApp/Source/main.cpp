@@ -31,8 +31,8 @@ class TestController : public Controller
 public:
     TestController() :
         Controller(1, "TestController"),
-        mSerialMessaging(mPeripheralFactory.GetUARTBus(2), "SerialMessaging",
-                         NORMALPRIO-3),
+        mSerialMessaging(this, mPeripheralFactory.GetUARTBus(2),
+                         "SerialMessaging", NORMALPRIO-3),
         mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 100000),
         mExpanderDriver(this, 2, "MCP23017", &mExpander)
     {
@@ -54,7 +54,23 @@ public:
             GPIOOutputConfiguration::OpenDrain,
             GPIOOutputSpeed::Low_2MHz);
 
+        // setup USART2_TX on PA2, and USART2_RX on PA3
+        InternalGPIOPin::SetPinConfiguration(
+            GPIOA, 2,
+            GPIOPinMode::AlternateFunction_USART2,
+            GPIOPullConfiguration::Floating,
+            GPIOOutputConfiguration::PushPull,
+            GPIOOutputSpeed::Low_2MHz);
+        InternalGPIOPin::SetPinConfiguration(
+            GPIOA, 3,
+            GPIOPinMode::AlternateFunction_USART2,
+            GPIOPullConfiguration::Floating,
+            GPIOOutputConfiguration::PushPull,
+            GPIOOutputSpeed::Low_2MHz);
+
         Controller::Start();
+
+        mSerialMessaging.Start();
     }
 
 private:

@@ -33,6 +33,9 @@
 #endif
 
 namespace Springboard {
+
+namespace Infrastructure { class Controller; }
+
 namespace Comms {
 
 #pragma pack(1)
@@ -50,7 +53,7 @@ struct MessageGetPropertyResponse
     uint16_t resourceId;
     uint16_t propertyId;
     ResultCode resultCode;
-    uint8_t firstByte;
+    uint8_t responseData;
 
     static constexpr size_t PREAMBLE_LENGTH = 8;
     static constexpr size_t MIN_LENGTH = PREAMBLE_LENGTH + 1;
@@ -60,7 +63,7 @@ struct MessageSetPropertyRequest
 {
     uint16_t resourceId;
     uint16_t propertyId;
-    uint8_t firstByte;
+    uint8_t responseData;
 
     static constexpr size_t PREAMBLE_LENGTH = 4;
     static constexpr size_t MIN_LENGTH = PREAMBLE_LENGTH + 1;
@@ -93,12 +96,16 @@ union MessagePayload
 
 struct MessageHeader
 {
-    uint8_t size;
+    static constexpr uint8_t SOF_BYTES[2] = { 0xfd, 0x02 };
+    static constexpr uint8_t EOF_BYTES[2] = { 0x03, 0xfc };
+
+    uint8_t sof[sizeof(SOF_BYTES)];
+    uint8_t size;  // excludes SOF/EOF, includes self
     uint8_t sequence;
     MessageType type;
     MessagePayload payload;
 
-    static constexpr size_t MIN_LENGTH = 3;
+    static constexpr size_t MIN_LENGTH = 3;  // excludes SOF
 };
 
 #pragma pack()
@@ -108,13 +115,26 @@ class IStream;
 class MessageStreamHandler : public Springboard::Kernel::Thread
 {
 public:
-    MessageStreamHandler(IStream* stream, const char* name, Priority priority);
+    MessageStreamHandler(Springboard::Infrastructure::Controller* controller,
+                         IStream* stream, const char* name, Priority priority);
     void Run() final;
 
 private:
     bool ReceiveNextByte();
     void HandleRxMessage();
+    void HandleRxGetPropertyRequest(MessageHeader* header);
+    void HandleRxSetPropertyResponse(MessageHeader* header);
     void ResetRxBuffer();
+    void FinaliseTxMessage();
+    void SendTxMessage();
+
+    static constexpr size_t BUFFER_SIZE = 256;
+    static constexpr uint8_t MAX_MSG_SIZE = BUFFER_SIZE -
+        (sizeof(MessageHeader::SOF_BYTES) + sizeof(MessageHeader::EOF_BYTES) +
+         1); // minus SOF/EOF/checksum
+    static constexpr uint8_t MAX_GET_PROPERTY_RSP_DATA_SIZE = MAX_MSG_SIZE -
+        (MessageHeader::MIN_LENGTH +
+         MessageGetPropertyResponse::PREAMBLE_LENGTH);
 
     enum class RxState
     {
@@ -127,10 +147,8 @@ private:
         GotEOFChar1,
         GotEOFChar2,
     };
-    static constexpr uint8_t SOF_BYTES[2] = { 0xfd, 0x02 };
-    static constexpr uint8_t EOF_BYTES[2] = { 0x03, 0xfc };
-    static constexpr size_t BUFFER_SIZE = 256;
-    static constexpr uint8_t MAX_MSG_SIZE = 251;  // minus SOF/EOF/checksum
+
+    Springboard::Infrastructure::Controller* mController;
     IStream* mStream;
     uint8_t mRxBuffer[BUFFER_SIZE];
     uint8_t mRxPos;
