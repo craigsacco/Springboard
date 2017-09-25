@@ -60,3 +60,13 @@ with serial.serial_for_url("spy:///dev/ttyUSB0", timeout=1) as iface:
     print "controller resource name: {0}".format(get_property(iface, 1, 2))
     print "controller RTOS type: {0}".format(get_property(iface, 1, 10))
     print "controller RTOS version: {0}".format(get_property(iface, 1, 11))
+    try:
+        get_property(iface, 0xdead, 1)
+        assert False
+    except Exception, ex:
+        print ex
+    try:
+        get_property(iface, 1, 0xbeef)
+        assert False
+    except Exception, ex:
+        print ex

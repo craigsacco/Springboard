@@ -46,7 +46,7 @@
 
 //! \section Controller result codes
 #define RC_CONTROLLER_BASE                  (RC_BASE_INFRASTRUCTURE_BLOCK(1))
-#define RC_CONTROLLER_INVALID_RESOURCE_ID   ((ResultCode)(RC_RESOURCE_BASE + 0))
+#define RC_CONTROLLER_INVALID_RESOURCE_ID   ((ResultCode)(RC_CONTROLLER_BASE + 0))
 
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(0))
