@@ -50,6 +50,63 @@ public:
         IOExpander,
     };
 
+    Resource(Controller* controller,
+             const ResourceIdentifier identifier,
+             const ResourceType type,
+             const char* name);
+
+    inline ResourceIdentifier GetIdentifier() const
+    {
+        return mIdentifier;
+    }
+
+    inline ResourceType GetResourceType() const
+    {
+        return mResourceType;
+    }
+
+    inline const char* GetName() const
+    {
+        return mName;
+    }
+
+#define PROPERTY_GET_HANDLER_IMPL(owner)                                    \
+    GetPropertyInternal<owner>(                                             \
+        this, sPropertyTable,                                               \
+        sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
+        identifier, data, length)
+#define PROPERTY_SET_HANDLER_IMPL(owner)                                    \
+    SetPropertyInternal<owner>(                                             \
+        this, sPropertyTable,                                               \
+        sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
+        identifier, data)
+#define PROPERTY_GET_HANDLER(owner, base)                                   \
+    ResultCode GetProperty(PropertyIdentifier identifier,                   \
+                           ByteArray data, uint8_t* length) override        \
+    {                                                                       \
+        ResultCode result = PROPERTY_GET_HANDLER_IMPL(owner);               \
+        if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
+            result = base::GetProperty(identifier, data, length);           \
+        }                                                                   \
+        return result;                                                      \
+    }
+#define PROPERTY_SET_HANDLER(owner, base)                                   \
+    ResultCode SetProperty(PropertyIdentifier identifier,                   \
+                           ConstByteArray data) override                    \
+    {                                                                       \
+        ResultCode result = PROPERTY_SET_HANDLER_IMPL(owner);               \
+        if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
+            result = base::SetProperty(identifier, data);                   \
+        }                                                                   \
+        return result;                                                      \
+    }
+
+    virtual ResultCode GetProperty(PropertyIdentifier identifier,
+                                   ByteArray data, uint8_t* length);
+    virtual ResultCode SetProperty(PropertyIdentifier identifier,
+                                   ConstByteArray data);
+
+protected:
     template <class TClass, typename TProp> using GetterFPtr =
         ResultCode(TClass::*)(TProp);
     template <class TClass> using BoolGetterFPtr =
@@ -106,6 +163,23 @@ public:
         SetterFPtr<TClass, ConstCharArray>;
     template <class TClass> using ByteArraySetterFPtr =
         SetterFPtr<TClass, ConstByteArray>;
+
+    enum class PropertyType : uint8_t
+    {
+        Boolean,
+        UInt8,
+        UInt16,
+        UInt32,
+        UInt64,
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        Float,
+        Double,
+        String,
+        ByteArray,
+    };
 
     const size_t PropertyTypeLengths[13] = {
         sizeof(bool),
@@ -256,63 +330,6 @@ public:
 #define PROPERTY_TABLE_END()                                                \
     };
 
-    Resource(Controller* controller,
-             const ResourceIdentifier identifier,
-             const ResourceType type,
-             const char* name);
-
-    inline ResourceIdentifier GetIdentifier() const
-    {
-        return mIdentifier;
-    }
-
-    inline ResourceType GetResourceType() const
-    {
-        return mResourceType;
-    }
-
-    inline const char* GetName() const
-    {
-        return mName;
-    }
-
-#define PROPERTY_GET_HANDLER_IMPL(owner)                                    \
-    GetPropertyInternal<owner>(                                             \
-        this, sPropertyTable,                                               \
-        sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
-        identifier, data, length)
-#define PROPERTY_SET_HANDLER_IMPL(owner)                                    \
-    SetPropertyInternal<owner>(                                             \
-        this, sPropertyTable,                                               \
-        sizeof(sPropertyTable) / sizeof(PropertyEntry<owner>),              \
-        identifier, data)
-#define PROPERTY_GET_HANDLER(owner, base)                                   \
-    ResultCode GetProperty(PropertyIdentifier identifier,                   \
-                           ByteArray data, uint8_t* length) override        \
-    {                                                                       \
-        ResultCode result = PROPERTY_GET_HANDLER_IMPL(owner);               \
-        if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
-            result = base::GetProperty(identifier, data, length);           \
-        }                                                                   \
-        return result;                                                      \
-    }
-#define PROPERTY_SET_HANDLER(owner, base)                                   \
-    ResultCode SetProperty(PropertyIdentifier identifier,                   \
-                           ConstByteArray data) override                    \
-    {                                                                       \
-        ResultCode result = PROPERTY_SET_HANDLER_IMPL(owner);               \
-        if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
-            result = base::SetProperty(identifier, data);                   \
-        }                                                                   \
-        return result;                                                      \
-    }
-
-    virtual ResultCode GetProperty(PropertyIdentifier identifier,
-                                   ByteArray data, uint8_t* length);
-    virtual ResultCode SetProperty(PropertyIdentifier identifier,
-                                   ConstByteArray data);
-
-protected:
     template <class TClass>
     ResultCode GetPropertyInternal(TClass* owner,
                                    const PropertyEntry<TClass> entries[],
