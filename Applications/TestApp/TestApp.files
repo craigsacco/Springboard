@@ -264,6 +264,7 @@
 ../../Springboard/Source/InternalHAL/UARTBus.cpp
 ../../Springboard/Source/Kernel/Kernel.cpp
 ../../Springboard/Source/Kernel/Thread.cpp
+../../Springboard/Source/Utilities/ArrayReference.cpp
 Include/board.h
 Include/chconf.h
 Include/halconf.h

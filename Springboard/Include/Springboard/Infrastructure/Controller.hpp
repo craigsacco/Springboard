@@ -54,15 +54,17 @@ protected:
     Springboard::InternalHAL::PeripheralFactory mPeripheralFactory;
 
 private:
-    ResultCode GetRTOSTypePropertyRequest(char* value)
+    ResultCode GetRTOSTypePropertyRequest(CharArray value)
     {
-        strcpy(value, "ChibiOS");
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, "ChibiOS/RT");
         return RC_OK;
     }
 
-    ResultCode GetRTOSVersionPropertyRequest(char* value)
+    ResultCode GetRTOSVersionPropertyRequest(CharArray value)
     {
-        strcpy(value, CH_VERSION);
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, CH_VERSION);
         return RC_OK;
     }
 

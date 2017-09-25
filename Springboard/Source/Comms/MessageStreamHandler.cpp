@@ -201,7 +201,6 @@ void MessageStreamHandler::HandleRxGetPropertyRequest(MessageHeader* rxHeader)
 
 void MessageStreamHandler::HandleRxSetPropertyResponse(MessageHeader* rxHeader)
 {
-
 }
 
 void MessageStreamHandler::ResetRxBuffer()

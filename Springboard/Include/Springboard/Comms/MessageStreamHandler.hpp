@@ -131,7 +131,7 @@ private:
     static constexpr size_t BUFFER_SIZE = 256;
     static constexpr uint8_t MAX_MSG_SIZE = BUFFER_SIZE -
         (sizeof(MessageHeader::SOF_BYTES) + sizeof(MessageHeader::EOF_BYTES) +
-         1); // minus SOF/EOF/checksum
+         1);  // minus SOF/EOF/checksum
     static constexpr uint8_t MAX_GET_PROPERTY_RSP_DATA_SIZE = MAX_MSG_SIZE -
         (MessageHeader::MIN_LENGTH +
          MessageGetPropertyResponse::PREAMBLE_LENGTH);

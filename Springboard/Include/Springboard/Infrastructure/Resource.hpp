@@ -33,6 +33,8 @@
 
 using Springboard::Utilities::ByteArray;
 using Springboard::Utilities::ConstByteArray;
+using Springboard::Utilities::CharArray;
+using Springboard::Utilities::ConstCharArray;
 
 namespace Springboard {
 namespace Infrastructure {
@@ -49,33 +51,33 @@ public:
     };
 
     template <class TClass, typename TProp> using GetterFPtr =
-        ResultCode(TClass::*)(TProp*);
+        ResultCode(TClass::*)(TProp);
     template <class TClass> using BoolGetterFPtr =
-        GetterFPtr<TClass, bool>;
+        GetterFPtr<TClass, bool*>;
     template <class TClass> using UInt8GetterFPtr =
-        GetterFPtr<TClass, uint8_t>;
+        GetterFPtr<TClass, uint8_t*>;
     template <class TClass> using UInt16GetterFPtr =
-        GetterFPtr<TClass, uint16_t>;
+        GetterFPtr<TClass, uint16_t*>;
     template <class TClass> using UInt32GetterFPtr =
-        GetterFPtr<TClass, uint32_t>;
+        GetterFPtr<TClass, uint32_t*>;
     template <class TClass> using UInt64GetterFPtr =
-        GetterFPtr<TClass, uint64_t>;
+        GetterFPtr<TClass, uint64_t*>;
     template <class TClass> using Int8GetterFPtr =
-        GetterFPtr<TClass, int8_t>;
+        GetterFPtr<TClass, int8_t*>;
     template <class TClass> using Int16GetterFPtr =
-        GetterFPtr<TClass, int16_t>;
+        GetterFPtr<TClass, int16_t*>;
     template <class TClass> using Int32GetterFPtr =
-        GetterFPtr<TClass, int32_t>;
+        GetterFPtr<TClass, int32_t*>;
     template <class TClass> using Int64GetterFPtr =
-        GetterFPtr<TClass, int64_t>;
+        GetterFPtr<TClass, int64_t*>;
     template <class TClass> using FloatGetterFPtr =
-        GetterFPtr<TClass, float>;
+        GetterFPtr<TClass, float*>;
     template <class TClass> using DoubleGetterFPtr =
-        GetterFPtr<TClass, double>;
+        GetterFPtr<TClass, double*>;
     template <class TClass> using StringGetterFPtr =
-        GetterFPtr<TClass, char>;
+        GetterFPtr<TClass, CharArray>;
     template <class TClass> using ByteArrayGetterFPtr =
-        GetterFPtr<TClass, uint8_t>;
+        GetterFPtr<TClass, ByteArray>;
     template <class TClass, typename TProp> using SetterFPtr =
         ResultCode(TClass::*)(const TProp);
     template <class TClass> using BoolSetterFPtr =
@@ -101,9 +103,9 @@ public:
     template <class TClass> using DoubleSetterFPtr =
         SetterFPtr<TClass, double>;
     template <class TClass> using StringSetterFPtr =
-        SetterFPtr<TClass, const char*>;
+        SetterFPtr<TClass, ConstCharArray>;
     template <class TClass> using ByteArraySetterFPtr =
-        SetterFPtr<TClass, const uint8_t*>;
+        SetterFPtr<TClass, ConstByteArray>;
 
     const size_t PropertyTypeLengths[13] = {
         sizeof(bool),
@@ -381,11 +383,10 @@ protected:
                 }
                 case PropertyType::String:
                     result = (owner->*(entry.getter.string_fn))
-                        (reinterpret_cast<char*>(data.GetData()));
+                        (data.CastTo<char>());
                     break;
                 case PropertyType::ByteArray:
-                    result = (owner->*(entry.getter.bytearray_fn))
-                        (data.GetData());
+                    result = (owner->*(entry.getter.bytearray_fn))(data);
                     break;
                 default:
                     *length = 0;
@@ -398,7 +399,7 @@ protected:
                 }
 
                 if (entry.type == PropertyType::String) {
-                    *length = strlen(reinterpret_cast<char*>(data.GetData()));
+                    *length = strlen(data.CastTo<const char>().GetData());
                 } else {
                     *length = entry.length;
                 }
@@ -476,10 +477,9 @@ protected:
                 }
                 case PropertyType::String:
                     return (owner->*(entry.setter.string_fn))
-                        (reinterpret_cast<const char*>(data.GetData()));
+                        (data.CastTo<const char>());
                 case PropertyType::ByteArray:
-                    return (owner->*(entry.setter.bytearray_fn))
-                        (reinterpret_cast<const uint8_t*>(data.GetData()));
+                    return (owner->*(entry.setter.bytearray_fn))(data);
                 default:
                     return RC_RESOURCE_INVALID_TYPE;
                 }
@@ -500,9 +500,10 @@ private:
         return RC_OK;
     }
 
-    ResultCode GetNamePropertyRequest(char* value)
+    ResultCode GetNamePropertyRequest(CharArray value)
     {
-        strcpy(value, GetName());
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, GetName());
         return RC_OK;
     }
 

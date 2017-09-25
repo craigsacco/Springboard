@@ -86,6 +86,15 @@ public:
         return ArrayReference<T>(mData + i, n);
     }
 
+    template <typename TTarget>
+    ArrayReference<TTarget> CastTo()
+    {
+        static_assert(sizeof(T) == sizeof(TTarget),
+                      "Target type must be the same size");
+        return ArrayReference<TTarget>::Construct(
+            reinterpret_cast<TTarget*>(mData), GetSize());
+    }
+
     static constexpr ArrayReference<T> Null()
     {
         return ArrayReference<T>(nullptr);
@@ -113,6 +122,15 @@ private:
 
 typedef ArrayReference<uint8_t> ByteArray;
 typedef ArrayReference<const uint8_t> ConstByteArray;
+typedef ArrayReference<char> CharArray;
+typedef ArrayReference<const char> ConstCharArray;
+
+namespace ArrayReferenceUtils
+{
+    CharArray ArrayFromString(char* ptr);
+    ConstCharArray ArrayFromString(const char* ptr);
+    void SafeStringCopy(CharArray target, const char* str);
+}
 
 }  // namespace Utilities
 }  // namespace Springboard
