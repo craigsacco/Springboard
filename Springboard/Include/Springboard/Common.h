@@ -38,7 +38,28 @@
 
 //! \section Common type definitions
 typedef uint32_t ResultCode;
+typedef uint16_t ResourceIdentifier;
+typedef uint16_t PropertyIdentifier;
 
 //! \section Assertion checking
 #define ASSERT(cond)                chDbgAssert(cond, #cond)
 #define ASSERT_MSG(cond, msg)       chDbgAssert(cond, msg)
+
+#ifdef __cplusplus
+enum class PropertyType : uint8_t
+{
+    Boolean,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    Float,
+    Double,
+    String,
+    ByteArray,
+};
+#endif

@@ -47,7 +47,7 @@ public:
     virtual void Start();
 
     void AddResource(Resource* resource) final;
-    Resource* FindResource(Resource::ResourceIdentifier identifier) final;
+    Resource* FindResource(ResourceIdentifier identifier) final;
 
     PROPERTY_GET_HANDLER(Controller, Resource)
     PROPERTY_SET_HANDLER(Controller, Resource)

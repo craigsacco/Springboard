@@ -48,7 +48,7 @@ void Controller::AddResource(Resource* resource)
     mResourceList.Add(resource);
 }
 
-Resource* Controller::FindResource(Resource::ResourceIdentifier identifier)
+Resource* Controller::FindResource(ResourceIdentifier identifier)
 {
     LinkedList<Resource>::FindDelegateFPtr fn =
         [&identifier](Resource* resource) -> bool {

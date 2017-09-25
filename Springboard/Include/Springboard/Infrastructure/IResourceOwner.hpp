@@ -35,7 +35,7 @@ class IResourceOwner
 {
 public:
     virtual void AddResource(Resource* resource) = 0;
-    virtual Resource* FindResource(Resource::ResourceIdentifier identifier) = 0;
+    virtual Resource* FindResource(ResourceIdentifier identifier) = 0;
 };
 
 }  // namespace Infrastructure

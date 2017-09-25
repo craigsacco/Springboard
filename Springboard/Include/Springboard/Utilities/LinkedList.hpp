@@ -134,8 +134,5 @@ private:
     size_t mSize;
 };
 
-typedef ArrayReference<uint8_t> ByteArray;
-typedef ArrayReference<const uint8_t> ConstByteArray;
-
 }  // namespace Utilities
 }  // namespace Springboard

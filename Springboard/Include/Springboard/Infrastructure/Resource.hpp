@@ -38,9 +38,6 @@ class IResourceOwner;
 class Resource
 {
 public:
-    typedef uint16_t ResourceIdentifier;
-    typedef uint16_t PropertyIdentifier;
-
     enum class ResourceType : uint16_t
     {
         Controller,
@@ -103,23 +100,6 @@ public:
         SetterFPtr<TClass, const char*>;
     template <class TClass> using ByteArraySetterFPtr =
         SetterFPtr<TClass, const uint8_t*>;
-
-    enum class PropertyType : uint8_t
-    {
-        Boolean,
-        UInt8,
-        UInt16,
-        UInt32,
-        UInt64,
-        Int8,
-        Int16,
-        Int32,
-        Int64,
-        Float,
-        Double,
-        String,
-        ByteArray,
-    };
 
     const size_t PropertyTypeLengths[13] = {
         sizeof(bool),
