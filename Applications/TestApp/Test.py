@@ -71,12 +71,16 @@ def set_property(iface, resid, propid, propdata):
     if resultcode != 0:
         raise Exception("set property request returned 0x{0:08x}".format(resultcode))
 
-with serial.serial_for_url("spy:///dev/ttyUSB0", timeout=1) as iface:
+#url = "spy:///dev/ttyUSB0"
+url = "/dev/ttyUSB0"
+with serial.serial_for_url(url, timeout=1) as iface:
     iface.baudrate = 9600
     print "controller resource type: {0}".format(struct.unpack("<H", get_property(iface, 1, 1))[0])
     print "controller resource name: {0}".format(get_property(iface, 1, 2))
     print "controller RTOS type: {0}".format(get_property(iface, 1, 10))
     print "controller RTOS version: {0}".format(get_property(iface, 1, 11))
+    print "expander resource type: {0}".format(struct.unpack("<H", get_property(iface, 2, 1))[0])
+    print "expander resource name: {0}".format(get_property(iface, 2, 2))
     try:
         print "attempt to query invalid resource"
         get_property(iface, 0xdead, 1)
@@ -95,3 +99,6 @@ with serial.serial_for_url("spy:///dev/ttyUSB0", timeout=1) as iface:
         assert False
     except Exception, ex:
         print ex
+
+    while True:
+        print struct.unpack("<H", get_property(iface, 2, 109))

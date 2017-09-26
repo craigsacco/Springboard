@@ -80,11 +80,7 @@ public:
     ResultCode WriteRegister(const Register reg, const uint8_t value);
     ResultCode WriteRegisterPair(const Register reg, const uint16_t value);
 
-protected:
-    inline Speed GetMaximumDeviceSpeed() const final
-    {
-        return 1700000U;
-    }
+    static constexpr Speed MAX_SPEED = 1700000U;
 };
 
 }  // namespace ExternalHAL

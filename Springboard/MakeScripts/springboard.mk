@@ -24,8 +24,8 @@ CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
 # ChibiOS make options
 USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb -DTHUMB --specs=nano.specs
-USE_COPT = -Wall -Wextra -Wundef -Wstrict-prototypes
-USE_CPPOPT = -fno-rtti -Wall -Wextra -Wundef
+USE_COPT = -std=c11 -Wall -Wextra -Wundef -Wstrict-prototypes
+USE_CPPOPT = -std=c++14 -fno-rtti -Wall -Wextra -Wundef -fno-exceptions
 USE_LINK_GC = yes
 USE_LDOPT =
 USE_LTO = no

@@ -33,12 +33,12 @@ namespace Springboard {
 namespace InternalHAL {
 
 I2CDevice::I2CDevice(I2CBus* bus, const Address address,
-                     const Speed speed)
+                     const Speed speed, const Speed maximumSpeed)
     : mBus(bus), mAddress(address), mSpeed(speed),
-      mCompletion(true)
+      mMaximumSpeed(maximumSpeed), mCompletion(true)
 {
     ASSERT(bus != nullptr);
-    ASSERT(speed > 0 && speed <= GetMaximumDeviceSpeed());
+    ASSERT(speed > 0 && speed <= GetMaximumSpeed());
 }
 
 ResultCode I2CDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,

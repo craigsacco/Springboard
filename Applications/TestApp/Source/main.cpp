@@ -33,7 +33,7 @@ public:
         Controller(1, "TestController"),
         mSerialMessaging(this, mPeripheralFactory.GetUARTBus(2),
                          "SerialMessaging", NORMALPRIO-3),
-        mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 100000),
+        mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 400000),
         mExpanderDriver(this, 2, "MCP23017", &mExpander)
     {
     }

@@ -62,7 +62,7 @@ void UnhandledException(volatile struct ExceptionStackFrame* frame)
 
     // if running a debug session, trigger a software breakpoint
     if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) {
-        asm volatile ("bkpt");
+        __ASM volatile ("bkpt");  // NOLINT
     }
 
     // loop forever

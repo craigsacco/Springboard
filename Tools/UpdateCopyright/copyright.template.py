@@ -1,4 +1,5 @@
-/******************************************************************************
+'''
+ ******************************************************************************
  * MIT License
  *
  * PROJECT SPRINGBOARD
@@ -22,33 +23,5 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- *****************************************************************************/
-
-#include <Springboard/ExternalHAL/PCF8574.hpp>
-
-#if SPRINGBOARD_HAL_ENABLE_I2C
-
-namespace Springboard {
-namespace ExternalHAL {
-
-PCF8574::PCF8574(Springboard::InternalHAL::I2CBus* bus,
-                 const Address address, const Speed speed)
-    : Springboard::InternalHAL::I2CDevice(bus, address, speed, MAX_SPEED)
-{
-    ASSERT(address >= 0x20 && address <= 0x27);
-}
-
-ResultCode PCF8574::ReadPort(uint8_t* inputs)
-{
-    return Receive(ByteArray::FromSinglePtr(inputs));
-}
-
-ResultCode PCF8574::WritePort(uint8_t outputs)
-{
-    return Transmit(ConstByteArray::FromSingleRef(outputs));
-}
-
-}  // namespace ExternalHAL
-}  // namespace Springboard
-
-#endif  // #if SPRINGBOARD_HAL_ENABLE_I2C
+ ******************************************************************************
+'''

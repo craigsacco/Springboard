@@ -46,7 +46,8 @@ public:
     typedef i2caddr_t Address;
     typedef uint32_t Speed;
 
-    I2CDevice(I2CBus* bus, const Address address, const Speed speed);
+    I2CDevice(I2CBus* bus, const Address address, const Speed speed,
+              const Speed maximumSpeed = DEFAULT_MAX_SPEED);
 
     inline Address GetAddress() const
     {
@@ -58,13 +59,14 @@ public:
         return mSpeed;
     }
 
-protected:
-    virtual Speed GetMaximumDeviceSpeed() const
+    inline Speed GetMaximumSpeed() const
     {
-        // all I2C devices should safely run at 100kHz
-        return 100000U;
+        return mMaximumSpeed;
     }
 
+    static constexpr Speed DEFAULT_MAX_SPEED = 100000U;
+
+protected:
     inline ResultCode Receive(ByteArray rxbuf,
                               systime_t timeout = TIME_INFINITE)
     {
@@ -88,8 +90,9 @@ private:
                                   systime_t timeout);
 
     I2CBus* mBus;
-    Address mAddress;
-    Speed mSpeed;
+    const Address mAddress;
+    const Speed mSpeed;
+    const Speed mMaximumSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
 };
 

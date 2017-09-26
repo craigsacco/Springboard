@@ -56,7 +56,7 @@ void I2CBus::Run()
             mConfig.duty_cycle =
                 static_cast<i2cdutycycle_t>(speed <= 100000 ?
                                             I2CDutyCycle::Standard :
-                                            I2CDutyCycle::Fast_16_9);
+                                            I2CDutyCycle::Fast_2);
             i2cStart(mBus, &mConfig);
         }
 
