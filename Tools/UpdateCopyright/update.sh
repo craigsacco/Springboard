@@ -15,8 +15,8 @@ for f in $FILES_C; do
 	mv -f $f.new $f
 done
 
-TEMPLATE_PY=Tools/UpdateCopyright/copyright.template.c
-FILES_PY=`find Springboard/Python -type f -iname "*.py"`
+TEMPLATE_PY=Tools/UpdateCopyright/copyright.template.py
+FILES_PY=`find Springboard/PythonLib -type f -iname "*.py"`
 for f in $FILES_PY; do
 	rm -f $f.new
 	cat $TEMPLATE_PY > $f.new
