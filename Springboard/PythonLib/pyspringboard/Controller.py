@@ -57,3 +57,15 @@ class Controller(Resource):
 
     def get_mcu_unique_id(self):
         return self._get_property_bytes(17)
+
+    def get_system_time(self):
+        return self._get_property_uint32(18)
+
+    def get_rtc_time(self):
+        return self._get_property_uint64(19)
+
+    def set_rtc_time(self, value):
+        return self._set_property_uint64(19, value)
+
+    def get_rtc_time_string(self):
+        return self._get_property_string(20)

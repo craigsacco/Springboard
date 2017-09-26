@@ -27,31 +27,41 @@
 #pragma once
 
 #include <Springboard/Common.h>
-#include <functional>
 #include <Springboard/Kernel/Kernel.hpp>
 
 namespace Springboard {
 namespace Utilities {
 
-template <typename T>
-class LinkedList
+template <typename TKey, typename TValue>
+class Dictionary
 {
 private:
     struct Item
     {
         Item* next;
-        T data;
+        TKey key;
+        TValue value;
     };
 
 public:
-    LinkedList() :
+    Dictionary() :
         mFirst(nullptr), mLast(nullptr), mSize(0)
     {
     }
 
-    bool Add(T data)
+    bool Add(TKey key, TValue value)
     {
-        Item* item = New();
+        Item* item = mFirst;
+        while (item != nullptr) {
+            if (item->key == key) {
+                item->value = value;
+                return true;
+            } else {
+                item = item->next;
+            }
+        }
+
+        item = New();
         if (item == nullptr) {
             return false;
         }
@@ -61,7 +71,8 @@ public:
         } else {
             mLast->next = item;
         }
-        item->data = data;
+        item->key = key;
+        item->value = value;
         item->next = nullptr;
         mLast = item;
         mSize++;
@@ -69,12 +80,12 @@ public:
         return true;
     }
 
-    bool Remove(T data)
+    bool Remove(TKey key)
     {
         Item* prev = nullptr;
         Item* item = mFirst;
         while (item != nullptr) {
-            if (item->data == data) {
+            if (item->key == key) {
                 if (item == mFirst) {
                     mFirst = item->next;
                 } else {
@@ -95,20 +106,19 @@ public:
         return false;
     }
 
-    typedef std::function<bool(T)> FindDelegateFPtr;
-
-    T Find(FindDelegateFPtr fn) const
+    bool Find(TKey key, TValue* value) const
     {
         Item* item = mFirst;
         while (item != nullptr) {
-            if (fn(item->data)) {
-                return item->data;
+            if (item->key == key) {
+                *value = item->value;
+                return true;
             } else {
                 item = item->next;
             }
         }
 
-        return nullptr;
+        return false;
     }
 
     inline size_t GetSize() const

@@ -59,17 +59,9 @@ const char* GetMCUArchitectureName()
     return PORT_ARCHITECTURE_NAME;
 }
 
-bool GetMCUArchitectureRevision(Springboard::Utilities::CharArray buffer)
+const char* GetMCUArchitectureRevision()
 {
-    // ensure that the provided buffer can accomodate the revision
-    // (enough to hold "r255p255" plus null terminator)
-    if (buffer.GetSize() < 9) {
-        return false;
-    }
-
-    chsnprintf(buffer.GetData(), buffer.GetSize() - 1, "r%up%u",
-               (__CM4_REV >> 8) & 0xff, __CM4_REV & 0xff);
-    return true;
+    return __CM4_REV_STR;
 }
 
 const char* GetMCUCoreVariantName()

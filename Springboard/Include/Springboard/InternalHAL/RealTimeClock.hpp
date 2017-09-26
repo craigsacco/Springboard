@@ -24,59 +24,28 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/InternalHAL/PeripheralFactory.hpp>
+#pragma once
+
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/Utilities/ArrayReference.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-PeripheralFactory::PeripheralFactory()
+class RealTimeClock
 {
-}
+public:
+    typedef RTCDriver Driver;
 
-void PeripheralFactory::Start()
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    for (I2CBus* bus : mI2CBuses) {
-        if (bus != nullptr) {
-            bus->Start();
-        }
-    }
-#endif
+    explicit RealTimeClock(Driver* driver);
 
-#if SPRINGBOARD_HAL_ENABLE_UART
-    for (UARTBus* bus : mUARTBuses) {
-        if (bus != nullptr) {
-            bus->Start();
-        }
-    }
-#endif
-}
+    ResultCode SetTime(uint64_t milliseconds);
+    ResultCode GetTime(uint64_t* milliseconds);
+    ResultCode GetTimeAsString(Springboard::Utilities::CharArray value);
 
-I2CBus* PeripheralFactory::GetI2CBus(size_t index) const
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);
-    return mI2CBuses[index-1];
-#else
-    return nullptr;
-#endif
-}
-
-UARTBus* PeripheralFactory::GetUARTBus(size_t index) const
-{
-#if SPRINGBOARD_HAL_ENABLE_UART
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_UART_COUNT);
-    return mUARTBuses[index-1];
-#else
-    return nullptr;
-#endif
-}
-
-RealTimeClock* PeripheralFactory::GetRTC(size_t index) const
-{
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_RTC_COUNT);
-    return mRTCs[index-1];
-}
+private:
+    Driver* mDriver;
+};
 
 }  // namespace InternalHAL
 }  // namespace Springboard

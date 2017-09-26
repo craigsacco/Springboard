@@ -37,6 +37,11 @@ void Initialise()
 
 void* AllocateMemoryFromHeap(size_t size)
 {
+    return chHeapAlloc(nullptr, size);
+}
+
+void* AllocateMemoryFromHeapAligned(size_t size)
+{
     return chHeapAllocAligned(nullptr, size, PORT_WORKING_AREA_ALIGN);
 }
 

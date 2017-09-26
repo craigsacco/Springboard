@@ -33,8 +33,13 @@ namespace Springboard {
 namespace Kernel {
 
 void Initialise();
+
+//! \section memory allocation (from heap)
 void* AllocateMemoryFromHeap(size_t size);
+void* AllocateMemoryFromHeapAligned(size_t size);
 void FreeMemoryFromHeap(void* ptr);
+
+
 
 }  // namespace Kernel
 }  // namespace Springboard

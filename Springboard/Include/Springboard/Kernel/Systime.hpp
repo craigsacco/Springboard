@@ -28,87 +28,63 @@
 
 #include <ch.h>
 #include <Springboard/Common.h>
-#include <Springboard/Kernel/Kernel.hpp>
+#include <type_traits>
 
 namespace Springboard {
 namespace Kernel {
 
-class Mailbox
+class Systime
 {
 public:
-    explicit Mailbox(size_t size)
+    constexpr Systime() : mTime(0)
     {
-        mData = reinterpret_cast<msg_t*>(
-            Springboard::Kernel::AllocateMemoryFromHeap(size * sizeof(msg_t)));
-        ASSERT(mData != nullptr);
-
-        chMBObjectInit(&mMailbox, mData, size);
     }
 
-    inline void Reset()
+    constexpr Systime(systime_t time) : mTime(time)
     {
-        chMBReset(&mMailbox);
     }
 
-    inline void ResetI()
+    operator systime_t() const
     {
-        chMBResetI(&mMailbox);
+        return mTime;
     }
 
-    inline void Resume()
+    Systime& operator=(const Systime& other)
     {
-        chMBResumeX(&mMailbox);
+        mTime = other.Value();
+        return *this;
     }
 
-    template <typename T>
-    inline void Post(const T& data)
+    Systime& operator+(const Systime& other)
     {
-        msg_t result = chMBPost(&mMailbox, (msg_t)&data, TIME_INFINITE);
-        ASSERT(result == MSG_OK);
+        mTime += other.Value();
+        return *this;
     }
 
-    template <typename T>
-    inline void PostI(const T& data)
+    Systime& operator-(const Systime& other)
     {
-        msg_t result = chMBPostI(&mMailbox, (msg_t)&data);
-        ASSERT(result == MSG_OK);
+        mTime -= other.Value();
+        return *this;
     }
 
-    template <typename T>
-    inline void PostAhead(const T& data)
+    constexpr systime_t Value() const
     {
-        msg_t result = chMBPostAhead(&mMailbox, (msg_t)&data, TIME_INFINITE);
-        ASSERT(result == MSG_OK);
+        return mTime;
     }
 
-    template <typename T>
-    inline void PostAheadI(const T& data)
+    static Systime Now()
     {
-        msg_t result = chMBPostAheadI(&mMailbox, (msg_t)&data);
-        ASSERT(result == MSG_OK);
+        return Systime(chVTGetSystemTime());
     }
 
-    template <typename T>
-    inline T& Fetch()
-    {
-        msg_t data = 0;
-        msg_t result = chMBFetch(&mMailbox, &data, TIME_INFINITE);
-        ASSERT(result == MSG_OK);
-        return *reinterpret_cast<T*>(data);
-    }
-
-    template <typename T>
-    inline T& FetchI()
-    {
-        msg_t data = 0;
-        msg_t result = chMBFetchI(&mMailbox, &data);
-        ASSERT(result == MSG_OK);
-        return *reinterpret_cast<T*>(data);
-    }
+    static_assert(sizeof(systime_t) == sizeof(uint32_t),
+                  "systime_t expected to be a 32-bit integer");
+    static_assert(std::is_integral<systime_t>() &&
+                  std::is_unsigned<systime_t>(),
+                  "systime_t must be an unsigned integer type");
 
 private:
-    mailbox_t mMailbox;
-    msg_t* mData;
+    systime_t mTime;
 };
 
 }  // namespace Kernel

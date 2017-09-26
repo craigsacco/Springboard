@@ -36,7 +36,7 @@ Thread::Thread(const char* name, size_t size, Priority priority)
     // this function is a variation of chThdCreateFromHeap, except that
     // the thread remains suspended at the end of the call
 
-    void* wsp = Springboard::Kernel::AllocateMemoryFromHeap(size);
+    void* wsp = Springboard::Kernel::AllocateMemoryFromHeapAligned(size);
     ASSERT(wsp != nullptr);
 
     thread_descriptor_t td = {

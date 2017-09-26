@@ -33,7 +33,7 @@ namespace Infrastructure {
 
 Controller::Controller(const ResourceIdentifier identifier, const char* name) :
     Resource(nullptr, identifier, ResourceType::Controller, name),
-    mPeripheralFactory(), mResourceList()
+    mPeripheralFactory(), mResourceDictionary()
 {
     AddResource(this);
 }
@@ -45,17 +45,17 @@ void Controller::Start()
 
 void Controller::AddResource(Resource* resource)
 {
-    mResourceList.Add(resource);
+    mResourceDictionary.Add(resource->GetIdentifier(), resource);
 }
 
 Resource* Controller::FindResource(ResourceIdentifier identifier)
 {
-    LinkedList<Resource>::FindDelegateFPtr fn =
-        [&identifier](Resource* resource) -> bool {
-            return resource->GetIdentifier() == identifier;
-        };
-
-    return mResourceList.Find(fn);
+    Resource* resource = nullptr;
+    if (mResourceDictionary.Find(identifier, &resource)) {
+        return resource;
+    } else {
+        return nullptr;
+    }
 }
 
 }  // namespace Infrastructure

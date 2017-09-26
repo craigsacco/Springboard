@@ -143,4 +143,43 @@ class MessageHandler:
         return str(self.__get_property_raw(resource_id, property_id))
 
     def get_property_bytes(self, resource_id, property_id):
-        return [ord(x) for x in self.__get_property_raw(resource_id, property_id)]
+        return bytearray(self.__get_property_raw(resource_id, property_id))
+
+    def set_property_bool(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<B", 1 if value == True else 0))
+
+    def set_property_uint8(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<B", value))
+
+    def set_property_uint16(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<H", value))
+
+    def set_property_uint32(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<I", value))
+
+    def set_property_uint64(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<Q", value))
+
+    def set_property_int8(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<b", value))
+
+    def set_property_int16(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<h", value))
+
+    def set_property_int32(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<i", value))
+
+    def set_property_int64(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<q", value))
+
+    def set_property_float(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<f", value))
+
+    def set_property_double(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, struct.pack("<d", value))
+
+    def set_property_string(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, value)
+
+    def set_property_bytes(self, resource_id, property_id, value):
+        return self.__set_property_raw(resource_id, property_id, value)

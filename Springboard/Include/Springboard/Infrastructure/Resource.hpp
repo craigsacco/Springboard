@@ -363,9 +363,13 @@ protected:
                         (reinterpret_cast<uint32_t*>(data.GetData()));
                     break;
                 case PropertyType::UInt64:
-                    result = (owner->*(entry.getter.uint64_fn))
-                        (reinterpret_cast<uint64_t*>(data.GetData()));
+                {
+                    // 64-bit ints must be aligned, or else a bus fault occurs
+                    uint64_t u = 0ULL;
+                    result = (owner->*(entry.getter.uint64_fn))(&u);
+                    memcpy(data.GetData(), &u, sizeof(uint64_t));
                     break;
+                }
                 case PropertyType::Int8:
                     result = (owner->*(entry.getter.int8_fn))
                         (reinterpret_cast<int8_t*>(data.GetData()));
@@ -379,9 +383,13 @@ protected:
                         (reinterpret_cast<int32_t*>(data.GetData()));
                     break;
                 case PropertyType::Int64:
-                    result = (owner->*(entry.getter.int64_fn))
-                        (reinterpret_cast<int64_t*>(data.GetData()));
+                {
+                    // 64-bit ints must be aligned, or else a bus fault occurs
+                    int64_t u = 0LL;
+                    result = (owner->*(entry.getter.int64_fn))(&u);
+                    memcpy(data.GetData(), &u, sizeof(int64_t));
                     break;
+                }
                 case PropertyType::Float:
                 {
                     // floats must be aligned, or else a bus fault occurs
@@ -483,8 +491,13 @@ protected:
                     return SetPropertyInternalTemplate(
                         owner, entry.setter.uint32_fn, data);
                 case PropertyType::UInt64:
-                    return SetPropertyInternalTemplate(
-                        owner, entry.setter.uint64_fn, data);
+                {
+                    // 64-bit ints must be aligned, or else a bus fault occurs
+                    uint64_t u = 0ULL;
+                    memcpy(&u, data.GetData(), sizeof(uint64_t));
+                    return SetPropertyInternalTemplate2(
+                        owner, entry.setter.uint64_fn, u);
+                }
                 case PropertyType::Int8:
                     return SetPropertyInternalTemplate(
                         owner, entry.setter.int8_fn, data);
@@ -495,8 +508,13 @@ protected:
                     return SetPropertyInternalTemplate(
                         owner, entry.setter.int32_fn, data);
                 case PropertyType::Int64:
-                    return SetPropertyInternalTemplate(
-                        owner, entry.setter.int64_fn, data);
+                {
+                    // 64-bit ints must be aligned, or else a bus fault occurs
+                    int64_t u = 0LL;
+                    memcpy(&u, data.GetData(), sizeof(int64_t));
+                    return SetPropertyInternalTemplate2(
+                        owner, entry.setter.int64_fn, u);
+                }
                 case PropertyType::Float:
                 {
                     // floats must be aligned, or else a bus fault occurs

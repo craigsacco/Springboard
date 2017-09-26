@@ -50,5 +50,9 @@
 
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(0))
-#define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 1)
+#define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 0)
 #define RC_I2C_ERROR_BASE                   (RC_I2C_BASE + 0x8000)
+
+//! \section RTC result codes
+#define RC_RTC_BASE                         (RC_BASE_HAL_BLOCK(1))
+#define RC_RTC_YEAR_BEFORE_1980             (RC_RTC_BASE + 0)

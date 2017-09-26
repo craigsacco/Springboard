@@ -29,10 +29,11 @@
 #include <chversion.h>
 #include <Springboard/Infrastructure/Resource.hpp>
 #include <Springboard/InternalHAL/PeripheralFactory.hpp>
-#include <Springboard/Utilities/LinkedList.hpp>
+#include <Springboard/Kernel/Systime.hpp>
+#include <Springboard/Utilities/Dictionary.hpp>
 
 using Springboard::Infrastructure::Resource;
-using Springboard::Utilities::LinkedList;
+using Springboard::Utilities::Dictionary;
 
 namespace Springboard {
 namespace Infrastructure {
@@ -84,10 +85,8 @@ private:
 
     ResultCode GetMCUArchitectureRevisionPropertyRequest(CharArray value)
     {
-        if (!Springboard::InternalHAL::GetMCUArchitectureRevision(value)) {
-            return RC_RESOURCE_INVALID_PROPERTY_LENGTH;
-        }
-
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetMCUArchitectureRevision());
         return RC_OK;
     }
 
@@ -113,7 +112,28 @@ private:
         return RC_OK;
     }
 
-    PROPERTY_TABLE_START(Controller, 8)
+    ResultCode GetSystemTimePropertyRequest(systime_t* value)
+    {
+        *value = Springboard::Kernel::Systime::Now();
+        return RC_OK;
+    }
+
+    ResultCode GetRTCTimePropertyRequest(uint64_t* value)
+    {
+        return mPeripheralFactory.GetRTC(1)->GetTime(value);
+    }
+
+    ResultCode SetRTCTimePropertyRequest(uint64_t value)
+    {
+        return mPeripheralFactory.GetRTC(1)->SetTime(value);
+    }
+
+    ResultCode GetRTCTimeStringPropertyRequest(CharArray value)
+    {
+        return mPeripheralFactory.GetRTC(1)->GetTimeAsString(value);
+    }
+
+    PROPERTY_TABLE_START(Controller, 11)
     PROPERTY_ENTRY_STRING_RO(Controller, 10, "RTOSName",
                              GetRTOSNamePropertyRequest)
     PROPERTY_ENTRY_STRING_RO(Controller, 11, "RTOSVersion",
@@ -131,9 +151,16 @@ private:
     PROPERTY_ENTRY_BYTEARRAY_RO(Controller, 17, "MCUUniqueId",
                                 MCU_UNIQUE_ID_LENGTH,
                                 GetMCUDeviceIdPropertyRequest)
+    PROPERTY_ENTRY_UINT32_RO(Controller, 18, "SystemTime",
+                             GetSystemTimePropertyRequest)
+    PROPERTY_ENTRY_UINT64_RW(Controller, 19, "RTCTime",
+                             GetRTCTimePropertyRequest,
+                             SetRTCTimePropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 20, "RTCTimeString",
+                             GetRTCTimeStringPropertyRequest)
     PROPERTY_TABLE_END()
 
-    LinkedList<Resource> mResourceList;
+    Dictionary<ResourceIdentifier, Resource*> mResourceDictionary;
 };
 
 }  // namespace Infrastructure

@@ -32,6 +32,7 @@
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/I2CBus.hpp>
 #include <Springboard/InternalHAL/UARTBus.hpp>
+#include <Springboard/InternalHAL/RealTimeClock.hpp>
 
 #if SPRINGBOARD_HAL_USE_I2C1
 #if !defined(SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY)
@@ -68,6 +69,7 @@
 
 #define SPRINGBOARD_HAL_I2C_COUNT           3
 #define SPRINGBOARD_HAL_UART_COUNT          8
+#define SPRINGBOARD_HAL_RTC_COUNT           1
 
 namespace Springboard {
 namespace InternalHAL {
@@ -88,6 +90,7 @@ public:
     void Start();
     I2CBus* GetI2CBus(size_t index) const;
     UARTBus* GetUARTBus(size_t index) const;
+    RealTimeClock* GetRTC(size_t index) const;
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C
@@ -193,6 +196,9 @@ private:
 #endif
     };
 #endif  // SPRINGBOARD_HAL_ENABLE_UART
+
+    RealTimeClock mRTC1 { &RTCD1 };
+    RealTimeClock* mRTCs[SPRINGBOARD_HAL_RTC_COUNT] = { &mRTC1 };
 };
 
 }  // namespace InternalHAL

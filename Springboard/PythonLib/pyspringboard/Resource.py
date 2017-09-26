@@ -70,6 +70,45 @@ class Resource(object):
 
     def _get_property_bytes(self, property_id):
         return self.__handler.get_property_bytes(self.__resource_id, property_id)
+    
+    def _set_property_bool(self, property_id, value):
+        return self.__handler.set_property_bool(self.__resource_id, property_id, value)
+
+    def _set_property_uint8(self, property_id, value):
+        return self.__handler.set_property_uint8(self.__resource_id, property_id, value)
+
+    def _set_property_uint16(self, property_id, value):
+        return self.__handler.set_property_uint16(self.__resource_id, property_id, value)
+
+    def _set_property_uint32(self, property_id, value):
+        return self.__handler.set_property_uint32(self.__resource_id, property_id, value)
+
+    def _set_property_uint64(self, property_id, value):
+        return self.__handler.set_property_uint64(self.__resource_id, property_id, value)
+
+    def _set_property_int8(self, property_id, value):
+        return self.__handler.set_property_int8(self.__resource_id, property_id, value)
+
+    def _set_property_int16(self, property_id, value):
+        return self.__handler.set_property_int16(self.__resource_id, property_id, value)
+
+    def _set_property_int32(self, property_id, value):
+        return self.__handler.set_property_int32(self.__resource_id, property_id, value)
+
+    def _set_property_int64(self, property_id, value):
+        return self.__handler.set_property_int64(self.__resource_id, property_id, value)
+
+    def _set_property_float(self, property_id, value):
+        return self.__handler.set_property_float(self.__resource_id, property_id, value)
+
+    def _set_property_double(self, property_id, value):
+        return self.__handler.set_property_double(self.__resource_id, property_id, value)
+
+    def _set_property_string(self, property_id, value):
+        return self.__handler.set_property_string(self.__resource_id, property_id, value)
+
+    def _set_property_bytes(self, property_id, value):
+        return self.__handler.set_property_bytes(self.__resource_id, property_id, value)
 
     def get_resource_type(self):
         return self._get_property_uint16(1)

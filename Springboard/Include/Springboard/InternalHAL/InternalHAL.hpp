@@ -173,7 +173,7 @@ const char* GetRTOSName();
 const char* GetRTOSVersion();
 const char* GetRTOSPortInfo();
 const char* GetMCUArchitectureName();
-bool GetMCUArchitectureRevision(Springboard::Utilities::CharArray buffer);
+const char* GetMCUArchitectureRevision();
 const char* GetMCUCoreVariantName();
 uint32_t GetMCUDeviceId();
 bool GetMCUUniqueId(Springboard::Utilities::ByteArray buffer);

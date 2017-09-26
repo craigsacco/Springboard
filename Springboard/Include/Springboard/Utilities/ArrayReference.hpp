@@ -65,6 +65,18 @@ public:
         return mSize;
     }
 
+    T& operator[](std::size_t i)
+    {
+        ASSERT(i <= mSize);
+        return *(mData + i);
+    }
+
+    const T& operator[](std::size_t i) const
+    {
+        ASSERT(i <= mSize);
+        return *(mData + i);
+    }
+
     T& At(size_t i) const
     {
         ASSERT(i <= mSize);

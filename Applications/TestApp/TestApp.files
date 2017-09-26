@@ -247,13 +247,16 @@
 ../../Springboard/Include/Springboard/InternalHAL/InternalGPIOPin.hpp
 ../../Springboard/Include/Springboard/InternalHAL/InternalHAL.hpp
 ../../Springboard/Include/Springboard/InternalHAL/PeripheralFactory.hpp
+../../Springboard/Include/Springboard/InternalHAL/RealTimeClock.hpp
 ../../Springboard/Include/Springboard/InternalHAL/UARTBus.hpp
 ../../Springboard/Include/Springboard/Kernel/BinarySemaphore.hpp
 ../../Springboard/Include/Springboard/Kernel/Kernel.hpp
 ../../Springboard/Include/Springboard/Kernel/Mailbox.hpp
 ../../Springboard/Include/Springboard/Kernel/Mutex.hpp
+../../Springboard/Include/Springboard/Kernel/Systime.hpp
 ../../Springboard/Include/Springboard/Kernel/Thread.hpp
 ../../Springboard/Include/Springboard/Utilities/ArrayReference.hpp
+../../Springboard/Include/Springboard/Utilities/Dictionary.hpp
 ../../Springboard/Include/Springboard/Utilities/LinkedList.hpp
 ../../Springboard/Source/Comms/MessageStreamHandler.cpp
 ../../Springboard/Source/Core/ExceptionHandling.c
@@ -267,6 +270,7 @@
 ../../Springboard/Source/InternalHAL/I2CDevice.cpp
 ../../Springboard/Source/InternalHAL/InternalHAL.cpp
 ../../Springboard/Source/InternalHAL/PeripheralFactory.cpp
+../../Springboard/Source/InternalHAL/RealTimeClock.cpp
 ../../Springboard/Source/InternalHAL/UARTBus.cpp
 ../../Springboard/Source/Kernel/Kernel.cpp
 ../../Springboard/Source/Kernel/Thread.cpp

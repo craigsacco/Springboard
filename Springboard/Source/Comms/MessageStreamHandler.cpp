@@ -218,8 +218,10 @@ void MessageStreamHandler::HandleRxSetPropertyResponse(MessageHeader* rxHeader)
     Resource* resource = mController->FindResource(
         rxHeader->payload.setPropertyRequest.resourceId);
     if (resource != nullptr) {
-        ConstByteArray data(&rxHeader->payload.setPropertyRequest.propertyData,
-                            MAX_SET_PROPERTY_REQ_DATA_SIZE);
+        ConstByteArray data(
+            &rxHeader->payload.setPropertyRequest.propertyData,
+            rxHeader->size - (MessageHeader::MIN_LENGTH +
+                              MessageSetPropertyRequest::PREAMBLE_LENGTH));
         txResponse.resultCode = resource->SetProperty(txResponse.propertyId,
                                                       data);
     } else {
