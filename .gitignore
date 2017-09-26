@@ -1,4 +1,6 @@
 **/build
 **/.dep
+**/*.pyc
+.idea
 *.creator.user
 *.autosave

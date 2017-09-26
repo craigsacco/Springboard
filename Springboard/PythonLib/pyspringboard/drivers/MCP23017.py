@@ -26,48 +26,43 @@
  ******************************************************************************
 '''
 
-import serial
+from pyspringboard.Resource import Resource
 
 
-class Client(object):
+class MCP23017(Resource):
 
-    def __init__(self):
-        pass
+    def __init__(self, handler, resource_id):
+        super(MCP23017, self).__init__(handler, resource_id)
 
-    def connect(self):
-        pass
+    def get_reg_iodir(self):
+        return self._get_property_uint16(100)
 
-    def close(self):
-        pass
+    def get_reg_ipol(self):
+        return self._get_property_uint16(101)
 
-    def read(self, len):
-        pass
+    def get_reg_gpinten(self):
+        return self._get_property_uint16(102)
 
-    def write(self, data):
-        pass
+    def get_reg_defval(self):
+        return self._get_property_uint16(103)
 
+    def get_reg_intcon(self):
+        return self._get_property_uint16(104)
 
-class SerialClient(Client):
+    def get_reg_iocon(self):
+        return self._get_property_uint8(105)
 
-    def __init__(self, port, baudrate=9600, timeout=1, debug=False):
-        super(SerialClient, self).__init__()
-        self.__url = port
-        self.__baudrate = baudrate
-        self.__timeout = timeout
-        if debug:
-            self.__url = "spy://" + self.__url
-        self.__client = None
+    def get_reg_gppu(self):
+        return self._get_property_uint16(106)
 
-    def connect(self):
-        self.__client = serial.serial_for_url(self.__url, timeout=self.__timeout)
-        self.__client.baudrate = self.__baudrate
+    def get_reg_intf(self):
+        return self._get_property_uint16(107)
 
-    def close(self):
-        self.__client.close()
-        self.__client = None
+    def get_reg_intcap(self):
+        return self._get_property_uint16(108)
 
-    def read(self, len):
-        return self.__client.read(len)
+    def get_reg_port(self):
+        return self._get_property_uint16(109)
 
-    def write(self, data):
-        self.__client.write(serial.to_bytes(data))
+    def get_reg_olat(self):
+        return self._get_property_uint16(110)

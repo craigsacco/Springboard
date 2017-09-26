@@ -26,48 +26,16 @@
  ******************************************************************************
 '''
 
-import serial
+from pyspringboard.Resource import Resource
 
 
-class Client(object):
+class Controller(Resource):
 
-    def __init__(self):
-        pass
+    def __init__(self, handler):
+        super(Controller, self).__init__(handler, 1)
 
-    def connect(self):
-        pass
+    def get_rtos_type(self):
+        return self._get_property_string(10)
 
-    def close(self):
-        pass
-
-    def read(self, len):
-        pass
-
-    def write(self, data):
-        pass
-
-
-class SerialClient(Client):
-
-    def __init__(self, port, baudrate=9600, timeout=1, debug=False):
-        super(SerialClient, self).__init__()
-        self.__url = port
-        self.__baudrate = baudrate
-        self.__timeout = timeout
-        if debug:
-            self.__url = "spy://" + self.__url
-        self.__client = None
-
-    def connect(self):
-        self.__client = serial.serial_for_url(self.__url, timeout=self.__timeout)
-        self.__client.baudrate = self.__baudrate
-
-    def close(self):
-        self.__client.close()
-        self.__client = None
-
-    def read(self, len):
-        return self.__client.read(len)
-
-    def write(self, data):
-        self.__client.write(serial.to_bytes(data))
+    def get_rtos_version(self):
+        return self._get_property_string(11)
