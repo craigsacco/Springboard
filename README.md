@@ -60,6 +60,24 @@ rapid prototyping with the end goal of reducing implementation effort.
 
 * **\[TODO\]** So much more!!!
 
+## Prerequisites
+
+* [GNU Tools for ARM Embedded](http://launchpad.net/gcc-arm-embedded) - the version that I've
+  been using is __6-2017-q2-update__, which is based on the following tools:
+    * GNU GCC 6.3.1
+    * GNU Binutils 2.28
+    * GNU GDB 7.12
+* cpplint - for static code analysis
+* openocd - to act as a debug server
+
+### Recommended Tools
+
+* [Qt Creator](http://www.qt.io/download-open-source) - great C/C++ IDE for development
+  and debugging
+* [PyCharm](http://www.jetbrains.com/pycharm/download) - great Python IDE
+* [Linux Mint](http://www.linuxmint.com) - most of the packages mentioned above can be downloaded
+  either via the Ubuntu package repository, or a third-party PPA
+
 ## License
 
 This project is subject to the MIT License.
