@@ -68,6 +68,8 @@ public:
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
 
+        mPeripheralFactory.GetUARTBus(2)->SetConfig(57600);
+
         Controller::Start();
 
         mSerialMessaging.Start();

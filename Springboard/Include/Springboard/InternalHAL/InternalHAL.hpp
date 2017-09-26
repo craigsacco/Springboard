@@ -28,6 +28,7 @@
 
 #include <hal.h>
 #include <Springboard/Common.h>
+#include <Springboard/Utilities/ArrayReference.hpp>
 
 #define SPRINGBOARD_HAL_ENABLE_I2C      HAL_USE_I2C
 #define SPRINGBOARD_HAL_USE_I2C1        STM32_I2C_USE_I2C1
@@ -168,6 +169,14 @@ enum class UARTStopBits
 };
 
 void Initialise();
+const char* GetRTOSName();
+const char* GetRTOSVersion();
+const char* GetRTOSPortInfo();
+const char* GetMCUArchitectureName();
+bool GetMCUArchitectureRevision(Springboard::Utilities::CharArray buffer);
+const char* GetMCUCoreVariantName();
+uint32_t GetMCUDeviceId();
+bool GetMCUUniqueId(Springboard::Utilities::ByteArray buffer);
 
 }  // namespace InternalHAL
 }  // namespace Springboard

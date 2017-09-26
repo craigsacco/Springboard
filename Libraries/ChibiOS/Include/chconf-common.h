@@ -5,5 +5,3 @@
 #pragma once
 
 // TODO: common chconf.h definitions here
-
-#include <chconf.h>

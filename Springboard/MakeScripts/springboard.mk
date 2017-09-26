@@ -41,6 +41,7 @@ include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.m
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 
@@ -54,7 +55,7 @@ VARIOUSCPPSRC = $(VARIOUSINC)/cpp_wrappers/syscalls_cpp.cpp
 
 # C sources
 CSRC = $(STARTUPSRC) $(KERNSRC) $(PORTSRC) $(OSALSRC) $(HALSRC) \
-       $(PLATFORMSRC) $(VARIOUSCSRC) $(SPRINGBOARDCSRC) \
+       $(PLATFORMSRC) $(VARIOUSCSRC) $(STREAMSSRC) $(SPRINGBOARDCSRC) \
        $(PROJECTCSRC)
 
 # C++ sources
@@ -68,7 +69,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) $(SPRINGBOARDASMXSRC) \
 # Includes folders
 INCDIR = $(CHIBIOS)/os/license $(CHIBIOS)/../Include $(STARTUPINC) $(KERNINC) \
          $(PORTINC) $(OSALINC) $(HALINC) $(PLATFORMINC) $(VARIOUSINC) \
-         $(SPRINGBOARDINC) $(PROJECTINC)
+         $(STREAMSINC) $(SPRINGBOARDINC) $(PROJECTINC)
 
 # Tools
 CC   = arm-none-eabi-gcc

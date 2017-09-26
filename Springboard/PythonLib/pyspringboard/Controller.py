@@ -34,8 +34,26 @@ class Controller(Resource):
     def __init__(self, handler):
         super(Controller, self).__init__(handler, 1)
 
-    def get_rtos_type(self):
+    def get_rtos(self):
         return self._get_property_string(10)
 
     def get_rtos_version(self):
         return self._get_property_string(11)
+
+    def get_rtos_port_info(self):
+        return self._get_property_string(12)
+
+    def get_mcu_architecture(self):
+        return self._get_property_string(13)
+
+    def get_mcu_architecture_revision(self):
+        return self._get_property_string(14)
+
+    def get_mcu_core_variant(self):
+        return self._get_property_string(15)
+
+    def get_mcu_device_id(self):
+        return self._get_property_uint32(16)
+
+    def get_mcu_unique_id(self):
+        return self._get_property_bytes(17)

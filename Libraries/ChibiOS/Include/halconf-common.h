@@ -7,6 +7,3 @@
 #include <mcuconf.h>
 
 // TODO: common halconf.h definitions here
-
-#include <halconf.h>
-

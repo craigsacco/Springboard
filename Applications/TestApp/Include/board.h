@@ -13,6 +13,7 @@
 
 //! \section Micro is an STM32F407xx
 #define STM32F407xx
+#define STM32F40_41xxx
 
 //! \section Debug port/pad definitions
 #define DEBUG_SWDIO_PORT            GPIOA

@@ -97,6 +97,12 @@
 ../../Libraries/ChibiOS/17.6.x/os/hal/include/hal_usb.h
 ../../Libraries/ChibiOS/17.6.x/os/hal/include/hal_usb_cdc.h
 ../../Libraries/ChibiOS/17.6.x/os/hal/include/hal_wdg.h
+../../Libraries/ChibiOS/17.6.x/os/hal/lib/streams/chprintf.c
+../../Libraries/ChibiOS/17.6.x/os/hal/lib/streams/chprintf.h
+../../Libraries/ChibiOS/17.6.x/os/hal/lib/streams/memstreams.c
+../../Libraries/ChibiOS/17.6.x/os/hal/lib/streams/memstreams.h
+../../Libraries/ChibiOS/17.6.x/os/hal/lib/streams/nullstreams.c
+../../Libraries/ChibiOS/17.6.x/os/hal/lib/streams/nullstreams.h
 ../../Libraries/ChibiOS/17.6.x/os/hal/osal/rt/osal.c
 ../../Libraries/ChibiOS/17.6.x/os/hal/osal/rt/osal.h
 ../../Libraries/ChibiOS/17.6.x/os/hal/ports/STM32/LLD/ADCv2/hal_adc_lld.c

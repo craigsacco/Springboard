@@ -25,7 +25,11 @@
  *****************************************************************************/
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <board.h>
 #include <hal.h>
+#include <chprintf.h>
+#include <chversion.h>
+#include <cstring>
 
 namespace Springboard {
 namespace InternalHAL {
@@ -33,6 +37,60 @@ namespace InternalHAL {
 void Initialise()
 {
     halInit();
+}
+
+const char* GetRTOSName()
+{
+    return "ChibiOS/RT";
+}
+
+const char* GetRTOSVersion()
+{
+    return CH_VERSION;
+}
+
+const char* GetRTOSPortInfo()
+{
+    return PORT_INFO;
+}
+
+const char* GetMCUArchitectureName()
+{
+    return PORT_ARCHITECTURE_NAME;
+}
+
+bool GetMCUArchitectureRevision(Springboard::Utilities::CharArray buffer)
+{
+    // ensure that the provided buffer can accomodate the revision
+    // (enough to hold "r255p255" plus null terminator)
+    if (buffer.GetSize() < 9) {
+        return false;
+    }
+
+    chsnprintf(buffer.GetData(), buffer.GetSize() - 1, "r%up%u",
+               (__CM4_REV >> 8) & 0xff, __CM4_REV & 0xff);
+    return true;
+}
+
+const char* GetMCUCoreVariantName()
+{
+    return PORT_CORE_VARIANT_NAME;
+}
+
+uint32_t GetMCUDeviceId()
+{
+    return DBGMCU->IDCODE;
+}
+
+bool GetMCUUniqueId(Springboard::Utilities::ByteArray buffer)
+{
+    // ensure that the provided buffer can accomodate the identifier
+    if (buffer.GetSize() < MCU_UNIQUE_ID_LENGTH) {
+        return false;
+    }
+
+    memcpy(buffer.GetData(), DES->UID.data, MCU_UNIQUE_ID_LENGTH);
+    return true;
 }
 
 }  // namespace InternalHAL

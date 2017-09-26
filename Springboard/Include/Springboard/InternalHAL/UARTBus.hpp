@@ -48,8 +48,10 @@ public:
 
     void Start();
     void Stop();
-    void SetConfig(Speed speed, UARTDataBits databits,
-                   UARTParity parity, UARTStopBits stopbits);
+    void SetConfig(Speed speed,
+                   UARTDataBits databits = UARTDataBits::Eight,
+                   UARTParity parity = UARTParity::None,
+                   UARTStopBits stopbits = UARTStopBits::One);
 
     inline bool IsStarted()
     {

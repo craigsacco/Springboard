@@ -54,25 +54,83 @@ protected:
     Springboard::InternalHAL::PeripheralFactory mPeripheralFactory;
 
 private:
-    ResultCode GetRTOSTypePropertyRequest(CharArray value)
+    ResultCode GetRTOSNamePropertyRequest(CharArray value)
     {
         Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
-            value, "ChibiOS/RT");
+            value, Springboard::InternalHAL::GetRTOSName());
         return RC_OK;
     }
 
     ResultCode GetRTOSVersionPropertyRequest(CharArray value)
     {
         Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
-            value, CH_VERSION);
+            value, Springboard::InternalHAL::GetRTOSVersion());
         return RC_OK;
     }
 
-    PROPERTY_TABLE_START(Controller, 2)
-    PROPERTY_ENTRY_STRING_RO(Controller, 10, "RTOSType",
-                             GetRTOSTypePropertyRequest)
+    ResultCode GetRTOSPortInfoPropertyRequest(CharArray value)
+    {
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetRTOSPortInfo());
+        return RC_OK;
+    }
+
+    ResultCode GetMCUArchitectureNamePropertyRequest(CharArray value)
+    {
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetMCUArchitectureName());
+        return RC_OK;
+    }
+
+    ResultCode GetMCUArchitectureRevisionPropertyRequest(CharArray value)
+    {
+        if (!Springboard::InternalHAL::GetMCUArchitectureRevision(value)) {
+            return RC_RESOURCE_INVALID_PROPERTY_LENGTH;
+        }
+
+        return RC_OK;
+    }
+
+    ResultCode GetMCUCoreVariantNamePropertyRequest(CharArray value)
+    {
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetMCUCoreVariantName());
+        return RC_OK;
+    }
+
+    ResultCode GetMCUDeviceIdPropertyRequest(uint32_t* value)
+    {
+        *value = Springboard::InternalHAL::GetMCUDeviceId();
+        return RC_OK;
+    }
+
+    ResultCode GetMCUDeviceIdPropertyRequest(ByteArray value)
+    {
+        if (!Springboard::InternalHAL::GetMCUUniqueId(value)) {
+            return RC_RESOURCE_INVALID_PROPERTY_LENGTH;
+        }
+
+        return RC_OK;
+    }
+
+    PROPERTY_TABLE_START(Controller, 8)
+    PROPERTY_ENTRY_STRING_RO(Controller, 10, "RTOSName",
+                             GetRTOSNamePropertyRequest)
     PROPERTY_ENTRY_STRING_RO(Controller, 11, "RTOSVersion",
                              GetRTOSVersionPropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 12, "RTOSPortInfo",
+                             GetRTOSPortInfoPropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 13, "MCUArchitectureName",
+                             GetMCUArchitectureNamePropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 14, "MCUArchitectureRevision",
+                             GetMCUArchitectureRevisionPropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 15, "MCUCoreVariantName",
+                             GetMCUCoreVariantNamePropertyRequest)
+    PROPERTY_ENTRY_UINT32_RO(Controller, 16, "MCUDeviceId",
+                             GetMCUDeviceIdPropertyRequest)
+    PROPERTY_ENTRY_BYTEARRAY_RO(Controller, 17, "MCUUniqueId",
+                                MCU_UNIQUE_ID_LENGTH,
+                                GetMCUDeviceIdPropertyRequest)
     PROPERTY_TABLE_END()
 
     LinkedList<Resource> mResourceList;

@@ -46,5 +46,3 @@ void boardInit(void);
 #define PIN_AFIO_AF(n, v)           ((v) << (((n) % 8U) * 4U))
 
 // TODO: common board.h definitions here
-
-#include <board.h>
