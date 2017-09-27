@@ -32,10 +32,12 @@
 //! \section Construction macros
 #define RC_BASE_INFRASTRUCTURE              ((ResultCode)0x10000000)
 #define RC_BASE_INFRASTRUCTURE_BLOCK(x)     (RC_BASE_INFRASTRUCTURE + (x << 16))
-#define RC_BASE_HAL                         ((ResultCode)0x20000000)
-#define RC_BASE_HAL_BLOCK(x)                (RC_BASE_HAL + (x << 16))
-#define RC_BASE_DRIVERS                     ((ResultCode)0x30000000)
+#define RC_BASE_DRIVERS                     ((ResultCode)0x20000000)
 #define RC_BASE_DRIVERS_BLOCK(x)            (RC_BASE_INFRASTRUCTURE + (x << 16))
+#define RC_BASE_HAL                         ((ResultCode)0x30000000)
+#define RC_BASE_HAL_BLOCK(x)                (RC_BASE_HAL + (x << 16))
+#define RC_BASE_EXTERNAL_HAL                ((ResultCode)0x40000000)
+#define RC_BASE_EXTERNAL_HAL_BLOCK(x)       (RC_BASE_EXTERNAL_HAL + (x << 16))
 
 //! \section Resource result codes
 #define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(0))
@@ -56,3 +58,7 @@
 //! \section RTC result codes
 #define RC_RTC_BASE                         (RC_BASE_HAL_BLOCK(1))
 #define RC_RTC_YEAR_BEFORE_1980             (RC_RTC_BASE + 0)
+
+//! \section NMEA0183 GPS device result codes
+#define RC_NMEA0183_GPS_BASE                (RC_BASE_EXTERNAL_HAL_BLOCK(0))
+#define RC_NMEA0183_NO_FIX_ACQUIRED         (RC_NMEA0183_GPS_BASE + 0)

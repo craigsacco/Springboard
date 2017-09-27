@@ -26,56 +26,50 @@
 
 #pragma once
 
-#include <ch.h>
-#include <Springboard/Common.h>
+#include <Springboard/ExternalHAL/NMEA0183Device.hpp>
+#include <Springboard/Kernel/Mutex.hpp>
+#include <Springboard/Utilities/StringSplitter.hpp>
+
+#if SPRINGBOARD_HAL_ENABLE_UART
+
+using Springboard::Utilities::StringSplitter;
 
 namespace Springboard {
-namespace Kernel {
+namespace ExternalHAL {
 
-class Mutex
+class NMEA0183GPSDevice : public NMEA0183Device
 {
 public:
-    Mutex()
-    {
-        chMtxObjectInit(&mMutex);
-    }
+    NMEA0183GPSDevice(Springboard::InternalHAL::UARTBus* bus,
+                      const char* name, Priority priority);
 
-    inline void Lock()
-    {
-        chMtxLock(&mMutex);
-    }
-
-    inline bool TryLock()
-    {
-        return chMtxTryLock(&mMutex);
-    }
-
-    inline void Unlock()
-    {
-        chMtxUnlock(&mMutex);
-    }
+    ResultCode GetLastFixTimeUTC(uint32_t* time);
+    ResultCode GetLastFixLatitude(float* latitude);
+    ResultCode GetLastFixLongitude(float* longitude);
+    ResultCode GetLastFixQuality(uint32_t* quality);
+    ResultCode GetLastFixSatellitesTracked(uint32_t* satellites);
+    ResultCode GetLastFixHorizontalDilution(float* dilution);
+    ResultCode GetLastFixAltitude(float* altitude);
+    ResultCode GetLastFixHeightOfGeoid(float* height);
 
 private:
-    mutex_t mMutex;
+    void ReceivedMessage(ConstCharArray message) final;
+    void ReceivedGPSFixInformation(StringSplitter splitter);
+
+    Springboard::Kernel::Mutex mMutex;
+
+    bool mLastFixReceived;
+    uint32_t mLastFixTimeUTC;
+    float mLastFixLatitude;
+    float mLastFixLongitude;
+    uint32_t mLastFixQuality;
+    uint32_t mLastFixSatellitesTracked;
+    float mLastFixHorizontalDilution;
+    float mLastFixAltitude;
+    float mLastFixHeightOfGeoid;
 };
 
-class ScopedMutex
-{
-public:
-    explicit ScopedMutex(Mutex* mutex) :
-        mMutex(mutex)
-    {
-        mMutex->Lock();
-    }
-
-    ~ScopedMutex()
-    {
-        mMutex->Unlock();
-    }
-
-private:
-    Mutex* mMutex;
-};
-
-}  // namespace Kernel
+}  // namespace ExternalHAL
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_UART

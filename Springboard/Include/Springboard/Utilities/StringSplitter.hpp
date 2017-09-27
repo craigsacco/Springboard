@@ -26,56 +26,30 @@
 
 #pragma once
 
-#include <ch.h>
-#include <Springboard/Common.h>
+#include <Springboard/Utilities/ArrayReference.hpp>
+
+using Springboard::Utilities::ConstCharArray;
 
 namespace Springboard {
-namespace Kernel {
+namespace Utilities {
 
-class Mutex
+class StringSplitter
 {
 public:
-    Mutex()
-    {
-        chMtxObjectInit(&mMutex);
-    }
+    StringSplitter(ConstCharArray buffer, char token);
 
-    inline void Lock()
-    {
-        chMtxLock(&mMutex);
-    }
-
-    inline bool TryLock()
-    {
-        return chMtxTryLock(&mMutex);
-    }
-
-    inline void Unlock()
-    {
-        chMtxUnlock(&mMutex);
-    }
+    ConstCharArray GetNext();
+    void SkipNext();
+    uint32_t GetNextAsUInt32(bool* errors = nullptr);
+    int32_t GetNextAsInt32(bool* errors = nullptr);
+    float GetNextAsFloat(bool* errors = nullptr);
+    StringSplitter GetRemainder() const;
 
 private:
-    mutex_t mMutex;
+    ConstCharArray mBuffer;
+    char mToken;
+    size_t mPosition;
 };
 
-class ScopedMutex
-{
-public:
-    explicit ScopedMutex(Mutex* mutex) :
-        mMutex(mutex)
-    {
-        mMutex->Lock();
-    }
-
-    ~ScopedMutex()
-    {
-        mMutex->Unlock();
-    }
-
-private:
-    Mutex* mMutex;
-};
-
-}  // namespace Kernel
+}  // namespace Utilities
 }  // namespace Springboard

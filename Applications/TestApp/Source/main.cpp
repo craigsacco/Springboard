@@ -11,6 +11,8 @@
 #include <Springboard/Comms/MessageStreamHandler.hpp>
 #include <Springboard/ExternalHAL/MCP23017.hpp>
 #include <Springboard/Drivers/MCP23017Driver.hpp>
+#include <Springboard/ExternalHAL/NMEA0183GPSDevice.hpp>
+#include <Springboard/Drivers/NMEA0183GPSDriver.hpp>
 
 using Springboard::Kernel::Thread;
 using Springboard::InternalHAL::GPIOPinMode;
@@ -24,6 +26,8 @@ using Springboard::Infrastructure::Controller;
 using Springboard::Comms::MessageStreamHandler;
 using Springboard::ExternalHAL::MCP23017;
 using Springboard::Drivers::MCP23017Driver;
+using Springboard::ExternalHAL::NMEA0183GPSDevice;
+using Springboard::Drivers::NMEA0183GPSDriver;
 
 
 class TestController : public Controller
@@ -34,7 +38,9 @@ public:
         mSerialMessaging(this, mPeripheralFactory.GetUARTBus(2),
                          "SerialMessaging", NORMALPRIO),
         mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 400000),
-        mExpanderDriver(this, 2, "MCP23017", &mExpander)
+        mExpanderDriver(this, 2, "MCP23017", &mExpander),
+        mGPS(mPeripheralFactory.GetUARTBus(1), "GPSDeviceComms", NORMALPRIO-1),
+        mGPSDriver(this, 3, "GPSDevice", &mGPS)
     {
     }
 
@@ -68,18 +74,36 @@ public:
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
 
+        // setup USART1_TX on PA9, and USART1_RX on PA10
+        InternalGPIOPin::SetPinConfiguration(
+            GPIOA, 9,
+            GPIOPinMode::AlternateFunction_USART1,
+            GPIOPullConfiguration::Floating,
+            GPIOOutputConfiguration::PushPull,
+            GPIOOutputSpeed::Low_2MHz);
+        InternalGPIOPin::SetPinConfiguration(
+            GPIOA, 10,
+            GPIOPinMode::AlternateFunction_USART1,
+            GPIOPullConfiguration::Floating,
+            GPIOOutputConfiguration::PushPull,
+            GPIOOutputSpeed::Low_2MHz);
+
+        mPeripheralFactory.GetUARTBus(2)->SetConfig(9600);
         mPeripheralFactory.GetUARTBus(2)->SetConfig(57600);
         mPeripheralFactory.GetWatchdog(1)->SetTimeout(100000U);
 
         Controller::Start();
 
         mSerialMessaging.Start();
+        mGPS.Start();
     }
 
 private:
     MessageStreamHandler mSerialMessaging;
     MCP23017 mExpander;
     MCP23017Driver mExpanderDriver;
+    NMEA0183GPSDevice mGPS;
+    NMEA0183GPSDriver mGPSDriver;
 };
 
 int main(void)

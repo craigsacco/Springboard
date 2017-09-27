@@ -24,58 +24,62 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#pragma once
+#include <cstring>
+#include <Springboard/Utilities/StringSplitter.hpp>
 
-#include <ch.h>
-#include <Springboard/Common.h>
+using namespace Springboard::Utilities::ArrayReferenceUtils;  // NOLINT
 
 namespace Springboard {
-namespace Kernel {
+namespace Utilities {
 
-class Mutex
+StringSplitter::StringSplitter(ConstCharArray buffer, char token) :
+    mBuffer(buffer), mToken(token), mPosition(0)
 {
-public:
-    Mutex()
-    {
-        chMtxObjectInit(&mMutex);
-    }
+}
 
-    inline void Lock()
-    {
-        chMtxLock(&mMutex);
-    }
-
-    inline bool TryLock()
-    {
-        return chMtxTryLock(&mMutex);
-    }
-
-    inline void Unlock()
-    {
-        chMtxUnlock(&mMutex);
-    }
-
-private:
-    mutex_t mMutex;
-};
-
-class ScopedMutex
+ConstCharArray StringSplitter::GetNext()
 {
-public:
-    explicit ScopedMutex(Mutex* mutex) :
-        mMutex(mutex)
-    {
-        mMutex->Lock();
+    if (mPosition >= mBuffer.GetSize()) {
+        return ConstCharArray::Null();
     }
 
-    ~ScopedMutex()
-    {
-        mMutex->Unlock();
+    size_t start = mPosition;
+    size_t length = 0;
+    while (true) {
+        if (mPosition == mBuffer.GetSize()) {
+            return mBuffer.Mid(start, length);
+        } else if (mBuffer[mPosition++] == mToken) {
+            return mBuffer.Mid(start, length);
+        } else {
+            length++;
+        }
     }
+}
 
-private:
-    Mutex* mMutex;
-};
+void StringSplitter::SkipNext()
+{
+    GetNext();
+}
 
-}  // namespace Kernel
+uint32_t StringSplitter::GetNextAsUInt32(bool* errors)
+{
+    return ToUInt32(GetNext(), errors);
+}
+
+int32_t StringSplitter::GetNextAsInt32(bool* errors)
+{
+    return ToInt32(GetNext(), errors);
+}
+
+float StringSplitter::GetNextAsFloat(bool* errors)
+{
+    return ToFloat(GetNext(), errors);
+}
+
+StringSplitter StringSplitter::GetRemainder() const
+{
+    return StringSplitter(mBuffer.RightFrom(mPosition), mToken);
+}
+
+}  // namespace Utilities
 }  // namespace Springboard

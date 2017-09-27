@@ -48,6 +48,7 @@ public:
     {
         Controller,
         IOExpander,
+        GPSReceiver,
     };
 
     Resource(Controller* controller,

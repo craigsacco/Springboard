@@ -45,9 +45,13 @@ rapid prototyping with the end goal of reducing implementation effort.
     * Configurable hardware watchdog
     * **\[TODO\]** - incorporate mandatory thread reporting
 
-* USART interface
+* U(S)ART interface
     * Implements IStream interface for common stream routines
+    * **\[TODO\]** - 9-bit data support
     * **\[TODO\]** - Use DMA subsystem for transmitting data, currently relying on IRQ
+
+* OEM devices
+    * NMEA 0183 compatible GPS devices (using a UART)
 
 * **\[TODO\]** SPI bus arbitrator
     * Access to I2C bus is synchronised
@@ -62,7 +66,7 @@ rapid prototyping with the end goal of reducing implementation effort.
 * **\[TODO\]** Event dispatcher
     * Event queueing for dispatching tasks in its own thread
 
-* **\[TODO\]** So much more!!!
+* **\[TODO\]** So much more to add!!!
 
 ## Prerequisites
 

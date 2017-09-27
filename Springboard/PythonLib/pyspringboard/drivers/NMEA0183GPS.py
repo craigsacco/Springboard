@@ -1,10 +1,11 @@
-/******************************************************************************
+'''
+ ******************************************************************************
  * MIT License
- *
+ * 
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -22,60 +23,37 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- *****************************************************************************/
+ ******************************************************************************
+'''
 
-#pragma once
+from pyspringboard.Resource import Resource
 
-#include <ch.h>
-#include <Springboard/Common.h>
 
-namespace Springboard {
-namespace Kernel {
+class NMEA0183GPS(Resource):
 
-class Mutex
-{
-public:
-    Mutex()
-    {
-        chMtxObjectInit(&mMutex);
-    }
+    def __init__(self, handler, resource_id):
+        super(NMEA0183GPS, self).__init__(handler, resource_id)
 
-    inline void Lock()
-    {
-        chMtxLock(&mMutex);
-    }
+    def get_last_fix_time_utc(self):
+        return self._get_property_uint32(100)
 
-    inline bool TryLock()
-    {
-        return chMtxTryLock(&mMutex);
-    }
+    def get_last_fix_latitude(self):
+        return self._get_property_float(101)
 
-    inline void Unlock()
-    {
-        chMtxUnlock(&mMutex);
-    }
+    def get_last_fix_longitude(self):
+        return self._get_property_float(102)
 
-private:
-    mutex_t mMutex;
-};
+    def get_last_fix_quality(self):
+        return self._get_property_uint32(103)
 
-class ScopedMutex
-{
-public:
-    explicit ScopedMutex(Mutex* mutex) :
-        mMutex(mutex)
-    {
-        mMutex->Lock();
-    }
+    def get_last_fix_satellites_tracked(self):
+        return self._get_property_uint32(104)
 
-    ~ScopedMutex()
-    {
-        mMutex->Unlock();
-    }
+    def get_last_fix_horizontal_dilution(self):
+        return self._get_property_float(105)
 
-private:
-    Mutex* mMutex;
-};
+    def get_last_fix_altitude(self):
+        return self._get_property_float(106)
 
-}  // namespace Kernel
-}  // namespace Springboard
+    def get_last_fix_height_of_geoid(self):
+        return self._get_property_float(107)

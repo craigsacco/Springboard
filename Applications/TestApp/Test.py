@@ -7,6 +7,7 @@ from pyspringboard.Client import SerialClient
 from pyspringboard.MessageHandler import MessageHandler
 from pyspringboard.Controller import Controller
 from pyspringboard.drivers.MCP23017 import MCP23017
+from pyspringboard.drivers.NMEA0183GPS import NMEA0183GPS
 
 
 class TestController(Controller):
@@ -14,10 +15,15 @@ class TestController(Controller):
     def __init__(self, handler):
         super(TestController, self).__init__(handler)
         self.__expander = MCP23017(handler, 2)
+        self.__gps = NMEA0183GPS(handler, 3)
 
     @property
     def expander(self):
         return self.__expander
+
+    @property
+    def gps(self):
+        return self.__gps
 
 
 def main():
@@ -46,6 +52,16 @@ def main():
         print "controller RTC time string: {0}".format(controller.get_rtc_time_string())
         print "expander resource type: {0}".format(controller.expander.get_resource_type())
         print "expander resource name: {0}".format(controller.expander.get_resource_name())
+        print "GPS resource type: {0}".format(controller.gps.get_resource_type())
+        print "GPS resource name: {0}".format(controller.gps.get_resource_name())
+        print "GPS last fix time UTC: {0}".format(controller.gps.get_last_fix_time_utc())
+        print "GPS last fix latitude: {0}".format(controller.gps.get_last_fix_latitude())
+        print "GPS last fix longitude: {0}".format(controller.gps.get_last_fix_longitude())
+        print "GPS last fix altitude: {0}".format(controller.gps.get_last_fix_altitude())
+        print "GPS last fix satellites tracked: {0}".format(controller.gps.get_last_fix_satellites_tracked())
+        print "GPS last fix quality: {0}".format(controller.gps.get_last_fix_quality())
+        print "GPS last fix horizontal dilution: {0}".format(controller.gps.get_last_fix_horizontal_dilution())
+        print "GPS last fix height of geoid: {0}".format(controller.gps.get_last_fix_height_of_geoid())
 
     finally:
         client.close()

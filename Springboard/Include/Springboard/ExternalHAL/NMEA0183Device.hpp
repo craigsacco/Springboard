@@ -26,56 +26,52 @@
 
 #pragma once
 
-#include <ch.h>
-#include <Springboard/Common.h>
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/Kernel/Thread.hpp>
+#include <Springboard/Utilities/ArrayReference.hpp>
+
+#if !defined(SPRINGBOARD_NMEA_0183_THREAD_SIZE)
+#define SPRINGBOARD_NMEA_0183_THREAD_SIZE   2048
+#endif
+
+#if SPRINGBOARD_HAL_ENABLE_UART
+
+using Springboard::Utilities::ConstCharArray;
 
 namespace Springboard {
-namespace Kernel {
 
-class Mutex
+namespace InternalHAL { class UARTBus; }
+
+namespace ExternalHAL {
+
+class NMEA0183Device : public Springboard::Kernel::Thread
 {
 public:
-    Mutex()
-    {
-        chMtxObjectInit(&mMutex);
-    }
+    NMEA0183Device(Springboard::InternalHAL::UARTBus* bus,
+                   const char* name, Priority priority);
+    void Run() final;
 
-    inline void Lock()
-    {
-        chMtxLock(&mMutex);
-    }
-
-    inline bool TryLock()
-    {
-        return chMtxTryLock(&mMutex);
-    }
-
-    inline void Unlock()
-    {
-        chMtxUnlock(&mMutex);
-    }
+protected:
+    virtual void ReceivedMessage(ConstCharArray message) = 0;
 
 private:
-    mutex_t mMutex;
+    enum class MessageState : uint8_t
+    {
+        Idle,
+        GotStartDelimiter,
+        GettingMessage,
+        GotEndDelimiter,
+        GettingChecksum,
+        GotCR,
+    };
+
+    static constexpr size_t MAX_MESSAGE_SIZE = 82;
+
+    Springboard::InternalHAL::UARTBus* mBus;
+    uint8_t mMessageBuffer[MAX_MESSAGE_SIZE];
 };
 
-class ScopedMutex
-{
-public:
-    explicit ScopedMutex(Mutex* mutex) :
-        mMutex(mutex)
-    {
-        mMutex->Lock();
-    }
-
-    ~ScopedMutex()
-    {
-        mMutex->Unlock();
-    }
-
-private:
-    Mutex* mMutex;
-};
-
-}  // namespace Kernel
+}  // namespace ExternalHAL
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_UART
