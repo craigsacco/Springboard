@@ -30,13 +30,6 @@
 #include <halconf-common.h>
 
 /**
- * @brief   Enables the PAL subsystem.
- */
-#if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
-#define HAL_USE_PAL                 TRUE
-#endif
-
-/**
  * @brief   Enables the ADC subsystem.
  */
 #if !defined(HAL_USE_ADC) || defined(__DOXYGEN__)
@@ -121,13 +114,6 @@
 #endif
 
 /**
- * @brief   Enables the RTC subsystem.
- */
-#if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
-#define HAL_USE_RTC                 TRUE
-#endif
-
-/**
  * @brief   Enables the SDC subsystem.
  */
 #if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
@@ -169,12 +155,6 @@
 #define HAL_USE_USB                 FALSE
 #endif
 
-/**
- * @brief   Enables the WDG subsystem.
- */
-#if !defined(HAL_USE_WDG) || defined(__DOXYGEN__)
-#define HAL_USE_WDG                 FALSE
-#endif
 
 /*===========================================================================*/
 /* ADC driver related settings.                                              */
@@ -205,17 +185,6 @@
  */
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
-#endif
-
-/*===========================================================================*/
-/* I2C driver related settings.                                              */
-/*===========================================================================*/
-
-/**
- * @brief   Enables the mutual exclusion APIs on the I2C bus.
- */
-#if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define I2C_USE_MUTUAL_EXCLUSION    FALSE
 #endif
 
 /*===========================================================================*/
@@ -288,15 +257,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Default bit rate.
- * @details Configuration parameter, this is the baud rate selected for the
- *          default configuration.
- */
-#if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
-#define SERIAL_DEFAULT_BITRATE      38400
-#endif
-
-/**
  * @brief   Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
  *          buffers depending on the requirements of your application.
@@ -328,26 +288,6 @@
  */
 #if !defined(SERIAL_USB_BUFFERS_NUMBER) || defined(__DOXYGEN__)
 #define SERIAL_USB_BUFFERS_NUMBER   2
-#endif
-
-/*===========================================================================*/
-/* SPI driver related settings.                                              */
-/*===========================================================================*/
-
-/**
- * @brief   Enables synchronous APIs.
- * @note    Disabling this option saves both code and data space.
- */
-#if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
-#define SPI_USE_WAIT                TRUE
-#endif
-
-/**
- * @brief   Enables the @p spiAcquireBus() and @p spiReleaseBus() APIs.
- * @note    Disabling this option saves both code and data space.
- */
-#if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SPI_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 /*===========================================================================*/

@@ -26,23 +26,40 @@
 
 #pragma once
 
-#include <sbconf.h>
-#include <ch.h>
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/Kernel/Thread.hpp>
+#include <Springboard/Kernel/Mutex.hpp>
+
+#if !defined(SPRINGBOARD_HAL_WDG_THREAD_SIZE)
+#define SPRINGBOARD_HAL_WDG_THREAD_SIZE     512
 #endif
 
-#include <Springboard/ResultCodes.h>
+#if !defined(SPRINGBOARD_HAL_WDG_PAT_INTERVAL_MS)
+#define SPRINGBOARD_HAL_WDG_PAT_INTERVAL_MS 5
+#endif
 
-//! \section Common type definitions
-typedef uint32_t ResultCode;
-typedef uint16_t ResourceIdentifier;
-typedef uint16_t PropertyIdentifier;
+#if !defined(SPRINGBOARD_HAL_WDG_TIMEOUT_MS)
+#define SPRINGBOARD_HAL_WDG_TIMEOUT_MS      100
+#endif
 
-//! \section Assertion checking
-#define ASSERT(cond)                chDbgAssert(cond, #cond)
-#define ASSERT_MSG(cond, msg)       chDbgAssert(cond, msg)
-#define ASSERT_FAIL()               chDbgAssert(false)
-#define ASSERT_FAIL_MSG(msg)        chDbgAssert(false, msg)
+namespace Springboard {
+namespace InternalHAL {
+
+class Watchdog : public Springboard::Kernel::Thread
+{
+public:
+    typedef WDGDriver Driver;
+    typedef WDGConfig Config;
+
+    Watchdog(Driver* driver, const char* name, Priority priority);
+    bool SetTimeout(uint32_t microseconds);
+    void Run() final;
+
+private:
+    Driver* mDriver;
+    Config mConfig;
+    Springboard::Kernel::Mutex mMutex;
+};
+
+}  // namespace InternalHAL
+}  // namespace Springboard

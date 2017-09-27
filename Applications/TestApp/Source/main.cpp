@@ -32,7 +32,7 @@ public:
     TestController() :
         Controller(1, "TestController"),
         mSerialMessaging(this, mPeripheralFactory.GetUARTBus(2),
-                         "SerialMessaging", NORMALPRIO-3),
+                         "SerialMessaging", NORMALPRIO),
         mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 400000),
         mExpanderDriver(this, 2, "MCP23017", &mExpander)
     {
@@ -69,6 +69,7 @@ public:
             GPIOOutputSpeed::Low_2MHz);
 
         mPeripheralFactory.GetUARTBus(2)->SetConfig(57600);
+        mPeripheralFactory.GetWatchdog(1)->SetTimeout(100000U);
 
         Controller::Start();
 

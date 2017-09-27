@@ -4,7 +4,8 @@
 
 #pragma once
 
-// TODO: common mcuconf.h definitions here
+//! \section MCU configuration declaration
+#define STM32F4xx_MCUCONF
 
 //! \section ARM architecture version
 #if CORTEX_MODEL == 4
@@ -69,3 +70,7 @@ typedef struct
 #define DES_BASE                (0x1FFF7A10)
 #define DES                     ((DES_TypeDef *) DES_BASE)
 #endif  // defined(STM32F40_41xxx)
+
+//! \section mandatory driver features
+#define STM32_WDG_USE_IWDG                  TRUE
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")

@@ -24,70 +24,64 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/InternalHAL/PeripheralFactory.hpp>
+#include <Springboard/InternalHAL/Watchdog.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-PeripheralFactory::PeripheralFactory()
+Watchdog::Watchdog(Driver* driver, const char* name, Priority priority)
+    : Thread(name, SPRINGBOARD_HAL_WDG_THREAD_SIZE, priority),
+      mDriver(driver), mConfig(), mMutex()
 {
+    // by default, make the timeout huge (in this case, 32.768 seconds)
+    mConfig.pr = 7;
+    mConfig.rlr = 0xFFF;
 }
 
-void PeripheralFactory::Start()
+bool Watchdog::SetTimeout(uint32_t microseconds)
 {
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    for (I2CBus* bus : mI2Cs) {
-        if (bus != nullptr) {
-            bus->Start();
+    uint32_t pr = 0;
+    uint32_t maximum = ((1000000UL << 2UL) / STM32_LSICLK) * 4096UL;
+    while (pr < 6) {
+        if (microseconds < maximum) {
+            mConfig.pr = pr;
+            mConfig.rlr = (microseconds / (maximum / 4096));
+            if (mConfig.rlr > 0) {
+                mConfig.rlr--;
+            }
+            mMutex.Lock();
+            if (mDriver->state == WDG_READY) {
+                wdgStart(mDriver, &mConfig);
+            }
+            mMutex.Unlock();
+            return true;
+        } else {
+            pr++;
+            maximum <<= 1UL;
         }
     }
-#endif
 
-#if SPRINGBOARD_HAL_ENABLE_UART
-    for (UARTBus* bus : mUARTs) {
-        if (bus != nullptr) {
-            bus->Start();
-        }
+    return false;
+}
+
+void Watchdog::Run()
+{
+    // freeze the peripheral when in debug (or else it will reboot)
+    DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_IWDG_STOP;
+
+    mMutex.Lock();
+    wdgStart(mDriver, &mConfig);
+    mMutex.Unlock();
+
+    while (true) {
+        Sleep_ms(SPRINGBOARD_HAL_WDG_PAT_INTERVAL_MS);
+
+        mMutex.Lock();
+        wdgReset(mDriver);
+        mMutex.Unlock();
     }
-#endif
 
-    for (Watchdog* wdg : mWDGs) {
-        if (wdg != nullptr) {
-            wdg->Start();
-        }
-    }
-}
-
-I2CBus* PeripheralFactory::GetI2CBus(size_t index) const
-{
-#if SPRINGBOARD_HAL_ENABLE_I2C
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);
-    return mI2Cs[index-1];
-#else
-    return nullptr;
-#endif
-}
-
-UARTBus* PeripheralFactory::GetUARTBus(size_t index) const
-{
-#if SPRINGBOARD_HAL_ENABLE_UART
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_UART_COUNT);
-    return mUARTs[index-1];
-#else
-    return nullptr;
-#endif
-}
-
-RealTimeClock* PeripheralFactory::GetRTC(size_t index) const
-{
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_RTC_COUNT);
-    return mRTCs[index-1];
-}
-
-Watchdog* PeripheralFactory::GetWatchdog(size_t index) const
-{
-    ASSERT(index > 0 && index <= SPRINGBOARD_HAL_WDG_COUNT);
-    return mWDGs[index-1];
+    ASSERT_FAIL_MSG("Watchdog thread should not be stopped");
 }
 
 }  // namespace InternalHAL

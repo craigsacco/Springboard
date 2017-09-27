@@ -41,6 +41,10 @@ rapid prototyping with the end goal of reducing implementation effort.
 * RTC support
     * Calendar get/set support through the communications interface
 
+* Watchdog support
+    * Configurable hardware watchdog
+    * **\[TODO\]** - incorporate mandatory thread reporting
+
 * USART interface
     * Implements IStream interface for common stream routines
     * **\[TODO\]** - Use DMA subsystem for transmitting data, currently relying on IRQ

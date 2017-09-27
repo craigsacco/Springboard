@@ -249,6 +249,7 @@
 ../../Springboard/Include/Springboard/InternalHAL/PeripheralFactory.hpp
 ../../Springboard/Include/Springboard/InternalHAL/RealTimeClock.hpp
 ../../Springboard/Include/Springboard/InternalHAL/UARTBus.hpp
+../../Springboard/Include/Springboard/InternalHAL/Watchdog.hpp
 ../../Springboard/Include/Springboard/Kernel/BinarySemaphore.hpp
 ../../Springboard/Include/Springboard/Kernel/Kernel.hpp
 ../../Springboard/Include/Springboard/Kernel/Mailbox.hpp
@@ -272,6 +273,7 @@
 ../../Springboard/Source/InternalHAL/PeripheralFactory.cpp
 ../../Springboard/Source/InternalHAL/RealTimeClock.cpp
 ../../Springboard/Source/InternalHAL/UARTBus.cpp
+../../Springboard/Source/InternalHAL/Watchdog.cpp
 ../../Springboard/Source/Kernel/Kernel.cpp
 ../../Springboard/Source/Kernel/Thread.cpp
 ../../Springboard/Source/Utilities/ArrayReference.cpp

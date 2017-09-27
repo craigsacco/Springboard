@@ -33,43 +33,61 @@
 #include <Springboard/InternalHAL/I2CBus.hpp>
 #include <Springboard/InternalHAL/UARTBus.hpp>
 #include <Springboard/InternalHAL/RealTimeClock.hpp>
+#include <Springboard/InternalHAL/Watchdog.hpp>
 
+//! \section Default thread priorities
+#define SPRINGBOARD_HAL_WDG_THREAD_PRIORITY_DEFAULT     HIGHPRIO
+#define SPRINGBOARD_HAL_SPI_THREAD_PRIORITY_DEFAULT     HIGHPRIO-1
+#define SPRINGBOARD_HAL_CAN_THREAD_PRIORITY_DEFAULT     HIGHPRIO-2
+#define SPRINGBOARD_HAL_I2C_THREAD_PRIORITY_DEFAULT     HIGHPRIO-3
+
+//! \section I2C1 thread macro checking
 #if SPRINGBOARD_HAL_USE_I2C1
 #if !defined(SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY)
-#error "SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY must be defined when" \
-    "SPRINGBOARD_HAL_USE_I2C1 is set"
+#define SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY                        \
+    SPRINGBOARD_HAL_I2C_THREAD_PRIORITY_DEFAULT
 #endif
 #if !defined(SPRINGBOARD_HAL_I2C1_XACTION_DEPTH)
-#error "SPRINGBOARD_HAL_I2C1_XACTION_DEPTH must be defined when" \
+#error "SPRINGBOARD_HAL_I2C1_XACTION_DEPTH must be defined when"    \
     "SPRINGBOARD_HAL_USE_I2C1 is set"
 #endif
 #endif
 
+//! \section I2C2 thread macro checking
 #if SPRINGBOARD_HAL_USE_I2C2
 #if !defined(SPRINGBOARD_HAL_I2C2_THREAD_PRIORITY)
-#error "SPRINGBOARD_HAL_I2C2_THREAD_PRIORITY must be defined when" \
-    "SPRINGBOARD_HAL_USE_I2C2 is set"
+#define SPRINGBOARD_HAL_I2C2_THREAD_PRIORITY                        \
+    SPRINGBOARD_HAL_I2C_THREAD_PRIORITY_DEFAULT
 #endif
 #if !defined(SPRINGBOARD_HAL_I2C2_XACTION_DEPTH)
-#error "SPRINGBOARD_HAL_I2C2_XACTION_DEPTH must be defined when" \
+#error "SPRINGBOARD_HAL_I2C2_XACTION_DEPTH must be defined when"    \
     "SPRINGBOARD_HAL_USE_I2C2 is set"
 #endif
 #endif
 
+//! \section I2C3 thread macro checking
 #if SPRINGBOARD_HAL_USE_I2C3
 #if !defined(SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY)
-#error "SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY must be defined when" \
-    "SPRINGBOARD_HAL_USE_I2C3 is set"
+#define SPRINGBOARD_HAL_I2C3_THREAD_PRIORITY                        \
+    SPRINGBOARD_HAL_I2C_THREAD_PRIORITY_DEFAULT
 #endif
 #if !defined(SPRINGBOARD_HAL_I2C3_XACTION_DEPTH)
-#error "SPRINGBOARD_HAL_I2C3_XACTION_DEPTH must be defined when" \
+#error "SPRINGBOARD_HAL_I2C3_XACTION_DEPTH must be defined when"    \
     "SPRINGBOARD_HAL_USE_I2C3 is set"
 #endif
 #endif
 
+//! \section watchdog thread macro checking
+#if !defined(SPRINGBOARD_HAL_WDG_THREAD_PRIORITY)
+#define SPRINGBOARD_HAL_WDG_THREAD_PRIORITY                         \
+    SPRINGBOARD_HAL_WDG_THREAD_PRIORITY_DEFAULT
+#endif
+
+//! \section peripheral counts (by type)
 #define SPRINGBOARD_HAL_I2C_COUNT           3
 #define SPRINGBOARD_HAL_UART_COUNT          8
 #define SPRINGBOARD_HAL_RTC_COUNT           1
+#define SPRINGBOARD_HAL_WDG_COUNT           1
 
 namespace Springboard {
 namespace InternalHAL {
@@ -91,6 +109,7 @@ public:
     I2CBus* GetI2CBus(size_t index) const;
     UARTBus* GetUARTBus(size_t index) const;
     RealTimeClock* GetRTC(size_t index) const;
+    Watchdog* GetWatchdog(size_t index) const;
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C
@@ -108,7 +127,7 @@ private:
 #if SPRINGBOARD_HAL_USE_I2C3
     SPRINGBOARD_HAL_PF_I2C_DECL(3);
 #endif
-    I2CBus* mI2CBuses[SPRINGBOARD_HAL_I2C_COUNT] = {
+    I2CBus* mI2Cs[SPRINGBOARD_HAL_I2C_COUNT] = {
 #if SPRINGBOARD_HAL_USE_I2C1
         &mI2C1Bus,
 #else
@@ -153,7 +172,7 @@ private:
 #if SPRINGBOARD_HAL_USE_UART8
     SPRINGBOARD_HAL_PF_UART_DECL(8);
 #endif
-    UARTBus* mUARTBuses[SPRINGBOARD_HAL_UART_COUNT] = {
+    UARTBus* mUARTs[SPRINGBOARD_HAL_UART_COUNT] = {
 #if SPRINGBOARD_HAL_USE_UART1
         &mUART1Bus,
 #else
@@ -199,6 +218,9 @@ private:
 
     RealTimeClock mRTC1 { &RTCD1 };
     RealTimeClock* mRTCs[SPRINGBOARD_HAL_RTC_COUNT] = { &mRTC1 };
+
+    Watchdog mWDG1 { &WDGD1, "Watchdog", SPRINGBOARD_HAL_WDG_THREAD_PRIORITY };
+    Watchdog* mWDGs[SPRINGBOARD_HAL_WDG_COUNT] = { &mWDG1 };
 };
 
 }  // namespace InternalHAL
