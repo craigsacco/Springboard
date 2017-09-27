@@ -53,8 +53,8 @@ rapid prototyping with the end goal of reducing implementation effort.
 * OEM devices
     * NMEA 0183 compatible GPS devices (using a UART)
 
-* **\[TODO\]** SPI bus arbitrator
-    * Access to I2C bus is synchronised
+* SPI bus arbitrator
+    * Access to SPI bus is synchronised
     * On-the-fly speed and clock phase/polarity configuration
 
 * **\[TODO\]** CAN bus arbitrator

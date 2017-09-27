@@ -24,29 +24,28 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/InternalHAL/I2CBus.hpp>
-#include <Springboard/InternalHAL/I2CDevice.hpp>
+#include <Springboard/InternalHAL/SPIBus.hpp>
+#include <Springboard/InternalHAL/SPIDevice.hpp>
+#include <Springboard/CommonHAL/IDigitalOutput.hpp>
 
-#if SPRINGBOARD_HAL_ENABLE_I2C
+#if SPRINGBOARD_HAL_ENABLE_SPI
 
 namespace Springboard {
 namespace InternalHAL {
 
-I2CBus::I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority,
+SPIBus::SPIBus(Bus* bus, const char* name, Priority priority,
                size_t transactionDepth)
-    : Thread(name, SPRINGBOARD_HAL_I2C_THREAD_SIZE, priority),
+    : Thread(name, SPRINGBOARD_HAL_SPI_THREAD_SIZE, priority),
       mBus(bus), mConfig(), mTransactionQueue(transactionDepth)
 {
-    mConfig.op_mode = static_cast<i2copmode_t>(mode);
 }
 
-void I2CBus::Run()
+void SPIBus::Run()
 {
-    mConfig.clock_speed = 0;
-
     while (!ShouldTerminate()) {
-        I2CTransaction& transaction = mTransactionQueue.Fetch<I2CTransaction>();
+        SPITransaction& transaction = mTransactionQueue.Fetch<SPITransaction>();
 
+        /*
         I2CDevice::Speed speed = transaction.device->GetSpeed();
         if (mConfig.clock_speed != speed) {
             if (mConfig.clock_speed > 0) {
@@ -59,33 +58,42 @@ void I2CBus::Run()
                                             I2CDutyCycle::Fast_2);
             i2cStart(mBus, &mConfig);
         }
+        */
 
-        msg_t result = MSG_OK;
-        if (transaction.txbuf.GetSize() == 0) {
-            result = i2cMasterReceiveTimeout(mBus,
-                                             transaction.device->GetAddress(),
-                                             transaction.rxbuf.GetData(),
-                                             transaction.rxbuf.GetSize(),
-                                             transaction.timeout);
-        } else {
-            result = i2cMasterTransmitTimeout(mBus,
-                                              transaction.device->GetAddress(),
-                                              transaction.txbuf.GetData(),
-                                              transaction.txbuf.GetSize(),
-                                              transaction.rxbuf.GetData(),
-                                              transaction.rxbuf.GetSize(),
-                                              transaction.timeout);
+        // select the device
+        Springboard::CommonHAL::IDigitalOutput* selectPin =
+            transaction.device->GetSelectPin();
+        if (selectPin != nullptr) {
+            selectPin->Clear();
         }
 
-        if (result != MSG_OK) {
-            transaction.result = RC_I2C_TIMED_OUT;
-            mConfig.clock_speed = 0;  // bus is locked - force bus restart
-        } else if (mBus->errors != I2C_NO_ERROR) {
-            transaction.result = RC_I2C_HARDWARE_ERROR_BASE + mBus->errors;
+        // perform transaction
+        transaction.result = RC_OK;
+        if (transaction.exchangeData) {
+            if (transaction.txbuf.GetSize() == transaction.rxbuf.GetSize()) {
+                spiExchange(mBus, transaction.txbuf.GetSize(),
+                            transaction.txbuf.GetData(),
+                            transaction.rxbuf.GetData());
+            } else {
+                transaction.result = RC_SPI_EXCHANGE_INVALID;
+            }
         } else {
-            transaction.result = RC_OK;
+            if (transaction.txbuf.GetSize() != 0) {
+                spiSend(mBus, transaction.txbuf.GetSize(),
+                        transaction.txbuf.GetData());
+            }
+            if (transaction.rxbuf.GetSize() != 0) {
+                spiReceive(mBus, transaction.rxbuf.GetSize(),
+                           transaction.rxbuf.GetData());
+            }
         }
 
+        // unselect the device
+        if (selectPin != nullptr) {
+            selectPin->Set();
+        }
+
+        // signal caller
         transaction.completion->Signal();
     }
 }

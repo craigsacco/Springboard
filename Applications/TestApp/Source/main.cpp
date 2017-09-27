@@ -108,9 +108,6 @@ private:
 
 int main(void)
 {
-    Springboard::InternalHAL::Initialise();
-    Springboard::Kernel::Initialise();
-
     TestController testController;
     testController.Start();
 

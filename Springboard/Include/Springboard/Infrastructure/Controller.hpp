@@ -38,7 +38,13 @@ using Springboard::Utilities::Dictionary;
 namespace Springboard {
 namespace Infrastructure {
 
-class Controller : public Resource
+class BaseController : public Resource
+{
+protected:
+    BaseController(const ResourceIdentifier identifier, const char* name);
+};
+
+class Controller : public BaseController
 {
 public:
     Controller(const ResourceIdentifier identifier, const char* name);

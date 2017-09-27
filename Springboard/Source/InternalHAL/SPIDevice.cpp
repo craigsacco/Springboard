@@ -24,47 +24,44 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/Infrastructure/Controller.hpp>
-#include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <Springboard/Kernel/Kernel.hpp>
+#include <Springboard/InternalHAL/SPIDevice.hpp>
+#include <Springboard/InternalHAL/SPIBus.hpp>
+#include <Springboard/CommonHAL/IDigitalOutput.hpp>
+
+#if SPRINGBOARD_HAL_ENABLE_SPI
 
 namespace Springboard {
-namespace Infrastructure {
+namespace InternalHAL {
 
-BaseController::BaseController(const ResourceIdentifier identifier,
-                               const char* name) :
-    Resource(nullptr, identifier, ResourceType::Controller, name)
+SPIDevice::SPIDevice(SPIBus* bus,
+                     Springboard::CommonHAL::IDigitalOutput* selectPin,
+                     const SPIClockConfig clockConfig, const Speed speed,
+                     const Speed maximumSpeed)
+    : mBus(bus), mSelectPin(selectPin), mClockConfig(clockConfig),
+      mSpeed(speed), mMaximumSpeed(maximumSpeed), mCompletion(true)
 {
-    Springboard::InternalHAL::Initialise();
-    Springboard::Kernel::Initialise();
+    ASSERT(bus != nullptr);
+    ASSERT(speed > 0 && speed <= GetMaximumSpeed());
+
+    // set the select pin to inhibit selection
+    mSelectPin->Set();
 }
 
-Controller::Controller(const ResourceIdentifier identifier, const char* name) :
-    BaseController(identifier, name),
-    mPeripheralFactory(), mResourceDictionary()
+ResultCode SPIDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
+                                         bool exchangeData)
 {
-    AddResource(this);
+    SPITransaction transaction {
+        .device = this, .txbuf = txbuf,
+        .rxbuf = rxbuf, .exchangeData = exchangeData,
+        .result = RC_OK, .completion = &mCompletion
+    };
+    mBus->Enqueue(transaction);
+    mCompletion.Wait();
+
+    return RC_OK;
 }
 
-void Controller::Start()
-{
-    mPeripheralFactory.Start();
-}
-
-void Controller::AddResource(Resource* resource)
-{
-    mResourceDictionary.Add(resource->GetIdentifier(), resource);
-}
-
-Resource* Controller::FindResource(ResourceIdentifier identifier)
-{
-    Resource* resource = nullptr;
-    if (mResourceDictionary.Find(identifier, &resource)) {
-        return resource;
-    } else {
-        return nullptr;
-    }
-}
-
-}  // namespace Infrastructure
+}  // namespace InternalHAL
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

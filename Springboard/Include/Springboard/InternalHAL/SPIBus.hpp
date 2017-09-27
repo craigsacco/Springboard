@@ -24,47 +24,62 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/Infrastructure/Controller.hpp>
+#pragma once
+
 #include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <Springboard/Kernel/Kernel.hpp>
+#include <Springboard/Kernel/Thread.hpp>
+#include <Springboard/Kernel/Mailbox.hpp>
+#include <Springboard/Utilities/ArrayReference.hpp>
+
+#if SPRINGBOARD_HAL_ENABLE_SPI
+
+#if !defined(SPRINGBOARD_HAL_SPI_THREAD_SIZE)
+#define SPRINGBOARD_HAL_SPI_THREAD_SIZE     512
+#endif
+
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
-namespace Infrastructure {
 
-BaseController::BaseController(const ResourceIdentifier identifier,
-                               const char* name) :
-    Resource(nullptr, identifier, ResourceType::Controller, name)
-{
-    Springboard::InternalHAL::Initialise();
-    Springboard::Kernel::Initialise();
-}
+namespace Kernel { class BinarySemaphore; }
 
-Controller::Controller(const ResourceIdentifier identifier, const char* name) :
-    BaseController(identifier, name),
-    mPeripheralFactory(), mResourceDictionary()
-{
-    AddResource(this);
-}
+namespace InternalHAL {
 
-void Controller::Start()
-{
-    mPeripheralFactory.Start();
-}
+class SPIDevice;
 
-void Controller::AddResource(Resource* resource)
+struct SPITransaction
 {
-    mResourceDictionary.Add(resource->GetIdentifier(), resource);
-}
+    SPIDevice* device;
+    ConstByteArray txbuf;
+    ByteArray rxbuf;
+    bool exchangeData;
+    ResultCode result;
+    Springboard::Kernel::BinarySemaphore* completion;
+};
 
-Resource* Controller::FindResource(ResourceIdentifier identifier)
+class SPIBus : public Springboard::Kernel::Thread
 {
-    Resource* resource = nullptr;
-    if (mResourceDictionary.Find(identifier, &resource)) {
-        return resource;
-    } else {
-        return nullptr;
+public:
+    typedef SPIDriver Bus;
+    typedef SPIConfig Config;
+
+    SPIBus(Bus* bus, const char* name, Priority priority,
+           size_t transactionDepth);
+    void Run() final;
+
+    inline void Enqueue(const SPITransaction& transaction)
+    {
+        mTransactionQueue.Post(transaction);
     }
-}
 
-}  // namespace Infrastructure
+private:
+    Bus* mBus;
+    Config mConfig;
+    Springboard::Kernel::Mailbox mTransactionQueue;
+};
+
+}  // namespace InternalHAL
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_SPI

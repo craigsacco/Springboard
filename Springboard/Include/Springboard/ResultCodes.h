@@ -53,11 +53,15 @@
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(0))
 #define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 0)
-#define RC_I2C_ERROR_BASE                   (RC_I2C_BASE + 0x8000)
+#define RC_I2C_HARDWARE_ERROR_BASE          (RC_I2C_BASE + 0x8000)
 
 //! \section RTC result codes
 #define RC_RTC_BASE                         (RC_BASE_HAL_BLOCK(1))
 #define RC_RTC_YEAR_BEFORE_1980             (RC_RTC_BASE + 0)
+
+//! \section SPI result codes
+#define RC_SPI_BASE                         (RC_BASE_HAL_BLOCK(2))
+#define RC_SPI_EXCHANGE_INVALID             (RC_SPI_BASE + 0)
 
 //! \section NMEA0183 GPS device result codes
 #define RC_NMEA0183_GPS_BASE                (RC_BASE_EXTERNAL_HAL_BLOCK(0))
