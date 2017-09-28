@@ -37,11 +37,12 @@ class PCF8574 : public Springboard::InternalHAL::I2CDevice
 {
 public:
     PCF8574(Springboard::InternalHAL::I2CBus* bus, const Address address,
-            const Speed speed);
+            const Speed requestedSpeed);
 
     ResultCode ReadPort(uint8_t* inputs);
     ResultCode WritePort(uint8_t outputs);
 
+private:
     static constexpr Speed MAX_SPEED = 100000U;
 };
 

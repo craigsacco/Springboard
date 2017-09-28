@@ -37,7 +37,7 @@ class MCP23017 : public Springboard::InternalHAL::I2CDevice
 {
 public:
     MCP23017(Springboard::InternalHAL::I2CBus* bus, const Address address,
-             const Speed speed);
+             const Speed requestedSpeed);
 
     ResultCode ReadIODIRx(uint16_t* value);
     ResultCode ReadIPOLx(uint16_t* value);
