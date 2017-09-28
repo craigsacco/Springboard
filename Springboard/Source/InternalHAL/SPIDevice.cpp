@@ -81,4 +81,4 @@ ResultCode SPIDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
 }  // namespace InternalHAL
 }  // namespace Springboard
 
-#endif  // SPRINGBOARD_HAL_ENABLE_I2C
+#endif  // SPRINGBOARD_HAL_ENABLE_SPI
