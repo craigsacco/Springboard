@@ -8,13 +8,15 @@ of communications interface.
 This project is in its infancy, but the goal in the end is to provide a powerful framework for
 rapid prototyping with the end goal of reducing implementation effort.
 
-## Features
+## Key Features
 
-* Real-time OS under the hood (ChibiOS/RT)
+* Real-time OS under the hood (ChibiOS/RT 17.6.0 with patches)
 * Extendable infrastructure
 * Thread-safe access to hardware
+* Wide array of communications options - I2C, SPI, U(S)ART, etc...
 
-## What's Supported
+## Detailed Description
+
 * Only supports the following microcontrollers
     * STMicro STM32F407 and its siblings (405/415/417)
 
@@ -32,11 +34,12 @@ rapid prototyping with the end goal of reducing implementation effort.
 
 * I2C bus arbitrator
     * Access to I2C bus is synchronised
+    * Using DMA for TX/RX operations - no need to serve an interrupt on each byte
     * On-the-fly speed configuration
     * Added drivers for following IC's
         * TI PCF8574 GPIO expander
         * Microchip MCP23017 GPIO expander
-    * **\[TODO\]** - 10-bit and extended addressing support
+    * **\[TODO\]** - extended addressing format
 
 * RTC support
     * Calendar get/set support through the communications interface
@@ -50,12 +53,19 @@ rapid prototyping with the end goal of reducing implementation effort.
     * **\[TODO\]** - 9-bit data support
     * **\[TODO\]** - Use DMA subsystem for transmitting data, currently relying on IRQ
 
-* OEM devices
-    * NMEA 0183 compatible GPS devices (using a UART)
+* OEM device support
+    * NMEA 0183 compatible GPS devices
 
 * SPI bus arbitrator
     * Access to SPI bus is synchronised
-    * On-the-fly speed and clock phase/polarity configuration
+    * Using DMA for TX/RX operations - no need to serve an interrupt on each byte
+    * Half-duplex and full-duplex operation
+    * On-the-fly speed and CPOL/CPHA configuration
+        * Determines actual speed to operate based on desired speed and host bus
+    * Added drivers for following IC's
+        * Adesto AT45DB041E external FLASH (very basic at the moment)
+    * **\[TODO\]** - 16-bit data support
+    * **\[TODO\]** - Dual-SPI and Quad-SPI support
 
 * **\[TODO\]** CAN bus arbitrator
     * Access to CAN bus is synchronised
