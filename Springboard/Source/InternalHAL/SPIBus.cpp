@@ -36,31 +36,64 @@ namespace InternalHAL {
 SPIBus::SPIBus(Bus* bus, const char* name, Priority priority,
                size_t transactionDepth)
     : Thread(name, SPRINGBOARD_HAL_SPI_THREAD_SIZE, priority),
-      mBus(bus), mConfig(), mTransactionQueue(transactionDepth)
+      mBus(bus), mConfig(), mMaximumSpeed(0),
+      mTransactionQueue(transactionDepth)
 {
+    // determine maximum bus speed - it is half of the APB clock speed
+    // of the bus it is running on
+    if (false) {  // NOLINT
+#if SPRINGBOARD_HAL_USE_SPI1
+    } else if (mBus == &SPID1) {
+        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+#endif
+#if SPRINGBOARD_HAL_USE_SPI2
+    } else if (mBus == &SPID2) {
+        mMaximumSpeed = STM32_PCLK1_MAX >> 1;
+#endif
+#if SPRINGBOARD_HAL_USE_SPI3
+    } else if (mBus == &SPID3) {
+        mMaximumSpeed = STM32_PCLK1_MAX >> 1;
+#endif
+#if SPRINGBOARD_HAL_USE_SPI4
+    } else if (mBus == &SPID4) {
+        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+#endif
+#if SPRINGBOARD_HAL_USE_SPI5
+    } else if (mBus == &SPID5) {
+        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+#endif
+#if SPRINGBOARD_HAL_USE_SPI5
+    } else if (mBus == &SPID6) {
+        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+#endif
+    } else {
+        ASSERT_FAIL_MSG("Unknown SPI peripheral");
+    }
 }
 
 void SPIBus::Run()
 {
+    // start running with unconfigured values
+    mConfig.cr1 = 0;
+    mConfig.cr2 = 0;
+    spiStart(mBus, &mConfig);
+
     while (!ShouldTerminate()) {
         SPITransaction& transaction = mTransactionQueue.Fetch<SPITransaction>();
 
-        /*
-        I2CDevice::Speed speed = transaction.device->GetSpeed();
-        if (mConfig.clock_speed != speed) {
-            if (mConfig.clock_speed > 0) {
-                i2cStop(mBus);
-            }
-            mConfig.clock_speed = speed;
-            mConfig.duty_cycle =
-                static_cast<i2cdutycycle_t>(speed <= 100000 ?
-                                            I2CDutyCycle::Standard :
-                                            I2CDutyCycle::Fast_2);
-            i2cStart(mBus, &mConfig);
+        // (re-)configure the peripheral where necessary
+        uint32_t cr1 =
+            (static_cast<uint32_t>(
+             transaction.device->GetActualSpeedPrescaler()) << 3) |
+            static_cast<uint32_t>(transaction.device->GetClockConfig());
+        uint32_t cr2 = 0;
+        if (mConfig.cr1 != cr1 || mConfig.cr2 != cr2) {
+            mConfig.cr1 = cr1;
+            mConfig.cr2 = cr2;
+            spiStart(mBus, &mConfig);
         }
-        */
 
-        // select the device
+        // select the device by asserting the /CS line
         Springboard::CommonHAL::IDigitalOutput* selectPin =
             transaction.device->GetSelectPin();
         if (selectPin != nullptr) {
@@ -88,7 +121,7 @@ void SPIBus::Run()
             }
         }
 
-        // unselect the device
+        // unselect the device by de-asserting the /CS line
         if (selectPin != nullptr) {
             selectPin->Set();
         }

@@ -35,16 +35,31 @@ namespace InternalHAL {
 
 SPIDevice::SPIDevice(SPIBus* bus,
                      Springboard::CommonHAL::IDigitalOutput* selectPin,
-                     const SPIClockConfig clockConfig, const Speed speed,
-                     const Speed maximumSpeed)
+                     const SPIClockConfig clockConfig,
+                     const Speed requestedSpeed, const Speed maximumSpeed)
     : mBus(bus), mSelectPin(selectPin), mClockConfig(clockConfig),
-      mSpeed(speed), mMaximumSpeed(maximumSpeed), mCompletion(true)
+      mRequestedSpeed(requestedSpeed), mActualSpeed(0),
+      mActualSpeedPrescaler(0), mMaximumSpeed(maximumSpeed), mCompletion(true)
 {
     ASSERT(bus != nullptr);
-    ASSERT(speed > 0 && speed <= GetMaximumSpeed());
+    ASSERT(requestedSpeed > 0 && requestedSpeed <= GetMaximumSpeed());
 
     // set the select pin to inhibit selection
     mSelectPin->Set();
+
+    // calculate prescaler
+    mActualSpeedPrescaler = 0;
+    mActualSpeed = mBus->GetMaximumSpeed();
+    while (true) {
+        if (mRequestedSpeed < mActualSpeed) {
+            mActualSpeed >>= 1;  // halve the speed
+            if (++mActualSpeedPrescaler == 8) {
+                ASSERT_FAIL_MSG("Requested speed is too low for the SPI bus");
+            }
+        } else {
+            break;
+        }
+    }
 }
 
 ResultCode SPIDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,

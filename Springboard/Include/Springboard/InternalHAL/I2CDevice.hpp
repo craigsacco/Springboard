@@ -46,7 +46,7 @@ public:
     typedef i2caddr_t Address;
     typedef uint32_t Speed;
 
-    I2CDevice(I2CBus* bus, const Address address, const Speed speed,
+    I2CDevice(I2CBus* bus, const Address address, const Speed requestedSpeed,
               const Speed maximumSpeed = DEFAULT_MAX_SPEED);
 
     inline Address GetAddress() const
@@ -54,9 +54,9 @@ public:
         return mAddress;
     }
 
-    inline Speed GetSpeed() const
+    inline Speed GetRequestedSpeed() const
     {
-        return mSpeed;
+        return mRequestedSpeed;
     }
 
     inline Speed GetMaximumSpeed() const
@@ -91,7 +91,7 @@ private:
 
     I2CBus* mBus;
     const Address mAddress;
-    const Speed mSpeed;
+    const Speed mRequestedSpeed;
     const Speed mMaximumSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
 };

@@ -50,7 +50,7 @@ public:
     typedef uint32_t Speed;
 
     SPIDevice(SPIBus* bus, Springboard::CommonHAL::IDigitalOutput* selectPin,
-              const SPIClockConfig clockConfig, const Speed speed,
+              const SPIClockConfig clockConfig, const Speed requestedSpeed,
               const Speed maximumSpeed = DEFAULT_MAX_SPEED);
 
     inline Springboard::CommonHAL::IDigitalOutput* GetSelectPin() const
@@ -63,9 +63,19 @@ public:
         return mClockConfig;
     }
 
-    inline Speed GetSpeed() const
+    inline Speed GetRequestedSpeed() const
     {
-        return mSpeed;
+        return mRequestedSpeed;
+    }
+
+    inline Speed GetActualSpeed() const
+    {
+        return mActualSpeed;
+    }
+
+    inline uint8_t GetActualSpeedPrescaler() const
+    {
+        return mActualSpeedPrescaler;
     }
 
     inline Speed GetMaximumSpeed() const
@@ -104,7 +114,9 @@ private:
     SPIBus* mBus;
     Springboard::CommonHAL::IDigitalOutput* mSelectPin;
     const SPIClockConfig mClockConfig;
-    const Speed mSpeed;
+    const Speed mRequestedSpeed;
+    Speed mActualSpeed;
+    uint8_t mActualSpeedPrescaler;
     const Speed mMaximumSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
 };

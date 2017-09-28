@@ -30,6 +30,7 @@
 #include <Springboard/Kernel/Thread.hpp>
 #include <Springboard/Kernel/Mailbox.hpp>
 #include <Springboard/Utilities/ArrayReference.hpp>
+#include <Springboard/InternalHAL/SPIDevice.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_SPI
 
@@ -45,8 +46,6 @@ namespace Springboard {
 namespace Kernel { class BinarySemaphore; }
 
 namespace InternalHAL {
-
-class SPIDevice;
 
 struct SPITransaction
 {
@@ -66,7 +65,13 @@ public:
 
     SPIBus(Bus* bus, const char* name, Priority priority,
            size_t transactionDepth);
+
     void Run() final;
+
+    inline SPIDevice::Speed GetMaximumSpeed() const
+    {
+        return mMaximumSpeed;
+    }
 
     inline void Enqueue(const SPITransaction& transaction)
     {
@@ -76,6 +81,7 @@ public:
 private:
     Bus* mBus;
     Config mConfig;
+    SPIDevice::Speed mMaximumSpeed;
     Springboard::Kernel::Mailbox mTransactionQueue;
 };
 

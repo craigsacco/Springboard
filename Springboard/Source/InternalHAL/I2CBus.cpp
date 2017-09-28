@@ -47,7 +47,7 @@ void I2CBus::Run()
     while (!ShouldTerminate()) {
         I2CTransaction& transaction = mTransactionQueue.Fetch<I2CTransaction>();
 
-        I2CDevice::Speed speed = transaction.device->GetSpeed();
+        I2CDevice::Speed speed = transaction.device->GetRequestedSpeed();
         if (mConfig.clock_speed != speed) {
             if (mConfig.clock_speed > 0) {
                 i2cStop(mBus);
