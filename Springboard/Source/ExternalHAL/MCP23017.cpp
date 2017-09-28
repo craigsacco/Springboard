@@ -38,6 +38,126 @@ MCP23017::MCP23017(Springboard::InternalHAL::I2CBus* bus,
     ASSERT(address >= 0x20 && address <= 0x27);
 }
 
+ResultCode MCP23017::ReadIODIRx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::IODIRA, value);
+}
+
+ResultCode MCP23017::ReadIPOLx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::IPOLA, value);
+}
+
+ResultCode MCP23017::ReadGPINTENx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::GPINTENA, value);
+}
+
+ResultCode MCP23017::ReadDEFVALx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::DEFVALA, value);
+}
+
+ResultCode MCP23017::ReadINTCONx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::INTCONA, value);
+}
+
+ResultCode MCP23017::ReadIOCON(uint8_t* value)
+{
+    return ReadRegister(Register::IOCON, value);
+}
+
+ResultCode MCP23017::ReadGPPUx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::GPPUA, value);
+}
+
+ResultCode MCP23017::ReadINTFx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::INTFA, value);
+}
+
+ResultCode MCP23017::ReadINTCAPx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::INTCAPA, value);
+}
+
+ResultCode MCP23017::ReadPORTx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::PORTA, value);
+}
+
+ResultCode MCP23017::ReadOLATx(uint16_t* value)
+{
+    return ReadRegisterPair(Register::OLATA, value);
+}
+
+ResultCode MCP23017::WriteIODIRx(const uint16_t value)
+{
+    return WriteRegisterPair(Register::IODIRA, value);
+}
+
+ResultCode MCP23017::WriteIPOLx(const uint16_t value)
+{
+    return WriteRegisterPair(Register::IPOLA, value);
+}
+
+ResultCode MCP23017::WriteGPINTENx(const uint16_t value)
+{
+    return WriteRegisterPair(Register::GPINTENA, value);
+}
+
+ResultCode MCP23017::WriteDEFVALx(const uint16_t value)
+{
+    return WriteRegisterPair(Register::DEFVALA, value);
+}
+
+ResultCode MCP23017::WriteINTCONx(const uint16_t value)
+{
+    return WriteRegisterPair(Register::INTCONA, value);
+}
+
+ResultCode MCP23017::WriteIOCON(const uint8_t value)
+{
+    // only INTPOL, ODR and MIRROR bits are settable - setting any other
+    // bits in this register will cause this driver to malfunction
+    static const uint8_t validBits = (
+        static_cast<uint8_t>(MCP23017::IOCONBits::INTPOL) |
+        static_cast<uint8_t>(MCP23017::IOCONBits::ODR) |
+        static_cast<uint8_t>(MCP23017::IOCONBits::MIRROR));
+    if ((value & (~(validBits))) != 0x00) {
+        return RC_MCP23017_IOCON_INVALID;
+    }
+
+    return WriteRegister(Register::IOCON, value);
+}
+
+ResultCode MCP23017::WriteGPPUx(const uint16_t value)
+{
+    return WriteRegister(Register::GPPUA, value);
+}
+
+ResultCode MCP23017::WriteINTFx(const uint16_t value)
+{
+    return WriteRegister(Register::INTFA, value);
+}
+
+ResultCode MCP23017::WriteINTCAPx(const uint16_t value)
+{
+    return WriteRegister(Register::INTCAPA, value);
+}
+
+ResultCode MCP23017::WritePORTx(const uint16_t value)
+{
+    return WriteRegister(Register::PORTA, value);
+}
+
+ResultCode MCP23017::WriteOLATx(const uint16_t value)
+{
+    return WriteRegister(Register::OLATA, value);
+}
+
 ResultCode MCP23017::ReadRegister(const Register reg, uint8_t* value)
 {
     const uint8_t input = static_cast<uint8_t>(reg);

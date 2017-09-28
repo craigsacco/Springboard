@@ -27,42 +27,63 @@
 #pragma once
 
 //! \section Success
-#define RC_OK                               ((ResultCode)0)
+#define RC_OK                               ((ResultCode)0UL)
 
-//! \section Construction macros
-#define RC_BASE_INFRASTRUCTURE              ((ResultCode)0x10000000)
+//! \section Infrastructure result code macros and block ids
+#define RC_BASE_INFRASTRUCTURE              ((ResultCode)0x10000000UL)
 #define RC_BASE_INFRASTRUCTURE_BLOCK(x)     (RC_BASE_INFRASTRUCTURE + (x << 16))
-#define RC_BASE_DRIVERS                     ((ResultCode)0x20000000)
+#define RCBLK_INFRASTRUCTURE_RESOURCE       (0UL)
+#define RCBLK_INFRASTRUCTURE_CONTROLLER     (1UL)
+
+//! \section Driver result code macros and block ids
+#define RC_BASE_DRIVERS                     ((ResultCode)0x20000000UL)
 #define RC_BASE_DRIVERS_BLOCK(x)            (RC_BASE_INFRASTRUCTURE + (x << 16))
-#define RC_BASE_HAL                         ((ResultCode)0x30000000)
+
+//! \section HAL result code macros and block ids
+#define RC_BASE_HAL                         ((ResultCode)0x30000000UL)
 #define RC_BASE_HAL_BLOCK(x)                (RC_BASE_HAL + (x << 16))
+#define RCBLK_HAL_I2C                       (0UL)
+#define RCBLK_HAL_RTC                       (1UL)
+#define RCBLK_HAL_SPI                       (2UL)
+
+//! \section External HAL result code macros and block ids
 #define RC_BASE_EXTERNAL_HAL                ((ResultCode)0x40000000)
 #define RC_BASE_EXTERNAL_HAL_BLOCK(x)       (RC_BASE_EXTERNAL_HAL + (x << 16))
+#define RCBLK_EXTERNAL_HAL_NMEA0183_GPS     (0UL)
+#define RCBLK_EXTERNAL_HAL_MCP23017         (1UL)
 
 //! \section Resource result codes
-#define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(0))
-#define RC_RESOURCE_INVALID_TYPE            (RC_RESOURCE_BASE + 0)
-#define RC_RESOURCE_INVALID_PROPERTY_ID     (RC_RESOURCE_BASE + 1)
-#define RC_RESOURCE_PROPERTY_NOT_SETABLE    (RC_RESOURCE_BASE + 2)
-#define RC_RESOURCE_INVALID_PROPERTY_LENGTH (RC_RESOURCE_BASE + 3)
+#define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(  \
+                                             RCBLK_INFRASTRUCTURE_RESOURCE))
+#define RC_RESOURCE_INVALID_TYPE            (RC_RESOURCE_BASE + 0UL)
+#define RC_RESOURCE_INVALID_PROPERTY_ID     (RC_RESOURCE_BASE + 1UL)
+#define RC_RESOURCE_PROPERTY_NOT_SETABLE    (RC_RESOURCE_BASE + 2UL)
+#define RC_RESOURCE_INVALID_PROPERTY_LENGTH (RC_RESOURCE_BASE + 3UL)
 
 //! \section Controller result codes
-#define RC_CONTROLLER_BASE                  (RC_BASE_INFRASTRUCTURE_BLOCK(1))
-#define RC_CONTROLLER_INVALID_RESOURCE_ID   (RC_CONTROLLER_BASE + 0)
+#define RC_CONTROLLER_BASE                  (RC_BASE_INFRASTRUCTURE_BLOCK(  \
+                                             RCBLK_INFRASTRUCTURE_CONTROLLER))
+#define RC_CONTROLLER_INVALID_RESOURCE_ID   (RC_CONTROLLER_BASE + 0UL)
 
 //! \section I2C result codes
-#define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(0))
-#define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 0)
-#define RC_I2C_HARDWARE_ERROR_BASE          (RC_I2C_BASE + 0x8000)
+#define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(RCBLK_HAL_I2C))
+#define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 0UL)
+#define RC_I2C_HARDWARE_ERROR_BASE          (RC_I2C_BASE + 0x8000UL)
 
 //! \section RTC result codes
-#define RC_RTC_BASE                         (RC_BASE_HAL_BLOCK(1))
-#define RC_RTC_YEAR_BEFORE_1980             (RC_RTC_BASE + 0)
+#define RC_RTC_BASE                         (RC_BASE_HAL_BLOCK(RCBLK_HAL_RTC))
+#define RC_RTC_YEAR_BEFORE_1980             (RC_RTC_BASE + 0UL)
 
 //! \section SPI result codes
-#define RC_SPI_BASE                         (RC_BASE_HAL_BLOCK(2))
-#define RC_SPI_EXCHANGE_INVALID             (RC_SPI_BASE + 0)
+#define RC_SPI_BASE                         (RC_BASE_HAL_BLOCK(RCBLK_HAL_SPI))
+#define RC_SPI_EXCHANGE_INVALID             (RC_SPI_BASE + 0UL)
 
 //! \section NMEA0183 GPS device result codes
-#define RC_NMEA0183_GPS_BASE                (RC_BASE_EXTERNAL_HAL_BLOCK(0))
-#define RC_NMEA0183_NO_FIX_ACQUIRED         (RC_NMEA0183_GPS_BASE + 0)
+#define RC_NMEA0183_GPS_BASE                (RC_BASE_EXTERNAL_HAL_BLOCK(    \
+                                             RCBLK_EXTERNAL_HAL_NMEA0183_GPS))
+#define RC_NMEA0183_NO_FIX_ACQUIRED         (RC_NMEA0183_GPS_BASE + 0UL)
+
+//! \section MCP23017 expander device result codes
+#define RC_MCP23017_BASE                    (RC_BASE_EXTERNAL_HAL_BLOCK(    \
+                                             RCBLK_EXTERNAL_HAL_MCP23017))
+#define RC_MCP23017_IOCON_INVALID           (RC_MCP23017_BASE + 0UL)

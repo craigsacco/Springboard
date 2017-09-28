@@ -42,118 +42,112 @@ MCP23017Driver::MCP23017Driver(
 
 ResultCode MCP23017Driver::ReadIODIRx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::IODIRA, value);
+    return mDriver->ReadIODIRx(value);
 }
 
 ResultCode MCP23017Driver::ReadIPOLx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::IPOLA, value);
+    return mDriver->ReadIPOLx(value);
 }
 
 ResultCode MCP23017Driver::ReadGPINTENx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::GPINTENA, value);
+    return mDriver->ReadGPINTENx(value);
 }
 
 ResultCode MCP23017Driver::ReadDEFVALx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::DEFVALA, value);
+    return mDriver->ReadDEFVALx(value);
 }
 
 ResultCode MCP23017Driver::ReadINTCONx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::INTCONA, value);
+    return mDriver->ReadINTCONx(value);
 }
 
 ResultCode MCP23017Driver::ReadIOCON(uint8_t* value)
 {
-    return mDriver->ReadRegister(MCP23017::Register::IOCON, value);
+    return mDriver->ReadIOCON(value);
 }
 
 ResultCode MCP23017Driver::ReadGPPUx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::GPPUA, value);
+    return mDriver->ReadGPPUx(value);
 }
 
 ResultCode MCP23017Driver::ReadINTFx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::INTFA, value);
+    return mDriver->ReadINTFx(value);
 }
 
 ResultCode MCP23017Driver::ReadINTCAPx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::INTCAPA, value);
+    return mDriver->ReadINTCAPx(value);
 }
 
 ResultCode MCP23017Driver::ReadPORTx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::PORTA, value);
+    return mDriver->ReadPORTx(value);
 }
 
 ResultCode MCP23017Driver::ReadOLATx(uint16_t* value)
 {
-    return mDriver->ReadRegisterPair(MCP23017::Register::OLATA, value);
+    return mDriver->ReadOLATx(value);
 }
 
 ResultCode MCP23017Driver::WriteIODIRx(const uint16_t value)
 {
-    return mDriver->WriteRegisterPair(MCP23017::Register::IODIRA, value);
+    return mDriver->WriteIODIRx(value);
 }
 
 ResultCode MCP23017Driver::WriteIPOLx(const uint16_t value)
 {
-    return mDriver->WriteRegisterPair(MCP23017::Register::IPOLA, value);
+    return mDriver->WriteIPOLx(value);
 }
 
 ResultCode MCP23017Driver::WriteGPINTENx(const uint16_t value)
 {
-    return mDriver->WriteRegisterPair(MCP23017::Register::GPINTENA, value);
+    return mDriver->WriteGPINTENx(value);
 }
 
 ResultCode MCP23017Driver::WriteDEFVALx(const uint16_t value)
 {
-    return mDriver->WriteRegisterPair(MCP23017::Register::DEFVALA, value);
+    return mDriver->WriteDEFVALx(value);
 }
 
 ResultCode MCP23017Driver::WriteINTCONx(const uint16_t value)
 {
-    return mDriver->WriteRegisterPair(MCP23017::Register::INTCONA, value);
+    return mDriver->WriteINTCONx(value);
 }
 
 ResultCode MCP23017Driver::WriteIOCON(const uint8_t value)
 {
-    // only INTPOL, ODR and MIRROR bits are settable - setting any other
-    // bits in this register will cause this driver to malfunction
-    static const uint8_t mask = (
-        static_cast<uint8_t>(MCP23017::IOCONBits::INTPOL) |
-        static_cast<uint8_t>(MCP23017::IOCONBits::ODR) |
-        static_cast<uint8_t>(MCP23017::IOCONBits::MIRROR));
-    return mDriver->WriteRegister(MCP23017::Register::IOCON, value & mask);
+    return mDriver->WriteIOCON(value);
 }
 
 ResultCode MCP23017Driver::WriteGPPUx(const uint16_t value)
 {
-    return mDriver->WriteRegister(MCP23017::Register::GPPUA, value);
+    return mDriver->WriteGPPUx(value);
 }
 
 ResultCode MCP23017Driver::WriteINTFx(const uint16_t value)
 {
-    return mDriver->WriteRegister(MCP23017::Register::INTFA, value);
+    return mDriver->WriteINTFx(value);
 }
 
 ResultCode MCP23017Driver::WriteINTCAPx(const uint16_t value)
 {
-    return mDriver->WriteRegister(MCP23017::Register::INTCAPA, value);
+    return mDriver->WriteINTCAPx(value);
 }
 
 ResultCode MCP23017Driver::WritePORTx(const uint16_t value)
 {
-    return mDriver->WriteRegister(MCP23017::Register::PORTA, value);
+    return mDriver->WritePORTx(value);
 }
 
 ResultCode MCP23017Driver::WriteOLATx(const uint16_t value)
 {
-    return mDriver->WriteRegister(MCP23017::Register::OLATA, value);
+    return mDriver->WriteOLATx(value);
 }
 
 }  // namespace Drivers

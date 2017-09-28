@@ -39,6 +39,30 @@ public:
     MCP23017(Springboard::InternalHAL::I2CBus* bus, const Address address,
              const Speed speed);
 
+    ResultCode ReadIODIRx(uint16_t* value);
+    ResultCode ReadIPOLx(uint16_t* value);
+    ResultCode ReadGPINTENx(uint16_t* value);
+    ResultCode ReadDEFVALx(uint16_t* value);
+    ResultCode ReadINTCONx(uint16_t* value);
+    ResultCode ReadIOCON(uint8_t* value);
+    ResultCode ReadGPPUx(uint16_t* value);
+    ResultCode ReadINTFx(uint16_t* value);
+    ResultCode ReadINTCAPx(uint16_t* value);
+    ResultCode ReadPORTx(uint16_t* value);
+    ResultCode ReadOLATx(uint16_t* value);
+    ResultCode WriteIODIRx(const uint16_t value);
+    ResultCode WriteIPOLx(const uint16_t value);
+    ResultCode WriteGPINTENx(const uint16_t value);
+    ResultCode WriteDEFVALx(const uint16_t value);
+    ResultCode WriteINTCONx(const uint16_t value);
+    ResultCode WriteIOCON(const uint8_t value);
+    ResultCode WriteGPPUx(const uint16_t value);
+    ResultCode WriteINTFx(const uint16_t value);
+    ResultCode WriteINTCAPx(const uint16_t value);
+    ResultCode WritePORTx(const uint16_t value);
+    ResultCode WriteOLATx(const uint16_t value);
+
+private:
     enum class Register : uint8_t
     {
         IODIRA = 0x00,
