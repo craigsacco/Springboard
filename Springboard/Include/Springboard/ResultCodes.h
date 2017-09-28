@@ -51,6 +51,7 @@
 #define RC_BASE_EXTERNAL_HAL_BLOCK(x)       (RC_BASE_EXTERNAL_HAL + (x << 16))
 #define RCBLK_EXTERNAL_HAL_NMEA0183_GPS     (0UL)
 #define RCBLK_EXTERNAL_HAL_MCP23017         (1UL)
+#define RCBLK_EXTERNAL_HAL_AT45DBXX         (2UL)
 
 //! \section Resource result codes
 #define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(  \
@@ -87,3 +88,10 @@
 #define RC_MCP23017_BASE                    (RC_BASE_EXTERNAL_HAL_BLOCK(    \
                                              RCBLK_EXTERNAL_HAL_MCP23017))
 #define RC_MCP23017_IOCON_INVALID           (RC_MCP23017_BASE + 0UL)
+
+//! \section AT45DBxx flash device result codes
+#define RC_AT45DBXX_BASE                    (RC_BASE_EXTERNAL_HAL_BLOCK(    \
+                                             RCBLK_EXTERNAL_HAL_AT45DBXX))
+#define RC_AT45DBXX_NO_nWP_PIN              (RC_AT45DBXX_BASE + 0UL)
+#define RC_AT45DBXX_NO_nRST_PIN             (RC_AT45DBXX_BASE + 1UL)
+#define RC_AT45DBXX_JEDEC_BUFFER_TOO_SMALL  (RC_AT45DBXX_BASE + 2UL)

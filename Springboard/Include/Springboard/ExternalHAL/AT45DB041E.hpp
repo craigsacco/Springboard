@@ -26,29 +26,42 @@
 
 #pragma once
 
-#include <Springboard/CommonHAL/IDigitalInput.hpp>
-#include <Springboard/InternalHAL/InternalGPIOPin.hpp>
+#include <Springboard/InternalHAL/SPIDevice.hpp>
+
+#if SPRINGBOARD_HAL_ENABLE_SPI
 
 namespace Springboard {
-namespace InternalHAL {
+namespace ExternalHAL {
 
-class DigitalInput : public InternalGPIOPin,
-                     public Springboard::CommonHAL::IDigitalInput
+class AT45DB041E : public Springboard::InternalHAL::SPIDevice
 {
 public:
-    DigitalInput(const Port port, const uint8_t pin,
-                 const GPIOPullConfiguration pullConfiguration)
-        : InternalGPIOPin(port, pin, pullConfiguration)
-    {
-        SetPinConfiguration(mPort, mPin, GPIOPinMode::Input,
-                            mPullConfiguration);
-    }
+    AT45DB041E(Springboard::InternalHAL::SPIBus* bus,
+               Springboard::CommonHAL::IDigitalOutput* selectPin,
+               const Speed requestedSpeed,
+               Springboard::CommonHAL::IDigitalOutput* writeProtectPin,
+               Springboard::CommonHAL::IDigitalOutput* resetPin);
 
-    inline bool Get() const final
-    {
-        return palReadPad(mPort, mPin);
-    }
+    ResultCode GetWriteProtectState(bool* state);
+    ResultCode SetWriteProtectState(bool state);
+    ResultCode GetResetState(bool* state);
+    ResultCode SetResetState(bool state);
+    ResultCode ReadJEDECInfo(ByteArray bytes);
+
+    static constexpr size_t JEDEC_INFO_LENGTH = 5;
+
+private:
+    enum class OpCodes : uint8_t {
+        JedecInfo = 0x9F,
+    };
+
+    static constexpr Speed MAX_SPEED = 50000000U;
+
+    Springboard::CommonHAL::IDigitalOutput* mWriteProtectPin;
+    Springboard::CommonHAL::IDigitalOutput* mResetPin;
 };
 
-}  // namespace InternalHAL
+}  // namespace ExternalHAL
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_SPI

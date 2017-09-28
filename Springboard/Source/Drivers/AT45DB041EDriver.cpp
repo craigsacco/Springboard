@@ -24,31 +24,46 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#pragma once
+#include <Springboard/Drivers/AT45DB041EDriver.hpp>
 
-#include <Springboard/CommonHAL/IDigitalInput.hpp>
-#include <Springboard/InternalHAL/InternalGPIOPin.hpp>
+using Springboard::ExternalHAL::AT45DB041E;
 
 namespace Springboard {
-namespace InternalHAL {
+namespace Drivers {
 
-class DigitalInput : public InternalGPIOPin,
-                     public Springboard::CommonHAL::IDigitalInput
+AT45DB041EDriver::AT45DB041EDriver(
+    Springboard::Infrastructure::Controller* controller,
+    const ResourceIdentifier identifier, const char* name,
+    AT45DB041E* driver)
+    : Resource(controller, identifier, ResourceType::ExternalFlash, name),
+      mDriver(driver)
 {
-public:
-    DigitalInput(const Port port, const uint8_t pin,
-                 const GPIOPullConfiguration pullConfiguration)
-        : InternalGPIOPin(port, pin, pullConfiguration)
-    {
-        SetPinConfiguration(mPort, mPin, GPIOPinMode::Input,
-                            mPullConfiguration);
-    }
+}
 
-    inline bool Get() const final
-    {
-        return palReadPad(mPort, mPin);
-    }
-};
+ResultCode AT45DB041EDriver::GetWriteProtectState(bool* state)
+{
+    return mDriver->GetWriteProtectState(state);
+}
 
-}  // namespace InternalHAL
+ResultCode AT45DB041EDriver::SetWriteProtectState(bool state)
+{
+    return mDriver->SetWriteProtectState(state);
+}
+
+ResultCode AT45DB041EDriver::GetResetState(bool* state)
+{
+    return mDriver->GetResetState(state);
+}
+
+ResultCode AT45DB041EDriver::SetResetState(bool state)
+{
+    return mDriver->SetResetState(state);
+}
+
+ResultCode AT45DB041EDriver::ReadJEDECInfo(ByteArray bytes)
+{
+    return mDriver->ReadJEDECInfo(bytes);
+}
+
+}  // namespace Drivers
 }  // namespace Springboard

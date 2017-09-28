@@ -231,9 +231,11 @@
 ../../Springboard/Include/Springboard/Comms/IStream.hpp
 ../../Springboard/Include/Springboard/Comms/MessageStreamHandler.hpp
 ../../Springboard/Include/Springboard/Core/ExceptionHandling.h
+../../Springboard/Include/Springboard/Drivers/AT45DB041EDriver.hpp
 ../../Springboard/Include/Springboard/Drivers/MCP23017Driver.hpp
 ../../Springboard/Include/Springboard/Drivers/NMEA0183GPSDriver.hpp
 ../../Springboard/Include/Springboard/Drivers/PCF8574Driver.hpp
+../../Springboard/Include/Springboard/ExternalHAL/AT45DB041E.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/MCP23017.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/NMEA0183Device.hpp
 ../../Springboard/Include/Springboard/ExternalHAL/NMEA0183GPSDevice.hpp
@@ -267,9 +269,11 @@
 ../../Springboard/Include/Springboard/Utilities/StringSplitter.hpp
 ../../Springboard/Source/Comms/MessageStreamHandler.cpp
 ../../Springboard/Source/Core/ExceptionHandling.c
+../../Springboard/Source/Drivers/AT45DB041EDriver.cpp
 ../../Springboard/Source/Drivers/MCP23017Driver.cpp
 ../../Springboard/Source/Drivers/NMEA0183GPSDriver.cpp
 ../../Springboard/Source/Drivers/PCF8574Driver.cpp
+../../Springboard/Source/ExternalHAL/AT45DB041E.cpp
 ../../Springboard/Source/ExternalHAL/MCP23017.cpp
 ../../Springboard/Source/ExternalHAL/NMEA0183Device.cpp
 ../../Springboard/Source/ExternalHAL/NMEA0183GPSDevice.cpp

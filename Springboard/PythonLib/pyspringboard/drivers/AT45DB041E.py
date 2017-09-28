@@ -1,10 +1,11 @@
-/******************************************************************************
+'''
+ ******************************************************************************
  * MIT License
- *
+ * 
  * PROJECT SPRINGBOARD
  * -------------------
  * Copyright (c) 2017 <craig.sacco@gmail.com>
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -22,33 +23,28 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- *****************************************************************************/
+ ******************************************************************************
+'''
 
-#pragma once
+from pyspringboard.Resource import Resource
 
-#include <Springboard/CommonHAL/IDigitalInput.hpp>
-#include <Springboard/InternalHAL/InternalGPIOPin.hpp>
 
-namespace Springboard {
-namespace InternalHAL {
+class AT45DB041E(Resource):
 
-class DigitalInput : public InternalGPIOPin,
-                     public Springboard::CommonHAL::IDigitalInput
-{
-public:
-    DigitalInput(const Port port, const uint8_t pin,
-                 const GPIOPullConfiguration pullConfiguration)
-        : InternalGPIOPin(port, pin, pullConfiguration)
-    {
-        SetPinConfiguration(mPort, mPin, GPIOPinMode::Input,
-                            mPullConfiguration);
-    }
+    def __init__(self, handler, resource_id):
+        super(AT45DB041E, self).__init__(handler, resource_id)
 
-    inline bool Get() const final
-    {
-        return palReadPad(mPort, mPin);
-    }
-};
+    def get_write_protect_state(self):
+        return self._get_property_bool(100)
 
-}  // namespace InternalHAL
-}  // namespace Springboard
+    def set_write_protect_state(self, state):
+        return self._set_property_bool(100, state)
+
+    def get_reset_state(self):
+        return self._get_property_bool(101)
+
+    def set_reset_state(self, state):
+        return self._set_property_bool(101, state)
+
+    def read_jedec_info(self):
+        return self._get_property_bytes(102)

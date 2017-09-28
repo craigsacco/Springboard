@@ -42,8 +42,6 @@ public:
     {
     }
 
-    virtual void Configure() const = 0;
-
     inline static void SetPinConfiguration(
         const Port port, const uint8_t pin, const GPIOPinMode mode,
         const GPIOPullConfiguration pullConfiguration =

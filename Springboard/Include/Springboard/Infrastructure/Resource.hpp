@@ -49,6 +49,7 @@ public:
         Controller,
         IOExpander,
         GPSReceiver,
+        ExternalFlash
     };
 
     Resource(Controller* controller,
@@ -250,7 +251,7 @@ protected:
 #define PROPERTY_ENTRY_BASE(id, name, type, length, getter, setter)         \
     { id, #name, type, length, { getter }, { setter } },
 #define PROPERTY_ENTRY_BOOL_RO(owner, id, name, getter)                     \
-    PROPERTY_ENTRY_BASE(id, name, PropertyType::Bool, sizeof(bool),         \
+    PROPERTY_ENTRY_BASE(id, name, PropertyType::Boolean, sizeof(bool),         \
         .bool_fn = &owner::getter, .bool_fn = nullptr)
 #define PROPERTY_ENTRY_UINT8_RO(owner, id, name, getter)                    \
     PROPERTY_ENTRY_BASE(id, name, PropertyType::UInt8, sizeof(uint8_t),     \
@@ -289,7 +290,7 @@ protected:
     PROPERTY_ENTRY_BASE(id, name, PropertyType::ByteArray, length,          \
         .bytearray_fn = &owner::getter, .bytearray_fn = nullptr)
 #define PROPERTY_ENTRY_BOOL_RW(owner, id, name, getter, setter)             \
-    PROPERTY_ENTRY_BASE(id, name, PropertyType::Bool, sizeof(bool),         \
+    PROPERTY_ENTRY_BASE(id, name, PropertyType::Boolean, sizeof(bool),         \
         .bool_fn = &owner::getter, .bool_fn = &owner::setter)
 #define PROPERTY_ENTRY_UINT8_RW(owner, id, name, getter, setter)            \
     PROPERTY_ENTRY_BASE(id, name, PropertyType::UInt8, sizeof(uint8_t),     \

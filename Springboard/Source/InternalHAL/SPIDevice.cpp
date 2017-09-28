@@ -45,7 +45,9 @@ SPIDevice::SPIDevice(SPIBus* bus,
     ASSERT(requestedSpeed > 0 && requestedSpeed <= GetMaximumSpeed());
 
     // set the select pin to inhibit selection
-    mSelectPin->Set();
+    if (mSelectPin != nullptr) {
+        mSelectPin->Set();
+    }
 
     // calculate prescaler
     mActualSpeedPrescaler = 0;

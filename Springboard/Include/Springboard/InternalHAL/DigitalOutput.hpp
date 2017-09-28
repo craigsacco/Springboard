@@ -44,10 +44,6 @@ public:
         mOutputConfiguration(outputConfiguration),
         mOutputSpeed(outputSpeed)
     {
-    }
-
-    inline void Configure() const final
-    {
         SetPinConfiguration(mPort, mPin, GPIOPinMode::Output,
                             mPullConfiguration, mOutputConfiguration,
                             mOutputSpeed);

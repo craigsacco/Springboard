@@ -8,6 +8,7 @@ from pyspringboard.MessageHandler import MessageHandler
 from pyspringboard.Controller import Controller
 from pyspringboard.drivers.MCP23017 import MCP23017
 from pyspringboard.drivers.NMEA0183GPS import NMEA0183GPS
+from pyspringboard.drivers.AT45DB041E import AT45DB041E
 
 
 class TestController(Controller):
@@ -16,6 +17,7 @@ class TestController(Controller):
         super(TestController, self).__init__(handler)
         self.__expander = MCP23017(handler, 2)
         self.__gps = NMEA0183GPS(handler, 3)
+        self.__flash = AT45DB041E(handler, 4)
 
     @property
     def expander(self):
@@ -24,6 +26,10 @@ class TestController(Controller):
     @property
     def gps(self):
         return self.__gps
+
+    @property
+    def flash(self):
+        return self.__flash
 
 
 def main():
@@ -62,6 +68,12 @@ def main():
         print "GPS last fix quality: {0}".format(controller.gps.get_last_fix_quality())
         print "GPS last fix horizontal dilution: {0}".format(controller.gps.get_last_fix_horizontal_dilution())
         print "GPS last fix height of geoid: {0}".format(controller.gps.get_last_fix_height_of_geoid())
+        print "Flash resource type: {0}".format(controller.flash.get_resource_type())
+        print "Flash resource name: {0}".format(controller.flash.get_resource_name())
+        controller.flash.set_reset_state(False)
+        print "Flash reset state: {0}".format(controller.flash.get_reset_state())
+        print "Flash JEDEC info: {0}".format(list(controller.flash.read_jedec_info()))
+
 
     finally:
         client.close()
