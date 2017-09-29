@@ -28,6 +28,8 @@
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/Kernel/Kernel.hpp>
 
+using Springboard::Utilities::Dictionary;
+
 namespace Springboard {
 namespace Infrastructure {
 

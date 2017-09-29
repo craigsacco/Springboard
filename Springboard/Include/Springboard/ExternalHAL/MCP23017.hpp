@@ -36,8 +36,9 @@ namespace ExternalHAL {
 class MCP23017 : public Springboard::InternalHAL::I2CDevice
 {
 public:
-    MCP23017(Springboard::InternalHAL::I2CBus* bus, const Address address,
-             const Speed requestedSpeed);
+    MCP23017(Springboard::InternalHAL::I2CBus* bus,
+             const Springboard::InternalHAL::I2CBus::Address address,
+             const Springboard::InternalHAL::I2CBus::Speed requestedSpeed);
 
     ResultCode ReadIODIRx(uint16_t* value);
     ResultCode ReadIPOLx(uint16_t* value);
@@ -104,7 +105,8 @@ private:
     ResultCode WriteRegister(const Register reg, const uint8_t value);
     ResultCode WriteRegisterPair(const Register reg, const uint16_t value);
 
-    static constexpr Speed MAX_SPEED = 1700000U;
+    static constexpr Springboard::InternalHAL::I2CBus::Speed MAX_SPEED =
+        1700000U;
 };
 
 }  // namespace ExternalHAL

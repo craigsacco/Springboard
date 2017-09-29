@@ -30,15 +30,17 @@
 
 #if SPRINGBOARD_HAL_ENABLE_SPI
 
+using Springboard::CommonHAL::IDigitalOutput;
+using Springboard::InternalHAL::SPIBus;
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace ExternalHAL {
 
 AT45DB041E::AT45DB041E(
-    Springboard::InternalHAL::SPIBus* bus,
-    Springboard::CommonHAL::IDigitalOutput* selectPin,
-    const Speed requestedSpeed,
-    Springboard::CommonHAL::IDigitalOutput* writeProtectPin,
-    Springboard::CommonHAL::IDigitalOutput* resetPin)
+    SPIBus* bus, IDigitalOutput* selectPin, const SPIBus::Speed requestedSpeed,
+    IDigitalOutput* writeProtectPin, IDigitalOutput* resetPin)
     : Springboard::InternalHAL::SPIDevice(
         bus, selectPin,
         Springboard::InternalHAL::SPIClockConfig::Mode0_CPOL0_CPHA0,

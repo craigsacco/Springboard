@@ -37,38 +37,36 @@
 #define SPRINGBOARD_HAL_I2C_THREAD_SIZE     512
 #endif
 
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
-
 namespace Springboard {
 
 namespace Kernel { class BinarySemaphore; }
 
 namespace InternalHAL {
 
-class I2CDevice;
-
-struct I2CTransaction
-{
-    I2CDevice* device;
-    ConstByteArray txbuf;
-    ByteArray rxbuf;
-    systime_t timeout;
-    ResultCode result;
-    Springboard::Kernel::BinarySemaphore* completion;
-};
-
 class I2CBus : public Springboard::Kernel::Thread
 {
 public:
     typedef I2CDriver Bus;
     typedef I2CConfig Config;
+    typedef i2caddr_t Address;
+    typedef uint32_t Speed;
+
+    struct Transaction
+    {
+        Address address;
+        Speed speed;
+        Springboard::Utilities::ConstByteArray txbuf;
+        Springboard::Utilities::ByteArray rxbuf;
+        systime_t timeout;
+        ResultCode result;
+        Springboard::Kernel::BinarySemaphore* completion;
+    };
 
     I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority,
            size_t transactionDepth);
     void Run() final;
 
-    inline void Enqueue(const I2CTransaction& transaction)
+    inline void Enqueue(const Transaction& transaction)
     {
         mTransactionQueue.Post(transaction);
     }

@@ -32,8 +32,6 @@
 
 #if SPRINGBOARD_HAL_ENABLE_UART
 
-using Springboard::Utilities::StringSplitter;
-
 namespace Springboard {
 namespace ExternalHAL {
 
@@ -53,8 +51,9 @@ public:
     ResultCode GetLastFixHeightOfGeoid(float* height);
 
 private:
-    void ReceivedMessage(ConstCharArray message) final;
-    void ReceivedGPSFixInformation(StringSplitter splitter);
+    void ReceivedMessage(Springboard::Utilities::ConstCharArray message) final;
+    void ReceivedGPSFixInformation(
+        Springboard::Utilities::StringSplitter splitter);
 
     Springboard::Kernel::Mutex mMutex;
 

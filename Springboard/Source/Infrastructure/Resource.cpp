@@ -27,6 +27,9 @@
 #include <Springboard/Infrastructure/Resource.hpp>
 #include <Springboard/Infrastructure/Controller.hpp>
 
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace Infrastructure {
 

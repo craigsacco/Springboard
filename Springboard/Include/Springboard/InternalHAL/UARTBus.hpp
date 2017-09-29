@@ -63,12 +63,12 @@ public:
         return sdGet(mBus);
     }
 
-    inline void Read(ByteArray buffer) final
+    inline void Read(Springboard::Utilities::ByteArray buffer) final
     {
         sdRead(mBus, buffer.GetData(), buffer.GetSize());
     }
 
-    inline size_t ReadAsync(ByteArray buffer) final
+    inline size_t ReadAsync(Springboard::Utilities::ByteArray buffer) final
     {
         return sdAsynchronousRead(mBus, buffer.GetData(), buffer.GetSize());
     }
@@ -78,12 +78,12 @@ public:
         sdPut(mBus, b);
     }
 
-    inline void Write(ConstByteArray buffer) final
+    inline void Write(Springboard::Utilities::ConstByteArray buffer) final
     {
         sdWrite(mBus, buffer.GetData(), buffer.GetSize());
     }
 
-    inline size_t ReadAsync(ConstByteArray buffer) final
+    inline size_t ReadAsync(Springboard::Utilities::ConstByteArray buffer) final
     {
         return sdAsynchronousWrite(mBus, buffer.GetData(), buffer.GetSize());
     }

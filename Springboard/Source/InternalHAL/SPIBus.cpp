@@ -30,6 +30,9 @@
 
 #if SPRINGBOARD_HAL_ENABLE_SPI
 
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace InternalHAL {
 
@@ -79,13 +82,12 @@ void SPIBus::Run()
     spiStart(mBus, &mConfig);
 
     while (!ShouldTerminate()) {
-        SPITransaction& transaction = mTransactionQueue.Fetch<SPITransaction>();
+        Transaction& transaction = mTransactionQueue.Fetch<Transaction>();
 
         // (re-)configure the peripheral where necessary
         uint32_t cr1 =
-            (static_cast<uint32_t>(
-             transaction.device->GetActualSpeedPrescaler()) << 3) |
-            static_cast<uint32_t>(transaction.device->GetClockConfig());
+            (static_cast<uint32_t>(transaction.clockPrescaler) << 3) |
+            static_cast<uint32_t>(transaction.clockConfig);
         uint32_t cr2 = 0;
         if (mConfig.cr1 != cr1 || mConfig.cr2 != cr2) {
             mConfig.cr1 = cr1;
@@ -94,10 +96,8 @@ void SPIBus::Run()
         }
 
         // select the device by asserting the /CS line
-        Springboard::CommonHAL::IDigitalOutput* selectPin =
-            transaction.device->GetSelectPin();
-        if (selectPin != nullptr) {
-            selectPin->Clear();
+        if (transaction.selectPin != nullptr) {
+            transaction.selectPin->Clear();
         }
 
         // perform transaction
@@ -122,8 +122,8 @@ void SPIBus::Run()
         }
 
         // unselect the device by de-asserting the /CS line
-        if (selectPin != nullptr) {
-            selectPin->Set();
+        if (transaction.selectPin != nullptr) {
+            transaction.selectPin->Set();
         }
 
         // signal caller

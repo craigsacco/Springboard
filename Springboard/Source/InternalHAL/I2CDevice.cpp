@@ -29,11 +29,15 @@
 
 #if SPRINGBOARD_HAL_ENABLE_I2C
 
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace InternalHAL {
 
-I2CDevice::I2CDevice(I2CBus* bus, const Address address,
-                     const Speed requestedSpeed, const Speed maximumSpeed)
+I2CDevice::I2CDevice(I2CBus* bus, const I2CBus::Address address,
+                     const I2CBus::Speed requestedSpeed,
+                     const I2CBus::Speed maximumSpeed)
     : mBus(bus), mAddress(address), mRequestedSpeed(requestedSpeed),
       mMaximumSpeed(maximumSpeed), mCompletion(true)
 {
@@ -41,13 +45,14 @@ I2CDevice::I2CDevice(I2CBus* bus, const Address address,
     ASSERT(requestedSpeed > 0 && requestedSpeed <= GetMaximumSpeed());
 }
 
-ResultCode I2CDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
-                                         systime_t timeout)
+ResultCode I2CDevice::PerformTransaction(I2CBus::Address address,
+                                         ConstByteArray txbuf,
+                                         ByteArray rxbuf, systime_t timeout)
 {
-    I2CTransaction transaction {
-        .device = this, .txbuf = txbuf,
-        .rxbuf = rxbuf, .timeout = timeout,
-        .result = RC_OK, .completion = &mCompletion
+    I2CBus::Transaction transaction {
+        .address = address, .speed = mRequestedSpeed, .txbuf = txbuf,
+        .rxbuf = rxbuf, .timeout = timeout, .result = RC_OK,
+        .completion = &mCompletion
     };
     mBus->Enqueue(transaction);
     mCompletion.Wait();

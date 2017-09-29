@@ -27,6 +27,7 @@
 #include <Springboard/Drivers/AT45DB041EDriver.hpp>
 
 using Springboard::ExternalHAL::AT45DB041E;
+using Springboard::Utilities::ByteArray;
 
 namespace Springboard {
 namespace Drivers {

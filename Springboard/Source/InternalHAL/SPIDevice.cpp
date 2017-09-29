@@ -30,16 +30,20 @@
 
 #if SPRINGBOARD_HAL_ENABLE_SPI
 
+using Springboard::CommonHAL::IDigitalOutput;
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace InternalHAL {
 
-SPIDevice::SPIDevice(SPIBus* bus,
-                     Springboard::CommonHAL::IDigitalOutput* selectPin,
+SPIDevice::SPIDevice(SPIBus* bus, IDigitalOutput* selectPin,
                      const SPIClockConfig clockConfig,
-                     const Speed requestedSpeed, const Speed maximumSpeed)
+                     const SPIBus::Speed requestedSpeed,
+                     const SPIBus::Speed maximumSpeed)
     : mBus(bus), mSelectPin(selectPin), mClockConfig(clockConfig),
       mRequestedSpeed(requestedSpeed), mActualSpeed(0),
-      mActualSpeedPrescaler(0), mMaximumSpeed(maximumSpeed), mCompletion(true)
+      mActualClockPrescaler(0), mMaximumSpeed(maximumSpeed), mCompletion(true)
 {
     ASSERT(bus != nullptr);
     ASSERT(requestedSpeed > 0 && requestedSpeed <= GetMaximumSpeed());
@@ -49,13 +53,14 @@ SPIDevice::SPIDevice(SPIBus* bus,
         mSelectPin->Set();
     }
 
-    // calculate prescaler
-    mActualSpeedPrescaler = 0;
+    // calculate clock prescaler - this is based of the maximum speed of the
+    // SPI bus
+    mActualClockPrescaler = 0;
     mActualSpeed = mBus->GetMaximumSpeed();
     while (true) {
         if (mRequestedSpeed < mActualSpeed) {
             mActualSpeed >>= 1;  // halve the speed
-            if (++mActualSpeedPrescaler == 8) {
+            if (++mActualClockPrescaler == 8) {
                 ASSERT_FAIL_MSG("Requested speed is too low for the SPI bus");
             }
         } else {
@@ -67,10 +72,11 @@ SPIDevice::SPIDevice(SPIBus* bus,
 ResultCode SPIDevice::PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
                                          bool exchangeData)
 {
-    SPITransaction transaction {
-        .device = this, .txbuf = txbuf,
-        .rxbuf = rxbuf, .exchangeData = exchangeData,
-        .result = RC_OK, .completion = &mCompletion
+    SPIBus::Transaction transaction {
+        .clockPrescaler = mActualClockPrescaler, .clockConfig = mClockConfig,
+        .selectPin = mSelectPin, .txbuf = txbuf, .rxbuf = rxbuf,
+        .exchangeData = exchangeData, .result = RC_OK,
+        .completion = &mCompletion
     };
     mBus->Enqueue(transaction);
     mCompletion.Wait();

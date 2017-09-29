@@ -36,14 +36,16 @@ namespace ExternalHAL {
 class PCF8574 : public Springboard::InternalHAL::I2CDevice
 {
 public:
-    PCF8574(Springboard::InternalHAL::I2CBus* bus, const Address address,
-            const Speed requestedSpeed);
+    PCF8574(Springboard::InternalHAL::I2CBus* bus,
+            const Springboard::InternalHAL::I2CBus::Address address,
+            const Springboard::InternalHAL::I2CBus::Speed requestedSpeed);
 
     ResultCode ReadPort(uint8_t* inputs);
     ResultCode WritePort(uint8_t outputs);
 
 private:
-    static constexpr Speed MAX_SPEED = 100000U;
+    static constexpr Springboard::InternalHAL::I2CBus::Speed MAX_SPEED =
+        100000U;
 };
 
 }  // namespace ExternalHAL

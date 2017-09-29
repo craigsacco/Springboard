@@ -27,13 +27,11 @@
 #pragma once
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/InternalHAL/I2CBus.hpp>
 #include <Springboard/Kernel/BinarySemaphore.hpp>
 #include <Springboard/Utilities/ArrayReference.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_I2C
-
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
 namespace InternalHAL {
@@ -43,56 +41,81 @@ class I2CBus;
 class I2CDevice
 {
 public:
-    typedef i2caddr_t Address;
-    typedef uint32_t Speed;
+    I2CDevice(I2CBus* bus,
+              const I2CBus::Address address,
+              const I2CBus::Speed requestedSpeed,
+              const I2CBus::Speed maximumSpeed = DEFAULT_MAX_SPEED);
 
-    I2CDevice(I2CBus* bus, const Address address, const Speed requestedSpeed,
-              const Speed maximumSpeed = DEFAULT_MAX_SPEED);
-
-    inline Address GetAddress() const
+    inline I2CBus::Address GetAddress() const
     {
         return mAddress;
     }
 
-    inline Speed GetRequestedSpeed() const
+    inline I2CBus::Speed GetRequestedSpeed() const
     {
         return mRequestedSpeed;
     }
 
-    inline Speed GetMaximumSpeed() const
+    inline I2CBus::Speed GetMaximumSpeed() const
     {
         return mMaximumSpeed;
     }
 
-    static constexpr Speed DEFAULT_MAX_SPEED = 100000U;
+    static constexpr I2CBus::Speed DEFAULT_MAX_SPEED = 100000U;
 
 protected:
-    inline ResultCode Receive(ByteArray rxbuf,
+    inline ResultCode Receive(Springboard::Utilities::ByteArray rxbuf,
                               systime_t timeout = TIME_INFINITE)
     {
-        return PerformTransaction(nullptr, rxbuf, timeout);
+        return ReceiveEx(mAddress, rxbuf, timeout);
     }
 
-    inline ResultCode Transmit(ConstByteArray txbuf,
+    inline ResultCode Transmit(Springboard::Utilities::ConstByteArray txbuf,
                                systime_t timeout = TIME_INFINITE)
     {
-        return PerformTransaction(txbuf, nullptr, timeout);
+        return TransmitEx(mAddress, txbuf, timeout);
     }
 
-    inline ResultCode TransmitAndReceive(ConstByteArray txbuf, ByteArray rxbuf,
-                                         systime_t timeout = TIME_INFINITE)
+    inline ResultCode TransmitAndReceive(
+        Springboard::Utilities::ConstByteArray txbuf,
+        Springboard::Utilities::ByteArray rxbuf,
+        systime_t timeout = TIME_INFINITE)
     {
-        return PerformTransaction(txbuf, rxbuf, timeout);
+        return TransmitAndReceiveEx(mAddress, txbuf, rxbuf, timeout);
+    }
+
+    inline ResultCode ReceiveEx(I2CBus::Address address,
+                                Springboard::Utilities::ByteArray rxbuf,
+                                systime_t timeout = TIME_INFINITE)
+    {
+        return PerformTransaction(address, nullptr, rxbuf, timeout);
+    }
+
+    inline ResultCode TransmitEx(I2CBus::Address address,
+                                 Springboard::Utilities::ConstByteArray txbuf,
+                                 systime_t timeout = TIME_INFINITE)
+    {
+        return PerformTransaction(address, txbuf, nullptr, timeout);
+    }
+
+    inline ResultCode TransmitAndReceiveEx(
+        I2CBus::Address address, Springboard::Utilities::ConstByteArray txbuf,
+        Springboard::Utilities::ByteArray rxbuf,
+        systime_t timeout = TIME_INFINITE)
+    {
+        return PerformTransaction(address, txbuf, rxbuf, timeout);
     }
 
 private:
-    ResultCode PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
+    ResultCode PerformTransaction(I2CBus::Address address,
+                                  Springboard::Utilities::ConstByteArray txbuf,
+                                  Springboard::Utilities::ByteArray rxbuf,
                                   systime_t timeout);
 
     I2CBus* mBus;
-    const Address mAddress;
-    const Speed mRequestedSpeed;
-    const Speed mMaximumSpeed;
+    const I2CBus::Address mAddress;
+    const I2CBus::Speed mRequestedSpeed;
+    const I2CBus::Speed mMaximumSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
 };
 

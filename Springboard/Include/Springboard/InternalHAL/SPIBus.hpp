@@ -30,7 +30,6 @@
 #include <Springboard/Kernel/Thread.hpp>
 #include <Springboard/Kernel/Mailbox.hpp>
 #include <Springboard/Utilities/ArrayReference.hpp>
-#include <Springboard/InternalHAL/SPIDevice.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_SPI
 
@@ -38,42 +37,44 @@
 #define SPRINGBOARD_HAL_SPI_THREAD_SIZE     512
 #endif
 
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
-
 namespace Springboard {
 
+namespace CommonHAL { class IDigitalOutput; }
 namespace Kernel { class BinarySemaphore; }
 
 namespace InternalHAL {
-
-struct SPITransaction
-{
-    SPIDevice* device;
-    ConstByteArray txbuf;
-    ByteArray rxbuf;
-    bool exchangeData;
-    ResultCode result;
-    Springboard::Kernel::BinarySemaphore* completion;
-};
 
 class SPIBus : public Springboard::Kernel::Thread
 {
 public:
     typedef SPIDriver Bus;
     typedef SPIConfig Config;
+    typedef uint32_t Speed;
+    typedef uint8_t Prescaler;
+
+    struct Transaction
+    {
+        Prescaler clockPrescaler;
+        SPIClockConfig clockConfig;
+        Springboard::CommonHAL::IDigitalOutput* selectPin;
+        Springboard::Utilities::ConstByteArray txbuf;
+        Springboard::Utilities::ByteArray rxbuf;
+        bool exchangeData;
+        ResultCode result;
+        Springboard::Kernel::BinarySemaphore* completion;
+    };
 
     SPIBus(Bus* bus, const char* name, Priority priority,
            size_t transactionDepth);
 
     void Run() final;
 
-    inline SPIDevice::Speed GetMaximumSpeed() const
+    inline Speed GetMaximumSpeed() const
     {
         return mMaximumSpeed;
     }
 
-    inline void Enqueue(const SPITransaction& transaction)
+    inline void Enqueue(const Transaction& transaction)
     {
         mTransactionQueue.Post(transaction);
     }
@@ -81,7 +82,7 @@ public:
 private:
     Bus* mBus;
     Config mConfig;
-    SPIDevice::Speed mMaximumSpeed;
+    Speed mMaximumSpeed;
     Springboard::Kernel::Mailbox mTransactionQueue;
 };
 

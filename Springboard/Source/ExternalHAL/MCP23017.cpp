@@ -28,13 +28,16 @@
 
 #if SPRINGBOARD_HAL_ENABLE_I2C
 
+using Springboard::InternalHAL::I2CBus;
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace ExternalHAL {
 
-MCP23017::MCP23017(Springboard::InternalHAL::I2CBus* bus,
-                   const Address address, const Speed requestedSpeed)
-    : Springboard::InternalHAL::I2CDevice(bus, address, requestedSpeed,
-                                          MAX_SPEED)
+MCP23017::MCP23017(I2CBus* bus, const I2CBus::Address address,
+                   const I2CBus::Speed requestedSpeed)
+    : I2CDevice(bus, address, requestedSpeed, MAX_SPEED)
 {
     ASSERT(address >= 0x20 && address <= 0x27);
 }

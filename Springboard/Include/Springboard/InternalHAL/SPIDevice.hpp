@@ -27,13 +27,11 @@
 #pragma once
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/InternalHAL/SPIBus.hpp>
 #include <Springboard/Kernel/BinarySemaphore.hpp>
 #include <Springboard/Utilities/ArrayReference.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_SPI
-
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
 
 namespace Springboard {
 
@@ -41,17 +39,13 @@ namespace CommonHAL { class IDigitalOutput; }
 
 namespace InternalHAL {
 
-class SPIBus;
-
 class SPIDevice
 {
 public:
-    typedef i2caddr_t Address;
-    typedef uint32_t Speed;
-
     SPIDevice(SPIBus* bus, Springboard::CommonHAL::IDigitalOutput* selectPin,
-              const SPIClockConfig clockConfig, const Speed requestedSpeed,
-              const Speed maximumSpeed = DEFAULT_MAX_SPEED);
+              const SPIClockConfig clockConfig,
+              const SPIBus::Speed requestedSpeed,
+              const SPIBus::Speed maximumSpeed = DEFAULT_MAX_SPEED);
 
     inline Springboard::CommonHAL::IDigitalOutput* GetSelectPin() const
     {
@@ -63,61 +57,65 @@ public:
         return mClockConfig;
     }
 
-    inline Speed GetRequestedSpeed() const
+    inline SPIBus::Speed GetRequestedSpeed() const
     {
         return mRequestedSpeed;
     }
 
-    inline Speed GetActualSpeed() const
+    inline SPIBus::Speed GetActualSpeed() const
     {
         return mActualSpeed;
     }
 
-    inline uint8_t GetActualSpeedPrescaler() const
+    inline SPIBus::Prescaler GetActualClockPrescaler() const
     {
-        return mActualSpeedPrescaler;
+        return mActualClockPrescaler;
     }
 
-    inline Speed GetMaximumSpeed() const
+    inline SPIBus::Speed GetMaximumSpeed() const
     {
         return mMaximumSpeed;
     }
 
-    static constexpr Speed DEFAULT_MAX_SPEED = 100000U;
+    static constexpr SPIBus::Speed DEFAULT_MAX_SPEED = 100000U;
 
 protected:
-    inline ResultCode Receive(ByteArray rxbuf)
+    inline ResultCode Receive(Springboard::Utilities::ByteArray rxbuf)
     {
         return PerformTransaction(nullptr, rxbuf, false);
     }
 
-    inline ResultCode Transmit(ConstByteArray txbuf)
+    inline ResultCode Transmit(Springboard::Utilities::ConstByteArray txbuf)
     {
         return PerformTransaction(txbuf, nullptr, false);
     }
 
-    inline ResultCode TransmitAndReceive(ConstByteArray txbuf, ByteArray rxbuf)
+    inline ResultCode TransmitAndReceive(
+        Springboard::Utilities::ConstByteArray txbuf,
+        Springboard::Utilities::ByteArray rxbuf)
     {
         return PerformTransaction(txbuf, rxbuf, false);
     }
 
-    inline ResultCode Exchange(ConstByteArray txbuf, ByteArray rxbuf)
+    inline ResultCode Exchange(Springboard::Utilities::ConstByteArray txbuf,
+                               Springboard::Utilities::ByteArray rxbuf)
     {
         ASSERT(txbuf.GetSize() == rxbuf.GetSize());
         return PerformTransaction(txbuf, rxbuf, true);
     }
 
 private:
-    ResultCode PerformTransaction(ConstByteArray txbuf, ByteArray rxbuf,
+    ResultCode PerformTransaction(Springboard::Utilities::ConstByteArray txbuf,
+                                  Springboard::Utilities::ByteArray rxbuf,
                                   bool exchangeData);
 
     SPIBus* mBus;
     Springboard::CommonHAL::IDigitalOutput* mSelectPin;
     const SPIClockConfig mClockConfig;
-    const Speed mRequestedSpeed;
-    Speed mActualSpeed;
-    uint8_t mActualSpeedPrescaler;
-    const Speed mMaximumSpeed;
+    const SPIBus::Speed mRequestedSpeed;
+    SPIBus::Speed mActualSpeed;
+    SPIBus::Prescaler mActualClockPrescaler;
+    const SPIBus::Speed mMaximumSpeed;
     Springboard::Kernel::BinarySemaphore mCompletion;
 };
 

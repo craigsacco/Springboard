@@ -45,16 +45,15 @@ void I2CBus::Run()
     mConfig.clock_speed = 0;
 
     while (!ShouldTerminate()) {
-        I2CTransaction& transaction = mTransactionQueue.Fetch<I2CTransaction>();
+        Transaction& transaction = mTransactionQueue.Fetch<Transaction>();
 
-        I2CDevice::Speed speed = transaction.device->GetRequestedSpeed();
-        if (mConfig.clock_speed != speed) {
+        if (mConfig.clock_speed != transaction.speed) {
             if (mConfig.clock_speed > 0) {
                 i2cStop(mBus);
             }
-            mConfig.clock_speed = speed;
+            mConfig.clock_speed = transaction.speed;
             mConfig.duty_cycle =
-                static_cast<i2cdutycycle_t>(speed <= 100000 ?
+                static_cast<i2cdutycycle_t>(transaction.speed <= 100000 ?
                                             I2CDutyCycle::Standard :
                                             I2CDutyCycle::Fast_2);
             i2cStart(mBus, &mConfig);
@@ -63,13 +62,13 @@ void I2CBus::Run()
         msg_t result = MSG_OK;
         if (transaction.txbuf.GetSize() == 0) {
             result = i2cMasterReceiveTimeout(mBus,
-                                             transaction.device->GetAddress(),
+                                             transaction.address,
                                              transaction.rxbuf.GetData(),
                                              transaction.rxbuf.GetSize(),
                                              transaction.timeout);
         } else {
             result = i2cMasterTransmitTimeout(mBus,
-                                              transaction.device->GetAddress(),
+                                              transaction.address,
                                               transaction.txbuf.GetData(),
                                               transaction.txbuf.GetSize(),
                                               transaction.rxbuf.GetData(),

@@ -28,8 +28,6 @@
 
 #include <Springboard/Utilities/ArrayReference.hpp>
 
-using Springboard::Utilities::ConstCharArray;
-
 namespace Springboard {
 namespace Utilities {
 

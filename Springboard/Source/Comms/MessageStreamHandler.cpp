@@ -28,6 +28,9 @@
 #include <Springboard/Infrastructure/Controller.hpp>
 #include <Springboard/Comms/IStream.hpp>
 
+using Springboard::Infrastructure::Resource;
+using Springboard::Utilities::ConstByteArray;
+
 namespace Springboard {
 namespace Comms {
 

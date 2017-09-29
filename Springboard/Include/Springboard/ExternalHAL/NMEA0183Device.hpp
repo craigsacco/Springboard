@@ -36,8 +36,6 @@
 
 #if SPRINGBOARD_HAL_ENABLE_UART
 
-using Springboard::Utilities::ConstCharArray;
-
 namespace Springboard {
 
 namespace InternalHAL { class UARTBus; }
@@ -52,7 +50,8 @@ public:
     void Run() final;
 
 protected:
-    virtual void ReceivedMessage(ConstCharArray message) = 0;
+    virtual void ReceivedMessage(
+        Springboard::Utilities::ConstCharArray message) = 0;
 
 private:
     enum class MessageState : uint8_t

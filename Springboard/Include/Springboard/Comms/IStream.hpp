@@ -28,9 +28,6 @@
 
 #include <Springboard/Utilities/ArrayReference.hpp>
 
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
-
 namespace Springboard {
 namespace Comms {
 
@@ -38,11 +35,11 @@ class IStream
 {
 public:
     virtual uint8_t Read() = 0;
-    virtual void Read(ByteArray buffer) = 0;
-    virtual size_t ReadAsync(ByteArray buffer) = 0;
+    virtual void Read(Springboard::Utilities::ByteArray buffer) = 0;
+    virtual size_t ReadAsync(Springboard::Utilities::ByteArray buffer) = 0;
     virtual void Write(uint8_t b) = 0;
-    virtual void Write(ConstByteArray buffer) = 0;
-    virtual size_t ReadAsync(ConstByteArray buffer) = 0;
+    virtual void Write(Springboard::Utilities::ConstByteArray buffer) = 0;
+    virtual size_t ReadAsync(Springboard::Utilities::ConstByteArray buffer) = 0;
 };
 
 }  // namespace Comms

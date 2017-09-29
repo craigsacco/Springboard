@@ -27,6 +27,10 @@
 #include <Springboard/ExternalHAL/NMEA0183Device.hpp>
 #include <Springboard/InternalHAL/UARTBus.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_UART
+
+using Springboard::Utilities::ConstCharArray;
+
 namespace Springboard {
 namespace ExternalHAL {
 
@@ -153,3 +157,5 @@ void NMEA0183Device::Run()
 
 }  // namespace ExternalHAL
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_UART

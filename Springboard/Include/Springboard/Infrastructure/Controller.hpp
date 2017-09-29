@@ -32,8 +32,8 @@
 #include <Springboard/Kernel/Systime.hpp>
 #include <Springboard/Utilities/Dictionary.hpp>
 
-using Springboard::Infrastructure::Resource;
-using Springboard::Utilities::Dictionary;
+using Springboard::Utilities::ByteArray;
+using Springboard::Utilities::CharArray;
 
 namespace Springboard {
 namespace Infrastructure {
@@ -166,7 +166,8 @@ private:
                              GetRTCTimeStringPropertyRequest)
     PROPERTY_TABLE_END()
 
-    Dictionary<ResourceIdentifier, Resource*> mResourceDictionary;
+    Springboard::Utilities::Dictionary<ResourceIdentifier, Resource*>
+        mResourceDictionary;
 };
 
 }  // namespace Infrastructure

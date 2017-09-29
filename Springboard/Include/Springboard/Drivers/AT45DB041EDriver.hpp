@@ -45,7 +45,7 @@ public:
     ResultCode SetWriteProtectState(bool state);
     ResultCode GetResetState(bool* state);
     ResultCode SetResetState(bool state);
-    ResultCode ReadJEDECInfo(ByteArray bytes);
+    ResultCode ReadJEDECInfo(Springboard::Utilities::ByteArray bytes);
 
     PROPERTY_GET_HANDLER(AT45DB041EDriver,
                          Springboard::Infrastructure::Resource)

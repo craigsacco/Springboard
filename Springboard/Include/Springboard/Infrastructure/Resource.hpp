@@ -31,11 +31,6 @@
 #include <cstring>
 #include <Springboard/Utilities/ArrayReference.hpp>
 
-using Springboard::Utilities::ByteArray;
-using Springboard::Utilities::ConstByteArray;
-using Springboard::Utilities::CharArray;
-using Springboard::Utilities::ConstCharArray;
-
 namespace Springboard {
 namespace Infrastructure {
 
@@ -84,7 +79,8 @@ public:
         identifier, data)
 #define PROPERTY_GET_HANDLER(owner, base)                                   \
     ResultCode GetProperty(PropertyIdentifier identifier,                   \
-                           ByteArray data, uint8_t* length) override        \
+                           Springboard::Utilities::ByteArray data,          \
+                           uint8_t* length) override                        \
     {                                                                       \
         ResultCode result = PROPERTY_GET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
@@ -94,7 +90,8 @@ public:
     }
 #define PROPERTY_SET_HANDLER(owner, base)                                   \
     ResultCode SetProperty(PropertyIdentifier identifier,                   \
-                           ConstByteArray data) override                    \
+                           Springboard::Utilities::ConstByteArray data)     \
+                           override                                         \
     {                                                                       \
         ResultCode result = PROPERTY_SET_HANDLER_IMPL(owner);               \
         if (result == RC_RESOURCE_INVALID_PROPERTY_ID) {                    \
@@ -104,9 +101,10 @@ public:
     }
 
     virtual ResultCode GetProperty(PropertyIdentifier identifier,
-                                   ByteArray data, uint8_t* length);
+                                   Springboard::Utilities::ByteArray data,
+                                   uint8_t* length);
     virtual ResultCode SetProperty(PropertyIdentifier identifier,
-                                   ConstByteArray data);
+                                   Springboard::Utilities::ConstByteArray data);
 
 protected:
     template <class TClass, typename TProp> using GetterFPtr =
@@ -134,9 +132,9 @@ protected:
     template <class TClass> using DoubleGetterFPtr =
         GetterFPtr<TClass, double*>;
     template <class TClass> using StringGetterFPtr =
-        GetterFPtr<TClass, CharArray>;
+        GetterFPtr<TClass, Springboard::Utilities::CharArray>;
     template <class TClass> using ByteArrayGetterFPtr =
-        GetterFPtr<TClass, ByteArray>;
+        GetterFPtr<TClass, Springboard::Utilities::ByteArray>;
     template <class TClass, typename TProp> using SetterFPtr =
         ResultCode(TClass::*)(const TProp);
     template <class TClass> using BoolSetterFPtr =
@@ -162,9 +160,9 @@ protected:
     template <class TClass> using DoubleSetterFPtr =
         SetterFPtr<TClass, double>;
     template <class TClass> using StringSetterFPtr =
-        SetterFPtr<TClass, ConstCharArray>;
+        SetterFPtr<TClass, Springboard::Utilities::ConstCharArray>;
     template <class TClass> using ByteArraySetterFPtr =
-        SetterFPtr<TClass, ConstByteArray>;
+        SetterFPtr<TClass, Springboard::Utilities::ConstByteArray>;
 
     enum class PropertyType : uint8_t
     {
@@ -337,7 +335,8 @@ protected:
                                    const PropertyEntry<TClass> entries[],
                                    size_t size,
                                    PropertyIdentifier identifier,
-                                   ByteArray data, uint8_t* length)
+                                   Springboard::Utilities::ByteArray data,
+                                   uint8_t* length)
     {
         for (size_t i = 0; i < size; i++)
         {
@@ -452,7 +451,8 @@ protected:
 
     template <class TClass, typename TProp>
     inline ResultCode SetPropertyInternalTemplate(TClass* owner,
-        SetterFPtr<TClass, TProp> setter, ConstByteArray data)
+        SetterFPtr<TClass, TProp> setter,
+        Springboard::Utilities::ConstByteArray data)
     {
         return SetPropertyInternalTemplate2(
             owner, setter, *reinterpret_cast<const TProp*>(data.GetData()));
@@ -463,7 +463,7 @@ protected:
                                    const PropertyEntry<TClass> entries[],
                                    size_t size,
                                    PropertyIdentifier identifier,
-                                   ConstByteArray data)
+                                   Springboard::Utilities::ConstByteArray data)
     {
         for (size_t i = 0; i < size; i++)
         {
@@ -559,7 +559,7 @@ private:
         return RC_OK;
     }
 
-    ResultCode GetNamePropertyRequest(CharArray value)
+    ResultCode GetNamePropertyRequest(Springboard::Utilities::CharArray value)
     {
         Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
             value, GetName());

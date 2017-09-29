@@ -38,7 +38,7 @@ class AT45DB041E : public Springboard::InternalHAL::SPIDevice
 public:
     AT45DB041E(Springboard::InternalHAL::SPIBus* bus,
                Springboard::CommonHAL::IDigitalOutput* selectPin,
-               const Speed requestedSpeed,
+               const Springboard::InternalHAL::SPIBus::Speed requestedSpeed,
                Springboard::CommonHAL::IDigitalOutput* writeProtectPin,
                Springboard::CommonHAL::IDigitalOutput* resetPin);
 
@@ -46,7 +46,7 @@ public:
     ResultCode SetWriteProtectState(bool state);
     ResultCode GetResetState(bool* state);
     ResultCode SetResetState(bool state);
-    ResultCode ReadJEDECInfo(ByteArray bytes);
+    ResultCode ReadJEDECInfo(Springboard::Utilities::ByteArray bytes);
 
     static constexpr size_t JEDEC_INFO_LENGTH = 5;
 
@@ -55,7 +55,8 @@ private:
         JedecInfo = 0x9F,
     };
 
-    static constexpr Speed MAX_SPEED = 50000000U;
+    static constexpr Springboard::InternalHAL::SPIBus::Speed MAX_SPEED =
+        50000000U;
 
     Springboard::CommonHAL::IDigitalOutput* mWriteProtectPin;
     Springboard::CommonHAL::IDigitalOutput* mResetPin;

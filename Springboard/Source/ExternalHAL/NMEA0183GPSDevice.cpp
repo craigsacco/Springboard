@@ -27,13 +27,16 @@
 #include <cstring>
 #include <Springboard/ExternalHAL/NMEA0183GPSDevice.hpp>
 
+using Springboard::InternalHAL::UARTBus;
 using Springboard::Kernel::ScopedMutex;
+using Springboard::Utilities::ConstCharArray;
+using Springboard::Utilities::StringSplitter;
 
 namespace Springboard {
 namespace ExternalHAL {
 
-NMEA0183GPSDevice::NMEA0183GPSDevice(Springboard::InternalHAL::UARTBus* bus,
-                                     const char* name, Priority priority) :
+NMEA0183GPSDevice::NMEA0183GPSDevice(UARTBus* bus, const char* name,
+                                     Priority priority) :
     NMEA0183Device(bus, name, priority),
     mMutex(), mLastFixReceived(false)
 {
