@@ -78,7 +78,7 @@ float StringSplitter::GetNextAsFloat(bool* errors)
 
 StringSplitter StringSplitter::GetRemainder() const
 {
-    return StringSplitter(mBuffer.RightFrom(mPosition), mToken);
+    return StringSplitter(mBuffer.From(mPosition), mToken);
 }
 
 }  // namespace Utilities

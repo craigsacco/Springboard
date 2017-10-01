@@ -37,42 +37,64 @@
 #define CH_CFG_USE_MEMPOOLS                 FALSE
 #define CH_CFG_USE_DYNAMIC                  TRUE
 
+//! \section mandatory debug options
+
+#define CH_DBG_SYSTEM_STATE_CHECK           TRUE
+#define CH_DBG_ENABLE_CHECKS                TRUE
+#define CH_DBG_ENABLE_ASSERTS               TRUE
+#define CH_DBG_ENABLE_STACK_CHECK           TRUE
+#define CH_DBG_FILL_THREADS                 TRUE
+
+//! \section extern declarations for kernel hooks
+//! \note need to hide it from the assembler
+
+#ifndef _FROM_ASM_
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern void HandleCrashFA(const char* reason);
+#ifdef __cplusplus
+}
+#endif
+#endif
+
 //! \section mandatory kernel hooks
 
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/
+    /* Add threads custom fields here.*/
 #define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
-  /* Add threads initialization code here.*/                                \
+    /* Add threads initialization code here.*/                              \
 }
 #define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
-  /* Add threads finalization code here.*/                                  \
+    /* Add threads finalization code here.*/                                \
 }
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-  /* Context switch code here.*/                                            \
+    /* Context switch code here.*/                                          \
 }
 #define CH_CFG_IRQ_PROLOGUE_HOOK() {                                        \
-  /* IRQ prologue code here.*/                                              \
+    /* IRQ prologue code here.*/                                            \
 }
 #define CH_CFG_IRQ_EPILOGUE_HOOK() {                                        \
-  /* IRQ epilogue code here.*/                                              \
+    /* IRQ epilogue code here.*/                                            \
 }
 #define CH_CFG_IDLE_ENTER_HOOK() {                                          \
-  /* Idle-enter code here.*/                                                \
+    /* Idle-enter code here.*/                                              \
 }
 #define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
-  /* Idle-leave code here.*/                                                \
+    /* Idle-leave code here.*/                                              \
 }
 #define CH_CFG_IDLE_LOOP_HOOK() {                                           \
-  /* Idle loop code here.*/                                                 \
+    /* Idle loop code here.*/                                               \
 }
 #define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
-  /* System tick event code here.*/                                         \
+    /* System tick event code here.*/                                       \
 }
 #define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
-  /* System halt code here.*/                                               \
+    HandleCrashFA(reason);                                                  \
 }
 #define CH_CFG_TRACE_HOOK(tep) {                                            \
-  /* Trace code here.*/                                                     \
+    /* Trace code here.*/                                                   \
 }
 
-// TODO: common chconf.h definitions here
+//! \section port options
+#define PORT_ENABLE_GUARD_PAGES             TRUE

@@ -24,17 +24,52 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <hal.h>
-#include <Springboard/Core/ExceptionHandling.h>
 #include <Springboard/Core/CrashHandler.h>
+#include <hal.h>
+#include <string.h>
 
-void UnhandledException(struct ExceptionStackFrame* frame)
+static inline void TriggerBreakpoint(void)
 {
-    port_disable();
+    // if running a debug session, trigger a software breakpoint
+    if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) {
+        __ASM volatile ("bkpt");  // NOLINT
+    }
 
-    HandleCrashUE(frame,
-                  (uint8_t)(SCB->ICSR & 0xff),
-                  (SCB->CFSR),
-                  ((SCB->CFSR & (1UL << 7)) ? SCB->MMFAR : 0x00000000U),
-                  ((SCB->CFSR & (1UL << 15)) ? SCB->BFAR : 0x00000000U));
+    // loop forever
+    while (true) {
+    }
+}
+
+static void PersistCrashInfo(struct CrashInfo* info)
+{
+    (void)info;
+}
+
+void HandleCrashFA(const char* reason)
+{
+    struct CrashInfo info;
+    info.type = CRASH_INFO_TYPE_FIRMWARE_ASSERT;
+    strncpy(info.data.firmwareAssert.assertString, reason,
+            CRASH_INFO_FIRMWARE_ASSERT_STRING_LENGTH - 1);
+
+    PersistCrashInfo(&info);
+    TriggerBreakpoint();
+}
+
+void HandleCrashUE(struct ExceptionStackFrame* exceptionStackFrame,
+                   uint8_t exceptionNumber,
+                   uint32_t cfsrValue,
+                   uint32_t mmfarAddress,
+                   uint32_t bfarAddress)
+{
+    struct CrashInfo info;
+    info.type = CRASH_INFO_TYPE_UNHANDLED_EXCEPTION;
+    info.data.unhandledException.exceptionStackFrame = *exceptionStackFrame;
+    info.data.unhandledException.exceptionNumber = exceptionNumber;
+    info.data.unhandledException.cfsrValue = cfsrValue;
+    info.data.unhandledException.mmfarAddress = mmfarAddress;
+    info.data.unhandledException.bfarAddress = bfarAddress;
+
+    PersistCrashInfo(&info);
+    TriggerBreakpoint();
 }

@@ -43,114 +43,114 @@ NMEA0183Device::NMEA0183Device(Springboard::InternalHAL::UARTBus* bus,
 
 void NMEA0183Device::Run()
 {
-    size_t length = 0;
-    bool verify = false;
+    MessageState messageState = MessageState::Idle;
+    size_t messageLength = 0;
+    bool verifyMessage = false;
     uint8_t actualChecksum = 0;
     uint8_t expectedChecksum = 0;
     size_t expectedChecksumLength = 0;
-    MessageState state = MessageState::Idle;
 
     while (!ShouldTerminate()) {
-        bool ok = true;
-        bool message = false;
-        uint8_t b = mBus->Read();
+        bool charOk = true;
+        bool gotMessage = false;
+        uint8_t ch = mBus->Read();
 
-        if (b == '$' || b == '!') {
-            length = 0;
-            verify = false;
+        if (ch == '$' || ch == '!') {
+            messageLength = 0;
+            verifyMessage = false;
             actualChecksum = 0;
-            state = MessageState::GotStartDelimiter;
+            messageState = MessageState::GotStartDelimiter;
         } else {
-            switch (state) {
+            switch (messageState) {
             case MessageState::Idle:
             {
-                ok = false;  // out-of-band character
+                charOk = false;  // out-of-band character
                 break;
             }
             case MessageState::GotStartDelimiter:
             case MessageState::GettingMessage:
             {
-                if (b == '*') {
-                    state = MessageState::GotEndDelimiter;
+                if (ch == '*') {
+                    messageState = MessageState::GotEndDelimiter;
                     expectedChecksum = 0;
                     expectedChecksumLength = 0;
-                } else if (b < 0x20 || b > 0x7e) {
-                    ok = false;  // invalid character received
+                } else if (ch < 0x20 || ch > 0x7e) {
+                    charOk = false;  // invalid character received
                 } else {
-                    state = MessageState::GettingMessage;
+                    messageState = MessageState::GettingMessage;
                 }
                 break;
             }
             case MessageState::GotEndDelimiter:
             case MessageState::GettingChecksum:
             {
-                if (b == '\r') {
+                if (ch == '\r') {
                     if (expectedChecksumLength == 0 ||
                         expectedChecksumLength == 2) {
-                        state = MessageState::GotCR;
+                        messageState = MessageState::GotCR;
                     } else {
-                        ok = false;  // checksum field of malformed length
+                        charOk = false;  // checksum field of malformed length
                     }
-                } else if ((b >= '0' && b <= '9') ||
-                           (b >= 'A' && b <= 'F') ||
-                           (b >= 'a' && b <= 'f')) {
-                    state = MessageState::GettingChecksum;
-                    verify = true;
+                } else if ((ch >= '0' && ch <= '9') ||
+                           (ch >= 'A' && ch <= 'F') ||
+                           (ch >= 'a' && ch <= 'f')) {
+                    messageState = MessageState::GettingChecksum;
+                    verifyMessage = true;
                     expectedChecksum <<= 4;
-                    if (b >= '0' && b <= '9') {
-                        expectedChecksum |= b - '0';
-                    } else if (b >= 'A' && b <= 'F') {
-                        expectedChecksum |= ((b - 'A') + 10);
+                    if (ch >= '0' && ch <= '9') {
+                        expectedChecksum |= ch - '0';
+                    } else if (ch >= 'A' && ch <= 'F') {
+                        expectedChecksum |= ((ch - 'A') + 10);
                     } else {
-                        expectedChecksum |= ((b - 'a') + 10);
+                        expectedChecksum |= ((ch - 'a') + 10);
                     }
                     expectedChecksumLength++;
                     if (expectedChecksumLength > 2) {
-                        ok = false;  // checksum field too long
+                        charOk = false;  // checksum field too long
                     }
                 } else {
-                    ok = false;  // no hex character or CR character
+                    charOk = false;  // no hex character or CR character
                 }
                 break;
             }
             case MessageState::GotCR:
             {
-                if (b == '\n') {
-                    message = true;
+                if (ch == '\n') {
+                    gotMessage = true;
                 } else {
-                    ok = false;  // no LF character
+                    charOk = false;  // no LF character
                 }
                 break;
             }
             }
         }
 
-        bool reset = false;
-        if (ok) {
-            if (state == MessageState::GettingMessage) {
-                if (length < MAX_MESSAGE_SIZE) {
-                    mMessageBuffer[length++] = b;
-                    actualChecksum ^= b;
+        bool resetBuffer = false;
+        if (charOk) {
+            if (messageState == MessageState::GettingMessage) {
+                if (messageLength < MAX_MESSAGE_SIZE) {
+                    mMessageBuffer[messageLength++] = ch;
+                    actualChecksum ^= ch;
                 } else {
-                    reset = true;  // message too long - ignore remainder
+                    resetBuffer = true;  // message too long - ignore remainder
                 }
             }
-            if (message) {
-                if (verify && expectedChecksum == actualChecksum) {
+            if (gotMessage) {
+                if (verifyMessage && expectedChecksum == actualChecksum) {
                     ReceivedMessage(ConstCharArray::Construct(
                         reinterpret_cast<const char*>(mMessageBuffer),
-                        length));
+                        messageLength));
                 }
-                reset = true;  // done handling message
+                resetBuffer = true;  // done handling message
             }
         } else {
-            reset = true;  // resetting due to error condition
+            resetBuffer = true;  // resetting due to error condition
         }
 
-        if (reset) {
-            length = 0;
-            verify = false;
-            state = MessageState::Idle;
+        if (resetBuffer) {
+            messageLength = 0;
+            verifyMessage = false;
+            messageState = MessageState::Idle;
         }
     }
 }

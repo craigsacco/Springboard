@@ -53,9 +53,13 @@ uint32_t ToUInt32(ConstCharArray buffer, bool* errors)
     uint32_t value = 0;
 
     while (pos < buffer.GetSize()) {
-        char b = buffer[pos++];
-        if (isdigit(b)) {
-            value = (value * 10) + (b - '0');
+        char ch = buffer[pos++];
+        if (ch >= '0' && ch <= '9') {
+            if (value > (0xffffffff / 10)) {
+                ok = false;
+                break;  // will overflow
+            }
+            value = (value * 10) + (ch - '0');
         } else {
             ok = false;
             break;  // invalid digit found
@@ -76,7 +80,7 @@ int32_t ToInt32(ConstCharArray buffer, bool* errors)
 
     if (buffer[0] == '-') {
         negative = true;
-        u = ToUInt32(buffer.RightFrom(1), &errors0);
+        u = ToUInt32(buffer.From(1), &errors0);
     } else {
         u = ToUInt32(buffer, &errors0);
     }
@@ -114,17 +118,17 @@ float ToFloat(ConstCharArray buffer, bool* errors)
     float fractional = 0.0f;
 
     while (pos < buffer.GetSize()) {
-        char b = buffer[pos];
-        if (pos == 0 && b == '-') {
+        char ch = buffer[pos];
+        if (pos == 0 && ch == '-') {
             negative = true;
-        } else if (isdigit(b)) {
+        } else if (ch >= '0' && ch <= '9') {
             if (fractional == 0) {
-                value = (value * 10.0f) + (b - '0');
+                value = (value * 10.0f) + (ch - '0');
             } else {
-                value += ((b - '0') * fractional);
+                value += ((ch - '0') * fractional);
                 fractional *= 0.1f;
             }
-        } else if (b == '.') {
+        } else if (ch == '.') {
             if (fractional == 0.0f) {
                 fractional = 0.1f;
             } else {

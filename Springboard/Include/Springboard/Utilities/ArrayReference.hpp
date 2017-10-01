@@ -99,14 +99,15 @@ public:
 
     ArrayReference<T> Mid(size_t i, size_t n) const
     {
+        ASSERT(i <= mSize);
         ASSERT(i + n <= mSize);
         return ArrayReference<T>(mData + i, n);
     }
 
-    ArrayReference<T> RightFrom(size_t n) const
+    ArrayReference<T> From(size_t i) const
     {
-        ASSERT(n <= mSize);
-        return ArrayReference<T>(mData + n, mSize - n);
+        ASSERT(i <= mSize);
+        return ArrayReference<T>(mData + i, mSize - i);
     }
 
     template <typename TTarget>

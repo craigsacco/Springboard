@@ -63,34 +63,6 @@
 #define CH_DBG_STATISTICS                   FALSE
 
 /**
- * @brief   Debug option, system state check.
- * @details If enabled the correct call protocol for system APIs is checked
- *          at runtime.
- *
- * @note    The default is @p FALSE.
- */
-#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
-
-/**
- * @brief   Debug option, parameters checks.
- * @details If enabled then the checks on the API functions input
- *          parameters are activated.
- *
- * @note    The default is @p FALSE.
- */
-#define CH_DBG_ENABLE_CHECKS                FALSE
-
-/**
- * @brief   Debug option, consistency checks.
- * @details If enabled then all the assertions in the kernel code are
- *          activated. This includes consistency checks inside the kernel,
- *          runtime anomalies and port-defined checks.
- *
- * @note    The default is @p FALSE.
- */
-#define CH_DBG_ENABLE_ASSERTS               TRUE
-
-/**
  * @brief   Debug option, trace buffer.
  * @details If enabled then the trace buffer is activated.
  *
@@ -104,28 +76,6 @@
  *          different from @p CH_DBG_TRACE_MASK_DISABLED.
  */
 #define CH_DBG_TRACE_BUFFER_SIZE            128
-
-/**
- * @brief   Debug option, stack checks.
- * @details If enabled then a runtime stack check is performed.
- *
- * @note    The default is @p FALSE.
- * @note    The stack check is performed in a architecture/port dependent way.
- *          It may not be implemented or some ports.
- * @note    The default failure mode is to halt the system with the global
- *          @p panic_msg variable set to @p NULL.
- */
-#define CH_DBG_ENABLE_STACK_CHECK           TRUE
-
-/**
- * @brief   Debug option, stacks initialization.
- * @details If enabled then the threads working area is filled with a byte
- *          value when a thread is created. This can be useful for the
- *          runtime measurement of the used stack.
- *
- * @note    The default is @p FALSE.
- */
-#define CH_DBG_FILL_THREADS                 FALSE
 
 /**
  * @brief   Debug option, threads profiling.

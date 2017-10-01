@@ -230,6 +230,7 @@
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
 ../../Springboard/Include/Springboard/Comms/IStream.hpp
 ../../Springboard/Include/Springboard/Comms/MessageStreamHandler.hpp
+../../Springboard/Include/Springboard/Core/CrashHandler.h
 ../../Springboard/Include/Springboard/Core/ExceptionHandling.h
 ../../Springboard/Include/Springboard/Drivers/AT45DB041EDriver.hpp
 ../../Springboard/Include/Springboard/Drivers/MCP23017Driver.hpp
@@ -268,6 +269,7 @@
 ../../Springboard/Include/Springboard/Utilities/LinkedList.hpp
 ../../Springboard/Include/Springboard/Utilities/StringSplitter.hpp
 ../../Springboard/Source/Comms/MessageStreamHandler.cpp
+../../Springboard/Source/Core/CrashHandler.c
 ../../Springboard/Source/Core/ExceptionHandling.c
 ../../Springboard/Source/Drivers/AT45DB041EDriver.cpp
 ../../Springboard/Source/Drivers/MCP23017Driver.cpp

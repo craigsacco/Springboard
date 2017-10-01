@@ -36,8 +36,30 @@ Thread::Thread(const char* name, size_t size, Priority priority)
     // this function is a variation of chThdCreateFromHeap, except that
     // the thread remains suspended at the end of the call
 
-    void* wsp = Springboard::Kernel::AllocateMemoryFromHeapAligned(size);
+    // NOTE: when using PORT_ENABLE_GUARD_PAGES, the current
+    // version of the chHeapAllocAligned() function in ChibiOS may not return a
+    // pointer that is properly aligned to a 32-byte boundary required for MPU
+    // page guarding to work correctly. The side of effect is that the thread
+    // does not get created. It has been posted to the forums here:
+    // http://www.chibios.com/forum/viewtopic.php?f=35&t=4254
+    //
+    // the workaround is to request a larger amount of memory than requested
+    // from the heap and forward the pointer to a 32 byte alignment (or
+    // allocate the increased memory to the thread in case it is already
+    // aligned)
+    void* wsp = Springboard::Kernel::AllocateMemoryFromHeapAligned(
+        size + PORT_WORKING_AREA_ALIGN);
     ASSERT(wsp != nullptr);
+    uint8_t* tmp = static_cast<uint8_t*>(wsp);
+    tmp = reinterpret_cast<uint8_t*>(
+        (reinterpret_cast<uint32_t>(tmp) &
+         ~(static_cast<uint32_t>(PORT_WORKING_AREA_ALIGN - 1))));
+    if (tmp != wsp) {
+        tmp += PORT_WORKING_AREA_ALIGN;  // forward to next alignment
+    } else {
+        size += PORT_WORKING_AREA_ALIGN;  // give thread additional stack
+    }
+    wsp = static_cast<void*>(tmp);
 
     thread_descriptor_t td = {
         .name = name,

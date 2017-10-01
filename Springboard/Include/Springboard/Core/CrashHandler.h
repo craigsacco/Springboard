@@ -24,17 +24,66 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <hal.h>
-#include <Springboard/Core/ExceptionHandling.h>
-#include <Springboard/Core/CrashHandler.h>
+#pragma once
 
-void UnhandledException(struct ExceptionStackFrame* frame)
+#include <Springboard/Common.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#pragma pack(1)
+struct ExceptionStackFrame
 {
-    port_disable();
+    uint32_t r0;
+    uint32_t r1;
+    uint32_t r2;
+    uint32_t r3;
+    uint32_t r12;
+    uint32_t lr;
+    uint32_t pc;
+    uint32_t xpsr;
+};
 
-    HandleCrashUE(frame,
-                  (uint8_t)(SCB->ICSR & 0xff),
-                  (SCB->CFSR),
-                  ((SCB->CFSR & (1UL << 7)) ? SCB->MMFAR : 0x00000000U),
-                  ((SCB->CFSR & (1UL << 15)) ? SCB->BFAR : 0x00000000U));
+struct UnhandledExceptionData
+{
+    struct ExceptionStackFrame exceptionStackFrame;
+    uint8_t exceptionNumber;
+    uint32_t cfsrValue;
+    uint32_t mmfarAddress;
+    uint32_t bfarAddress;
+};
+
+#define CRASH_INFO_FIRMWARE_ASSERT_STRING_LENGTH        128
+
+struct FirmwareAssertData
+{
+    char assertString[CRASH_INFO_FIRMWARE_ASSERT_STRING_LENGTH];
+};
+
+union CrashData
+{
+    struct UnhandledExceptionData unhandledException;
+    struct FirmwareAssertData firmwareAssert;
+};
+
+#define CRASH_INFO_TYPE_UNHANDLED_EXCEPTION             0
+#define CRASH_INFO_TYPE_FIRMWARE_ASSERT                 1
+
+struct CrashInfo
+{
+    uint8_t type;
+    union CrashData data;
+};
+#pragma pack()
+
+void HandleCrashFA(const char* reason);
+void HandleCrashUE(struct ExceptionStackFrame* exceptionStackFrame,
+                   uint8_t exceptionNumber,
+                   uint32_t cfsrValue,
+                   uint32_t mmfarAddress,
+                   uint32_t bfarAddress);
+
+#ifdef __cplusplus
 }
+#endif
