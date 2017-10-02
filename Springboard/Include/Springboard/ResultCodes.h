@@ -52,6 +52,7 @@
 #define RCBLK_EXTERNAL_HAL_NMEA0183_GPS     (0UL)
 #define RCBLK_EXTERNAL_HAL_MCP23017         (1UL)
 #define RCBLK_EXTERNAL_HAL_AT45DBXX         (2UL)
+#define RCBLK_EXTERNAL_HAL_AT24CXX          (3UL)
 
 //! \section Resource result codes
 #define RC_RESOURCE_BASE                    (RC_BASE_INFRASTRUCTURE_BLOCK(  \
@@ -95,3 +96,8 @@
 #define RC_AT45DBXX_NO_nWP_PIN              (RC_AT45DBXX_BASE + 0UL)
 #define RC_AT45DBXX_NO_nRST_PIN             (RC_AT45DBXX_BASE + 1UL)
 #define RC_AT45DBXX_JEDEC_BUFFER_TOO_SMALL  (RC_AT45DBXX_BASE + 2UL)
+
+//! \section AT24Cxx EEPROM device result codes
+#define RC_AT24CXX_BASE                     (RC_BASE_EXTERNAL_HAL_BLOCK(    \
+                                             RCBLK_EXTERNAL_HAL_AT24CXX))
+#define RC_AT45DBXX_INVALID_OFFSET_OR_SIZE  (RC_AT24CXX_BASE + 0UL)
