@@ -122,26 +122,22 @@ public:
     {
         static_assert(sizeof(T) == sizeof(TTo),
                       "Size of destination type must be the same");
+        static_assert(!(std::is_const<T>() && !std::is_const<TTo>()),
+                      "Cast from const type to non-const type is forbidden");
         return ArrayReference<TTo>::Construct(reinterpret_cast<TTo*>(mData),
                                               mSize);
     }
 
-    void CopyTo(ArrayReference<NonConstType> to)
+    inline void CopyTo(ArrayReference<NonConstType> to)
     {
         ASSERT(to.GetSize() >= mSize);
         memcpy(to.GetData(), mData, mSize * sizeof(T));
     }
 
-    ArrayReference<ConstType> ToConst()
+    inline ArrayReference<ConstType> ToConst()
     {
         return ArrayReference<ConstType>::Construct(
             reinterpret_cast<ConstType*>(mData), GetSize());
-    }
-
-    ArrayReference<NonConstType> ToNonConst()
-    {
-        return ArrayReference<NonConstType>::Construct(
-            reinterpret_cast<NonConstType*>(mData), GetSize());
     }
 
     static constexpr ArrayReference<T> Null()

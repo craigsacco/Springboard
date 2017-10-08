@@ -77,7 +77,8 @@ ResultCode AT24Cxx::Read(size_t offset, ByteArray data, size_t* read)
         }
 
         // read chunk
-        result = ReceiveEx(GetAddress() + page, data.Mid(dataOffset, chunkSize));
+        result = ReceiveEx(GetAddress() + page, data.Mid(dataOffset,
+                                                         chunkSize));
         if (result != RC_OK) {
             return result;
         }
