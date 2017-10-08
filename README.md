@@ -10,7 +10,7 @@ rapid prototyping with the end goal of reducing implementation effort.
 
 ## Key Features
 
-* Real-time OS under the hood (ChibiOS/RT 17.6.0 with patches)
+* Real-time OS under the hood (ChibiOS/RT 17.6.2 with patches)
 * Extendable infrastructure
 * Thread-safe access to hardware
 * Wide array of communications options - I2C, SPI, U(S)ART, etc...

@@ -69,3 +69,12 @@ class Controller(Resource):
 
     def get_rtc_time_string(self):
         return self._get_property_string(20)
+
+    def get_mcu_family(self):
+        return self._get_property_string(21)
+
+    def get_mcu_line(self):
+        return self._get_property_string(22)
+
+    def get_mcu_variant(self):
+        return self._get_property_string(23)

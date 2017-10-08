@@ -30,11 +30,37 @@
 #include <Springboard/Common.h>
 #include <Springboard/Utilities/ArrayReference.hpp>
 
+//! \section Microcontroller families
+#define MCU_FAMILY_STM32F4              0UL
+
+//! \section STM32F4 microcontroller lines
+#define MCU_LINE_STM32F405_F407         0UL
+
+//! \section STM32F405/F407 microcontroller variants
+#define MCU_VARIANT_STM32F405xE         0UL
+#define MCU_VARIANT_STM32F405xG         1UL
+#define MCU_VARIANT_STM32F407xE         2UL
+#define MCU_VARIANT_STM32F407xG         3UL
+#define MCU_VARIANT_STM32F415xG         4UL
+#define MCU_VARIANT_STM32F417xE         5UL
+#define MCU_VARIANT_STM32F417xG         6UL
+
+//! \section Microcontroller type/family/line/variant declarations
+#define MCU_TYPE(family, line, variant)                     \
+    ((MCU_FAMILY_##family) << 16U) |                        \
+    ((MCU_LINE_##line) << 8U) |                             \
+    ((MCU_VARIANT_##variant) << 0U)
+#define MCU_FAMILY                      ((MCU_VALUE >> 16UL) & 0xffff)
+#define MCU_LINE                        ((MCU_VALUE >> 8UL) & 0xff)
+#define MCU_VARIANT                     ((MCU_VALUE >> 0UL) & 0xff)
+
+//! \section I2C presence macros
 #define SPRINGBOARD_HAL_ENABLE_I2C      HAL_USE_I2C
 #define SPRINGBOARD_HAL_USE_I2C1        STM32_I2C_USE_I2C1
 #define SPRINGBOARD_HAL_USE_I2C2        STM32_I2C_USE_I2C2
 #define SPRINGBOARD_HAL_USE_I2C3        STM32_I2C_USE_I2C3
 
+//! \section U(S)ART presence macros
 #define SPRINGBOARD_HAL_ENABLE_UART     HAL_USE_SERIAL
 #define SPRINGBOARD_HAL_USE_UART1       STM32_SERIAL_USE_USART1
 #define SPRINGBOARD_HAL_USE_UART2       STM32_SERIAL_USE_USART2
@@ -45,6 +71,7 @@
 #define SPRINGBOARD_HAL_USE_UART7       STM32_SERIAL_USE_UART7
 #define SPRINGBOARD_HAL_USE_UART8       STM32_SERIAL_USE_UART8
 
+//! \section SPI presence macros
 #define SPRINGBOARD_HAL_ENABLE_SPI      HAL_USE_SPI
 #define SPRINGBOARD_HAL_USE_SPI1        STM32_SPI_USE_SPI1
 #define SPRINGBOARD_HAL_USE_SPI2        STM32_SPI_USE_SPI2
@@ -56,6 +83,23 @@
 namespace Springboard {
 namespace InternalHAL {
 
+constexpr uint16_t GetMCUFamily()
+{
+    return static_cast<uint16_t>(MCU_FAMILY);
+}
+
+constexpr uint8_t GetMCULine()
+{
+    return static_cast<uint8_t>(MCU_LINE);
+}
+
+constexpr uint8_t GetMCUVariant()
+{
+    return static_cast<uint8_t>(MCU_VARIANT);
+}
+
+#if MCU_FAMILY == MCU_FAMILY_STM32F4
+#if MCU_LINE == MCU_LINE_STM32F405_F407
 enum class GPIOPinMode : iomode_t
 {
     Input = PAL_STM32_MODE_INPUT,
@@ -119,6 +163,8 @@ enum class GPIOPinMode : iomode_t
                              PAL_STM32_ALTERNATE(13),
     AnalogInput = PAL_STM32_MODE_ANALOG,
 };
+#endif  // MCU_LINE == MCU_LINE_STM32F405_F407
+#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4
 
 enum class GPIOPullConfiguration : iomode_t
 {
@@ -193,6 +239,9 @@ const char* GetMCUArchitectureRevision();
 const char* GetMCUCoreVariantName();
 uint32_t GetMCUDeviceId();
 bool GetMCUUniqueId(Springboard::Utilities::ByteArray buffer);
+const char* GetMCUFamilyName();
+const char* GetMCULineName();
+const char* GetMCUVariantName();
 
 }  // namespace InternalHAL
 }  // namespace Springboard

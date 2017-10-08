@@ -139,7 +139,28 @@ private:
         return mPeripheralFactory.GetRTC(1)->GetTimeAsString(value);
     }
 
-    PROPERTY_TABLE_START(Controller, 11)
+    ResultCode GetMCUFamilyPropertyRequest(CharArray value)
+    {
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetMCUFamilyName());
+        return RC_OK;
+    }
+
+    ResultCode GetMCULinePropertyRequest(CharArray value)
+    {
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetMCULineName());
+        return RC_OK;
+    }
+
+    ResultCode GetMCUVariantPropertyRequest(CharArray value)
+    {
+        Springboard::Utilities::ArrayReferenceUtils::SafeStringCopy(
+            value, Springboard::InternalHAL::GetMCUVariantName());
+        return RC_OK;
+    }
+
+    PROPERTY_TABLE_START(Controller, 14)
     PROPERTY_ENTRY_STRING_RO(Controller, 10, "RTOSName",
                              GetRTOSNamePropertyRequest)
     PROPERTY_ENTRY_STRING_RO(Controller, 11, "RTOSVersion",
@@ -164,6 +185,12 @@ private:
                              SetRTCTimePropertyRequest)
     PROPERTY_ENTRY_STRING_RO(Controller, 20, "RTCTimeString",
                              GetRTCTimeStringPropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 21, "MCUFamily",
+                             GetMCUFamilyPropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 22, "MCULine",
+                             GetMCULinePropertyRequest)
+    PROPERTY_ENTRY_STRING_RO(Controller, 23, "MCUVariant",
+                             GetMCUVariantPropertyRequest)
     PROPERTY_TABLE_END()
 
     Springboard::Utilities::Dictionary<ResourceIdentifier, Resource*>

@@ -1,6 +1,3 @@
-# Architecture setting
-MCU = cortex-m4
-
 # Project folders, includes and source
 PROJECTINC = ./Include
 PROJECTCSRC = $(wildcard ./Source/*.c)
@@ -22,8 +19,22 @@ SPRINGBOARDHEADERS = $(foreach dir,$(addprefix $(SPRINGBOARD)/Include/Springboar
 # ChibiOS location
 CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
+# ChibiOS make includes
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/rt/rt.mk
+
+# Architecture settings
+ifeq ($(findstring STM32F4,$(PROJECT_MCU)), STM32F4)
+include $(SPRINGBOARD)/MakeScripts/springboard_stm32f4.mk
+else
+$(error Architecture is not defined, or is not supported)
+endif
+
 # ChibiOS make options
-USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 -mthumb -DTHUMB --specs=nano.specs
+USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16 --specs=nano.specs $(MCUOPT)
 USE_COPT = -std=c11 -Wall -Wextra -Wundef -Wstrict-prototypes
 USE_CPPOPT = -std=c++14 -fno-rtti -Wall -Wextra -Wundef -fno-exceptions
 USE_LINK_GC = yes
@@ -35,18 +46,6 @@ USE_SMART_BUILD = no
 USE_PROCESS_STACKSIZE = 0x1000
 USE_EXCEPTIONS_STACKSIZE = 0x400
 USE_FPU = hard
-
-# ChibiOS make includes
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
-include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
-include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-
-# Define linker script file here
-LDSCRIPT = $(STARTUPLD)/STM32F407xG.ld
 
 # Optional sources provided by ChibiOS
 VARIOUSINC = $(CHIBIOS)/os/various

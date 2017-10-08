@@ -85,5 +85,20 @@ bool GetMCUUniqueId(Springboard::Utilities::ByteArray buffer)
     return true;
 }
 
+const char* GetMCUFamilyName()
+{
+    return MCU_FAMILY_NAME;
+}
+
+const char* GetMCULineName()
+{
+    return MCU_LINE_NAME;
+}
+
+const char* GetMCUVariantName()
+{
+    return MCU_NAME;
+}
+
 }  // namespace InternalHAL
 }  // namespace Springboard
