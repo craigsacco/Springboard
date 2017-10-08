@@ -30,6 +30,7 @@
 #include <cstddef>
 #include <cctype>
 #include <cstring>
+#include <type_traits>
 
 namespace Springboard {
 namespace Utilities {
@@ -38,8 +39,14 @@ template <typename T>
 class ArrayReference
 {
 public:
-    typedef T UnderlyingType;
-    typedef T* UnderlyingTypePtr;
+    typedef T Type;
+    typedef T* TypePtr;
+    typedef typename std::remove_const<typename
+        std::remove_reference<T>::type>::type NonConstType;
+    typedef NonConstType* NonConstTypePtr;
+    typedef typename std::add_const<typename
+        std::remove_reference<T>::type>::type ConstType;
+    typedef ConstType* ConstTypePtr;
 
     constexpr ArrayReference(std::nullptr_t) :
         mData(nullptr), mSize(0)
@@ -110,13 +117,31 @@ public:
         return ArrayReference<T>(mData + i, mSize - i);
     }
 
-    template <typename TTarget>
-    ArrayReference<TTarget> CastTo()
+    template <typename TTo>
+    inline ArrayReference<TTo> CastTo()
     {
-        static_assert(sizeof(T) == sizeof(TTarget),
-                      "Target type must be the same size");
-        return ArrayReference<TTarget>::Construct(
-            reinterpret_cast<TTarget*>(mData), GetSize());
+        static_assert(sizeof(T) == sizeof(TTo),
+                      "Size of destination type must be the same");
+        return ArrayReference<TTo>::Construct(reinterpret_cast<TTo*>(mData),
+                                              mSize);
+    }
+
+    void CopyTo(ArrayReference<NonConstType> to)
+    {
+        ASSERT(to.GetSize() >= mSize);
+        memcpy(to.GetData(), mData, mSize * sizeof(T));
+    }
+
+    ArrayReference<ConstType> ToConst()
+    {
+        return ArrayReference<ConstType>::Construct(
+            reinterpret_cast<ConstType*>(mData), GetSize());
+    }
+
+    ArrayReference<NonConstType> ToNonConst()
+    {
+        return ArrayReference<NonConstType>::Construct(
+            reinterpret_cast<NonConstType*>(mData), GetSize());
     }
 
     static constexpr ArrayReference<T> Null()

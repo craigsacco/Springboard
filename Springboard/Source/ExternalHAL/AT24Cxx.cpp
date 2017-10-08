@@ -29,6 +29,7 @@
 #if SPRINGBOARD_HAL_ENABLE_I2C
 
 using Springboard::InternalHAL::I2CBus;
+using Springboard::Kernel::ScopedMutex;
 using Springboard::Utilities::ByteArray;
 using Springboard::Utilities::ConstByteArray;
 
@@ -39,31 +40,108 @@ AT24Cxx::AT24Cxx(I2CBus* bus, const I2CBus::Address address,
                  const I2CBus::Speed requestedSpeed,
                  Variant variant)
     : I2CDevice(bus, address, requestedSpeed, MAX_SPEED),
-      mVariant(variant)
+      mVariant(variant), mMutex()
 {
     ASSERT(address >= 0x50 && address <= 0x57);
 }
 
-ResultCode AT24Cxx::ReadChunks(size_t offset, ByteArray data,
-                               size_t chunkSize)
+ResultCode AT24Cxx::Read(size_t offset, ByteArray data, size_t* read)
 {
-    if (offset + data.GetSize() > GetSize()) {
+    if (offset >= GetSize() ||
+        offset + data.GetSize() >= GetSize()) {
         return RC_AT45DBXX_INVALID_OFFSET_OR_SIZE;
     }
 
-    // TODO(craig.sacco): read in chunks
+    if (read != nullptr) {
+        *read = 0;
+    }
+
+    ScopedMutex mutex(&mMutex);
+
+    size_t bytesRemaining = data.GetSize();
+    size_t dataOffset = 0;
+    while (bytesRemaining > 0) {
+        uint8_t page = static_cast<uint8_t>(offset >> 8);
+        uint8_t pageOffset = static_cast<uint8_t>(offset & 0xff);
+        uint16_t pageBytesRemaining = 256U - pageOffset;
+        uint8_t chunkSize = (bytesRemaining < GetMaxChunkSize() ?
+                             bytesRemaining :
+                             (pageBytesRemaining < GetMaxChunkSize() ?
+                              pageBytesRemaining : GetMaxChunkSize()));
+
+        // write page/offset
+        ResultCode result = TransmitEx(
+            GetAddress() + page, ConstByteArray::FromSingleRef(pageOffset));
+        if (result != RC_OK) {
+            return result;
+        }
+
+        // read chunk
+        result = ReceiveEx(GetAddress() + page, data.Mid(dataOffset, chunkSize));
+        if (result != RC_OK) {
+            return result;
+        }
+
+        if (read != nullptr) {
+            *read += chunkSize;
+        }
+
+        bytesRemaining -= chunkSize;
+        offset += chunkSize;
+        dataOffset += chunkSize;
+    }
 
     return RC_OK;
 }
 
-ResultCode AT24Cxx::WriteChunks(size_t offset, ConstByteArray data,
-                                size_t chunkSize)
+ResultCode AT24Cxx::Write(size_t offset,  ConstByteArray data, size_t* write)
 {
-    if (offset + data.GetSize() > GetSize()) {
+    if (offset >= GetSize() ||
+        offset + data.GetSize() >= GetSize()) {
         return RC_AT45DBXX_INVALID_OFFSET_OR_SIZE;
     }
 
-    // TODO(craig.sacco): write in chunks
+    ASSERT(GetMaxChunkSize() < 16);
+
+    uint8_t writeData[16] = { 0x00 };
+    ByteArray writeArray(writeData);
+
+    if (write != nullptr) {
+        *write = 0;
+    }
+
+    ScopedMutex mutex(&mMutex);
+
+    size_t bytesRemaining = data.GetSize();
+    size_t dataOffset = 0;
+    while (bytesRemaining > 0) {
+        uint8_t page = static_cast<uint8_t>(offset >> 8);
+        uint8_t pageOffset = static_cast<uint8_t>(offset & 0xff);
+        uint16_t pageBytesRemaining = 256U - pageOffset;
+        uint8_t chunkSize = (bytesRemaining < GetMaxChunkSize() ?
+                             bytesRemaining :
+                             (pageBytesRemaining < GetMaxChunkSize() ?
+                              pageBytesRemaining : GetMaxChunkSize()));
+
+        // construct write buffer
+        writeArray[0] = pageOffset;
+        data.Mid(dataOffset, chunkSize).CopyTo(writeArray.From(1));
+
+        // write data
+        ResultCode result = TransmitEx(GetAddress() + page,
+                                       writeArray.ToConst());
+        if (result != RC_OK) {
+            return result;
+        }
+
+        if (write != nullptr) {
+            *write += chunkSize;
+        }
+
+        bytesRemaining -= chunkSize;
+        offset += chunkSize;
+        dataOffset += chunkSize;
+    }
 
     return RC_OK;
 }
@@ -77,16 +155,6 @@ AT24CxxType1::AT24CxxType1(I2CBus* bus, const I2CBus::Address address,
     ASSERT(address >= 0x50 && address <= 0x57);
 }
 
-ResultCode AT24CxxType1::Read(size_t offset, ByteArray data)
-{
-    return ReadChunks(offset, data, MAX_BYTES_PER_XACTION);
-}
-
-ResultCode AT24CxxType1::Write(size_t offset,  ConstByteArray data)
-{
-    return WriteChunks(offset, data, MAX_BYTES_PER_XACTION);
-}
-
 AT24CxxType2::AT24CxxType2(I2CBus* bus, const I2CBus::Address address,
                            const I2CBus::Speed requestedSpeed,
                            Variant variant)
@@ -94,16 +162,6 @@ AT24CxxType2::AT24CxxType2(I2CBus* bus, const I2CBus::Address address,
 {
     ASSERT(variant == Variant::AT24C04 || variant == Variant::AT24C08 ||
            variant == Variant::AT24C16);
-}
-
-ResultCode AT24CxxType2::Read(size_t offset, ByteArray data)
-{
-    return ReadChunks(offset, data, MAX_BYTES_PER_XACTION);
-}
-
-ResultCode AT24CxxType2::Write(size_t offset,  ConstByteArray data)
-{
-    return WriteChunks(offset, data, MAX_BYTES_PER_XACTION);
 }
 
 AT24C01::AT24C01(I2CBus* bus, const I2CBus::Address address,

@@ -27,6 +27,7 @@
 #pragma once
 
 #include <Springboard/InternalHAL/I2CDevice.hpp>
+#include <Springboard/Kernel/Mutex.hpp>
 #include <Springboard/Utilities/ArrayReference.hpp>
 
 #if SPRINGBOARD_HAL_ENABLE_I2C
@@ -57,20 +58,16 @@ public:
         return static_cast<size_t>(mVariant);
     }
 
-    virtual ResultCode Read(size_t offset,
-                            Springboard::Utilities::ByteArray data) = 0;
-    virtual ResultCode Write(size_t offset,
-                             Springboard::Utilities::ConstByteArray data) = 0;
+    virtual size_t GetMaxChunkSize() const = 0;
+
+    ResultCode Read(size_t offset, Springboard::Utilities::ByteArray data,
+                    size_t* read);
+    ResultCode Write(size_t offset, Springboard::Utilities::ConstByteArray data,
+                     size_t* written);
 
 protected:
-    ResultCode ReadChunks(size_t offset,
-                          Springboard::Utilities::ByteArray data,
-                          size_t chunkSize);
-    ResultCode WriteChunks(size_t offset,
-                           Springboard::Utilities::ConstByteArray data,
-                           size_t chunkSize);
-
     Variant mVariant;
+    Springboard::Kernel::Mutex mMutex;
 
 private:
     static constexpr Springboard::InternalHAL::I2CBus::Speed MAX_SPEED =
@@ -86,13 +83,10 @@ protected:
                  Variant variant);
 
 public:
-    ResultCode Read(size_t offset,
-                    Springboard::Utilities::ByteArray data) final;
-    ResultCode Write(size_t offset,
-                     Springboard::Utilities::ConstByteArray data) final;
-
-private:
-    static constexpr size_t MAX_BYTES_PER_XACTION = 7;
+    inline size_t GetMaxChunkSize() const final
+    {
+        return 7;
+    }
 };
 
 class AT24CxxType2 : public AT24Cxx
@@ -104,13 +98,10 @@ protected:
                  Variant variant);
 
 public:
-    ResultCode Read(size_t offset,
-                    Springboard::Utilities::ByteArray data) final;
-    ResultCode Write(size_t offset,
-                     Springboard::Utilities::ConstByteArray data) final;
-
-private:
-    static constexpr size_t MAX_BYTES_PER_XACTION = 15;
+    inline size_t GetMaxChunkSize() const final
+    {
+        return 15;
+    }
 };
 
 class AT24C01 : public AT24CxxType1

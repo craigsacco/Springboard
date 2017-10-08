@@ -409,7 +409,7 @@ protected:
                 }
                 case PropertyType::String:
                     result = (owner->*(entry.getter.string_fn))
-                        (data.CastTo<char>());
+                        (data.ToNonConst().CastTo<char>());
                     break;
                 case PropertyType::ByteArray:
                     result = (owner->*(entry.getter.bytearray_fn))(data);
@@ -425,7 +425,7 @@ protected:
                 }
 
                 if (entry.type == PropertyType::String) {
-                    *length = strlen(data.CastTo<const char>().GetData());
+                    *length = strlen(data.ToConst().CastTo<const char>().GetData());
                 } else {
                     *length = entry.length;
                 }
