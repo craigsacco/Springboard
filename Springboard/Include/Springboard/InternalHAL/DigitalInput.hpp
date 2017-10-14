@@ -36,6 +36,11 @@ class DigitalInput : public InternalGPIOPin,
                      public Springboard::CommonHAL::IDigitalInput
 {
 public:
+    DigitalInput(const Pad pad, const GPIOPullConfiguration pullConfiguration) :
+        DigitalInput(pad.port, pad.pin, pullConfiguration)
+    {
+    }
+
     DigitalInput(const Port port, const uint8_t pin,
                  const GPIOPullConfiguration pullConfiguration)
         : InternalGPIOPin(port, pin, pullConfiguration)

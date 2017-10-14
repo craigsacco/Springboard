@@ -36,6 +36,15 @@ class DigitalOutput : public InternalGPIOPin,
                       public Springboard::CommonHAL::IDigitalOutput
 {
 public:
+    DigitalOutput(const Pad pad,
+                  const GPIOPullConfiguration pullConfiguration,
+                  const GPIOOutputConfiguration outputConfiguration,
+                  const GPIOOutputSpeed outputSpeed) :
+        DigitalOutput(pad.port, pad.pin, pullConfiguration, outputConfiguration,
+                      outputSpeed)
+    {
+    }
+
     DigitalOutput(const Port port, const uint8_t pin,
                   const GPIOPullConfiguration pullConfiguration,
                   const GPIOOutputConfiguration outputConfiguration,

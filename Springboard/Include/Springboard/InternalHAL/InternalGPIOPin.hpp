@@ -36,10 +36,28 @@ class InternalGPIOPin
 public:
     typedef ioportid_t Port;
 
+    struct Pad
+    {
+        const Port port;
+        const uint8_t pin;
+    };
+
     InternalGPIOPin(const Port port, const uint8_t pin,
                     const GPIOPullConfiguration pullConfiguration) :
         mPort(port), mPin(pin), mPullConfiguration(pullConfiguration)
     {
+    }
+
+    inline static void SetPinConfiguration(
+        const Pad pad, const GPIOPinMode mode,
+        const GPIOPullConfiguration pullConfiguration =
+            GPIOPullConfiguration::Floating,
+        const GPIOOutputConfiguration outputConfiguration =
+            GPIOOutputConfiguration::PushPull,
+        const GPIOOutputSpeed outputSpeed = GPIOOutputSpeed::Low_2MHz)
+    {
+        SetPinConfiguration(pad.port, pad.pin, mode, pullConfiguration,
+                            outputConfiguration, outputSpeed);
     }
 
     inline static void SetPinConfiguration(

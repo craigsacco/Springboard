@@ -4,8 +4,12 @@
 
 #pragma once
 
+#include <Springboard/MCUTypes.h>
+
 //! \section MCU configuration declaration
+#if MCU_FAMILY == MCU_FAMILY_STM32F4
 #define STM32F4xx_MCUCONF
+#endif
 
 //! \section ARM architecture version
 #if CORTEX_MODEL == 4
@@ -45,8 +49,11 @@
 #endif  // CORTEX_MODEL == 4
 
 //! \section device electronic signature
-#if defined(STM32F40_41xxx) || defined(STM32F427_437xx) || \
-    defined(STM32F429_439xx)
+#if MCU_FAMILY == MCU_FAMILY_STM32F4 && ( \
+    MCU_LINE == MCU_LINE_STM32F405_F415 || \
+    MCU_LINE == MCU_LINE_STM32F407_F417 || \
+    MCU_LINE == MCU_LINE_STM32F427_F437 || \
+    MCU_LINE == MCU_LINE_STM32F429_F439)
 #define MCU_UNIQUE_ID_LENGTH    12
 typedef struct
 {
@@ -70,8 +77,11 @@ typedef struct
 
 #define DES_BASE                (0x1FFF7A10)
 #define DES                     ((DES_TypeDef *) DES_BASE)
-#endif  // defined(STM32F40_41xxx) || defined(STM32F427_437xx) || ...
+#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4 && ( ...
 
 //! \section mandatory driver features
 #define STM32_WDG_USE_IWDG                  TRUE
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
+#define STM32_ST_IRQ_PRIORITY               8
+#define STM32_ST_USE_TIMER                  2

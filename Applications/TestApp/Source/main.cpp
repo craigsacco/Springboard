@@ -34,99 +34,168 @@ using Springboard::ExternalHAL::AT45DB041E;
 using Springboard::Drivers::AT45DB041EDriver;
 
 
+#if MCU_FAMILY == MCU_FAMILY_STM32F4 && MCU_LINE == MCU_LINE_STM32F407_F417
+// Setup on a Waveshare Open407I-C development board
+static constexpr size_t SerialMessagingUARTBusIndex = 2;
+static constexpr GPIOPinMode SerialMessagingUARTBusPinMode =
+    GPIOPinMode::AlternateFunction_USART1;
+static constexpr InternalGPIOPin::Pad SerialMessagingUARTBusPad_TX =
+    { GPIOA, 2 };
+static constexpr InternalGPIOPin::Pad SerialMessagingUARTBusPad_RX =
+    { GPIOA, 3 };
+static constexpr size_t GPSDeviceUARTBusIndex = 1;
+static constexpr GPIOPinMode GPSDeviceUARTBusPinMode =
+    GPIOPinMode::AlternateFunction_USART3;
+static constexpr InternalGPIOPin::Pad GPSDeviceUARTBusPad_TX = { GPIOA, 9 };
+static constexpr InternalGPIOPin::Pad GPSDeviceUARTBusPad_RX = { GPIOA, 10 };
+static constexpr size_t I2CBusIndex = 3;
+static constexpr GPIOPinMode I2CBusPinMode =
+    GPIOPinMode::AlternateFunction_I2C1;
+static constexpr InternalGPIOPin::Pad I2CBusPad_SDA = { GPIOC, 9 };
+static constexpr InternalGPIOPin::Pad I2CBusPad_SCL = { GPIOH, 7 };
+static constexpr size_t SPIBusIndex = 1;
+static constexpr GPIOPinMode SPIBusPinMode =
+    GPIOPinMode::AlternateFunction_SPI1;
+static constexpr InternalGPIOPin::Pad SPIBusPad_CLK = { GPIOA, 5 };
+static constexpr InternalGPIOPin::Pad SPIBusPad_MISO = { GPIOA, 6 };
+static constexpr InternalGPIOPin::Pad SPIBusPad_MOSI = { GPIOA, 7 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nCS = { GPIOA, 4 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nWP = { GPIOH, 12 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nRST = { GPIOB, 12 };
+static constexpr InternalGPIOPin::Pad LEDPad_1 = { GPIOH, 2 };
+static constexpr InternalGPIOPin::Pad LEDPad_2 = { GPIOH, 3 };
+static constexpr InternalGPIOPin::Pad LEDPad_3 = { GPIOI, 8 };
+static constexpr InternalGPIOPin::Pad LEDPad_4 = { GPIOI, 10 };
+#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4 && MCU_LINE == ...
+
+#if MCU_FAMILY == MCU_FAMILY_STM32F4 && MCU_LINE == MCU_LINE_STM32F429_F439
+// Setup on a Waveshare Open429I-C development board
+static constexpr size_t SerialMessagingUARTBusIndex = 1;
+static constexpr GPIOPinMode SerialMessagingUARTBusPinMode =
+    GPIOPinMode::AlternateFunction_USART1;
+static constexpr InternalGPIOPin::Pad SerialMessagingUARTBusPad_TX =
+    { GPIOD, 8 };
+static constexpr InternalGPIOPin::Pad SerialMessagingUARTBusPad_RX =
+    { GPIOD, 9 };
+static constexpr size_t GPSDeviceUARTBusIndex = 3;
+static constexpr GPIOPinMode GPSDeviceUARTBusPinMode =
+    GPIOPinMode::AlternateFunction_USART3;
+static constexpr InternalGPIOPin::Pad GPSDeviceUARTBusPad_TX = { GPIOA, 9 };
+static constexpr InternalGPIOPin::Pad GPSDeviceUARTBusPad_RX = { GPIOA, 10 };
+static constexpr size_t I2CBusIndex = 1;
+static constexpr GPIOPinMode I2CBusPinMode =
+    GPIOPinMode::AlternateFunction_I2C1;
+static constexpr InternalGPIOPin::Pad I2CBusPad_SDA = { GPIOB, 6 };
+static constexpr InternalGPIOPin::Pad I2CBusPad_SCL = { GPIOB, 7 };
+static constexpr size_t SPIBusIndex = 1;
+static constexpr GPIOPinMode SPIBusPinMode =
+    GPIOPinMode::AlternateFunction_SPI1;
+static constexpr InternalGPIOPin::Pad SPIBusPad_CLK = { GPIOA, 5 };
+static constexpr InternalGPIOPin::Pad SPIBusPad_MISO = { GPIOA, 6 };
+static constexpr InternalGPIOPin::Pad SPIBusPad_MOSI = { GPIOA, 7 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nCS = { GPIOA, 4 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nWP = { GPIOH, 11 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nRST = { GPIOH, 10 };
+static constexpr InternalGPIOPin::Pad LEDPad_1 = { GPIOF, 6 };
+static constexpr InternalGPIOPin::Pad LEDPad_2 = { GPIOF, 7 };
+static constexpr InternalGPIOPin::Pad LEDPad_3 = { GPIOF, 8 };
+static constexpr InternalGPIOPin::Pad LEDPad_4 = { GPIOF, 9 };
+#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4 && MCU_LINE == ...
+
+
 class TestController : public Controller
 {
 public:
     TestController() :
         Controller(1, "TestController"),
-        mSerialMessaging(this, mPeripheralFactory.GetUARTBus(1),
-                         "SerialMessaging", NORMALPRIO),
-        mExpander(mPeripheralFactory.GetI2CBus(1), 0x20, 400000),
+        mSerialMessaging(
+            this, mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex),
+            "SerialMessaging", NORMALPRIO),
+        mExpander(mPeripheralFactory.GetI2CBus(I2CBusIndex), 0x20, 400000),
         mExpanderDriver(this, 2, "MCP23017", &mExpander),
-        mGPS(mPeripheralFactory.GetUARTBus(3), "GPSDeviceComms", NORMALPRIO-1),
+        mGPS(mPeripheralFactory.GetUARTBus(GPSDeviceUARTBusIndex),
+             "GPSDeviceComms", NORMALPRIO-1),
         mGPSDriver(this, 3, "GPSDevice", &mGPS),
-        mExternalFlash_nCS(GPIOA, 4, GPIOPullConfiguration::Floating,
+        mExternalFlash_nCS(ExternalFlashPad_nCS,
+                           GPIOPullConfiguration::Floating,
                            GPIOOutputConfiguration::PushPull,
                            GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash_nWP(GPIOH, 11, GPIOPullConfiguration::Floating,
+        mExternalFlash_nWP(ExternalFlashPad_nWP,
+                           GPIOPullConfiguration::Floating,
                            GPIOOutputConfiguration::PushPull,
                            GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash_nRST(GPIOH, 10, GPIOPullConfiguration::Floating,
+        mExternalFlash_nRST(ExternalFlashPad_nRST,
+                            GPIOPullConfiguration::Floating,
                             GPIOOutputConfiguration::PushPull,
                             GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash(mPeripheralFactory.GetSPIBus(1), &mExternalFlash_nCS,
-                       25000000, &mExternalFlash_nWP, &mExternalFlash_nRST),
+        mExternalFlash(mPeripheralFactory.GetSPIBus(SPIBusIndex),
+                       &mExternalFlash_nCS, 25000000, &mExternalFlash_nWP,
+                       &mExternalFlash_nRST),
         mExternalFlashDriver(this, 4, "FlashDevice", &mExternalFlash)
     {
     }
 
     void Start() final
     {
-        // setup I2C1_SDA on PB6, and I2C1_SCL on PB7
+        // setup I2C bus pins
         InternalGPIOPin::SetPinConfiguration(
-            GPIOB, 6,
-            GPIOPinMode::AlternateFunction_I2C1,
+            I2CBusPad_SDA, I2CBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::OpenDrain,
             GPIOOutputSpeed::Low_2MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOB, 7,
-            GPIOPinMode::AlternateFunction_I2C1,
+            I2CBusPad_SCL, I2CBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::OpenDrain,
             GPIOOutputSpeed::Low_2MHz);
 
-        // setup USART3_TX on PD8, and USART3_RX on PD9
+        // setup serial messaging UART bus pins
         InternalGPIOPin::SetPinConfiguration(
-            GPIOD, 8,
-            GPIOPinMode::AlternateFunction_USART3,
+            SerialMessagingUARTBusPad_TX, SerialMessagingUARTBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOD, 9,
-            GPIOPinMode::AlternateFunction_USART3,
+            SerialMessagingUARTBusPad_RX, SerialMessagingUARTBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
 
-        // setup USART1_TX on PA9, and USART1_RX on PA10
+        // setup GPS device UART bus pins
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 9,
-            GPIOPinMode::AlternateFunction_USART1,
+            GPSDeviceUARTBusPad_TX, GPSDeviceUARTBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 10,
-            GPIOPinMode::AlternateFunction_USART1,
+            GPSDeviceUARTBusPad_RX, GPSDeviceUARTBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
 
         // setup SPI1_CLK on PA5, SPI1_MISO on PA6 and SPI1_MOSI on PA7
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 5,
-            GPIOPinMode::AlternateFunction_SPI1,
+            SPIBusPad_CLK, SPIBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::VeryHigh_100MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 6,
-            GPIOPinMode::AlternateFunction_SPI1,
+            SPIBusPad_MISO, SPIBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::VeryHigh_100MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 7,
-            GPIOPinMode::AlternateFunction_SPI1,
+            SPIBusPad_MOSI, SPIBusPinMode,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::VeryHigh_100MHz);
 
-        mPeripheralFactory.GetUARTBus(3)->SetConfig(9600);  // GPS
-        mPeripheralFactory.GetUARTBus(1)->SetConfig(57600);  // serial client
-        mPeripheralFactory.GetWatchdog(1)->SetTimeout(100000U);
+        mPeripheralFactory.GetUARTBus(GPSDeviceUARTBusIndex)
+            ->SetConfig(9600);
+        mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex)
+            ->SetConfig(57600);
+        mPeripheralFactory.GetWatchdog(1)
+            ->SetTimeout(100000U);
 
         Controller::Start();
 
@@ -152,16 +221,16 @@ int main(void)
     TestController testController;
     testController.Start();
 
-    DigitalOutput led1(GPIOF, 6, GPIOPullConfiguration::Floating,
+    DigitalOutput led1(LEDPad_1, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
-    DigitalOutput led2(GPIOF, 7, GPIOPullConfiguration::Floating,
+    DigitalOutput led2(LEDPad_2, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
-    DigitalOutput led3(GPIOF, 8, GPIOPullConfiguration::Floating,
+    DigitalOutput led3(LEDPad_3, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
-    DigitalOutput led4(GPIOF, 9, GPIOPullConfiguration::Floating,
+    DigitalOutput led4(LEDPad_4, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
 
