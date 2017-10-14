@@ -29,6 +29,8 @@
 #include <Springboard/Infrastructure/Resource.hpp>
 #include <Springboard/ExternalHAL/AT45DB041E.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_SPI
+
 namespace Springboard {
 
 namespace Drivers {
@@ -68,3 +70,5 @@ private:
 
 }  // namespace Drivers
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_SPI

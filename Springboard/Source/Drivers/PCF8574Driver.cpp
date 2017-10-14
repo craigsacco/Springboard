@@ -27,6 +27,8 @@
 #include <Springboard/Drivers/PCF8574Driver.hpp>
 #include <Springboard/ExternalHAL/PCF8574.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_I2C
+
 using Springboard::ExternalHAL::PCF8574;
 
 namespace Springboard {
@@ -52,3 +54,5 @@ ResultCode PCF8574Driver::WritePort(const uint8_t value)
 
 }  // namespace Drivers
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

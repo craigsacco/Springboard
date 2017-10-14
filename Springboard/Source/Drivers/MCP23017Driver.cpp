@@ -27,6 +27,8 @@
 #include <Springboard/Drivers/MCP23017Driver.hpp>
 #include <Springboard/ExternalHAL/MCP23017.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_I2C
+
 using Springboard::ExternalHAL::MCP23017;
 
 namespace Springboard {
@@ -152,3 +154,5 @@ ResultCode MCP23017Driver::WriteOLATx(const uint16_t value)
 
 }  // namespace Drivers
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C

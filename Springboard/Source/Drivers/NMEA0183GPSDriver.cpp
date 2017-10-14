@@ -27,6 +27,8 @@
 #include <Springboard/Drivers/NMEA0183GPSDriver.hpp>
 #include <Springboard/ExternalHAL/NMEA0183GPSDevice.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_UART
+
 using Springboard::ExternalHAL::NMEA0183GPSDevice;
 
 namespace Springboard {
@@ -83,3 +85,5 @@ ResultCode NMEA0183GPSDriver::ReadLastFixHeightOfGeoid(float* height)
 
 }  // namespace Drivers
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_UART

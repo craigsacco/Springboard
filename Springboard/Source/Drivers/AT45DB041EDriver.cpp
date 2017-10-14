@@ -26,6 +26,8 @@
 
 #include <Springboard/Drivers/AT45DB041EDriver.hpp>
 
+#if SPRINGBOARD_HAL_ENABLE_SPI
+
 using Springboard::ExternalHAL::AT45DB041E;
 using Springboard::Utilities::ByteArray;
 
@@ -68,3 +70,5 @@ ResultCode AT45DB041EDriver::ReadJEDECInfo(ByteArray bytes)
 
 }  // namespace Drivers
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_SPI

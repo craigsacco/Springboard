@@ -26,7 +26,10 @@
 
 #pragma once
 
+#include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/Infrastructure/Resource.hpp>
+
+#if SPRINGBOARD_HAL_ENABLE_I2C
 
 namespace Springboard {
 
@@ -93,3 +96,5 @@ private:
 
 }  // namespace Drivers
 }  // namespace Springboard
+
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C
