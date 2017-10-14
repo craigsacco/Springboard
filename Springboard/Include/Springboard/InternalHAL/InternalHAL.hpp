@@ -30,30 +30,6 @@
 #include <Springboard/Common.h>
 #include <Springboard/Utilities/ArrayReference.hpp>
 
-//! \section Microcontroller families
-#define MCU_FAMILY_STM32F4              0UL
-
-//! \section STM32F4 microcontroller lines
-#define MCU_LINE_STM32F405_F407         0UL
-
-//! \section STM32F405/F407 microcontroller variants
-#define MCU_VARIANT_STM32F405xE         0UL
-#define MCU_VARIANT_STM32F405xG         1UL
-#define MCU_VARIANT_STM32F407xE         2UL
-#define MCU_VARIANT_STM32F407xG         3UL
-#define MCU_VARIANT_STM32F415xG         4UL
-#define MCU_VARIANT_STM32F417xE         5UL
-#define MCU_VARIANT_STM32F417xG         6UL
-
-//! \section Microcontroller type/family/line/variant declarations
-#define MCU_TYPE(family, line, variant)                     \
-    ((MCU_FAMILY_##family) << 16U) |                        \
-    ((MCU_LINE_##line) << 8U) |                             \
-    ((MCU_VARIANT_##variant) << 0U)
-#define MCU_FAMILY                      ((MCU_VALUE >> 16UL) & 0xffff)
-#define MCU_LINE                        ((MCU_VALUE >> 8UL) & 0xff)
-#define MCU_VARIANT                     ((MCU_VALUE >> 0UL) & 0xff)
-
 //! \section I2C presence macros
 #define SPRINGBOARD_HAL_ENABLE_I2C      HAL_USE_I2C
 #define SPRINGBOARD_HAL_USE_I2C1        STM32_I2C_USE_I2C1
@@ -98,13 +74,16 @@ constexpr uint8_t GetMCUVariant()
     return static_cast<uint8_t>(MCU_VARIANT);
 }
 
-#if MCU_FAMILY == MCU_FAMILY_STM32F4
-#if MCU_LINE == MCU_LINE_STM32F405_F407
 enum class GPIOPinMode : iomode_t
 {
     Input = PAL_STM32_MODE_INPUT,
     Output = PAL_STM32_MODE_OUTPUT,
+
+#if MCU_FAMILY == MCU_FAMILY_STM32F4
+    //! \section System functions
     AlternateFunction_SYS = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(0),
+
+    //! \section Timer peripherals
     AlternateFunction_TIM1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(1),
     AlternateFunction_TIM2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(1),
     AlternateFunction_TIM3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(2),
@@ -114,57 +93,122 @@ enum class GPIOPinMode : iomode_t
     AlternateFunction_TIM9 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(3),
     AlternateFunction_TIM10 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(3),
     AlternateFunction_TIM11 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(3),
+    AlternateFunction_TIM12 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
+    AlternateFunction_TIM13 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
+    AlternateFunction_TIM14 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
+
+    //! \section I2C interfaces
     AlternateFunction_I2C1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(4),
     AlternateFunction_I2C2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(4),
     AlternateFunction_I2C3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(4),
-    AlternateFunction_SPI1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
-    AlternateFunction_SPI2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+
+    //! \section I2S interfaces
     AlternateFunction_I2S2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
-    AlternateFunction_I2S3ext_AF5 = PAL_STM32_MODE_ALTERNATE |
-                                    PAL_STM32_ALTERNATE(5),
-    AlternateFunction_SPI3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
     AlternateFunction_I2S2ext = PAL_STM32_MODE_ALTERNATE |
                                 PAL_STM32_ALTERNATE(6),
     AlternateFunction_I2S3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
+    AlternateFunction_I2S3ext_AF5 = PAL_STM32_MODE_ALTERNATE |
+                                    PAL_STM32_ALTERNATE(5),
+    AlternateFunction_I2S3ext_AF7 = PAL_STM32_MODE_ALTERNATE |
+                                    PAL_STM32_ALTERNATE(7),
+
+    //! \section SAI interfaces
+#if MCU_LINE == MCU_LINE_STM32F427_F437 || MCU_LINE == MCU_LINE_STM32F429_F439
+    AlternateFunction_SAI1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
+#endif
+
+    //! \section SPI interfaces
+    AlternateFunction_SPI1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+#if MCU_LINE == MCU_LINE_STM32F405_F415 || MCU_LINE == MCU_LINE_STM32F407_F417
+    AlternateFunction_SPI2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+    AlternateFunction_SPI3 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(6),
+#elif MCU_LINE == MCU_LINE_STM32F427_F437 || MCU_LINE == MCU_LINE_STM32F429_F439
+    AlternateFunction_SPI2_AF5 = PAL_STM32_MODE_ALTERNATE |
+                                 PAL_STM32_ALTERNATE(5),
+    AlternateFunction_SPI2_AF6 = PAL_STM32_MODE_ALTERNATE |
+                                 PAL_STM32_ALTERNATE(6),
+    AlternateFunction_SPI3_AF5 = PAL_STM32_MODE_ALTERNATE |
+                                 PAL_STM32_ALTERNATE(5),
+    AlternateFunction_SPI3_AF6 = PAL_STM32_MODE_ALTERNATE |
+                                 PAL_STM32_ALTERNATE(6),
+    AlternateFunction_SPI3_AF7 = PAL_STM32_MODE_ALTERNATE |
+                                 PAL_STM32_ALTERNATE(7),
+    AlternateFunction_SPI4 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+    AlternateFunction_SPI5 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+    AlternateFunction_SPI6 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(5),
+#endif
+
+    //! \section U(S)ART interfaces
     AlternateFunction_USART1 = PAL_STM32_MODE_ALTERNATE |
                                PAL_STM32_ALTERNATE(7),
     AlternateFunction_USART2 = PAL_STM32_MODE_ALTERNATE |
                                PAL_STM32_ALTERNATE(7),
     AlternateFunction_USART3 = PAL_STM32_MODE_ALTERNATE |
                                PAL_STM32_ALTERNATE(7),
-    AlternateFunction_I2S3ext_AF7 = PAL_STM32_MODE_ALTERNATE |
-                                    PAL_STM32_ALTERNATE(7),
     AlternateFunction_UART4 = PAL_STM32_MODE_ALTERNATE |
                               PAL_STM32_ALTERNATE(8),
     AlternateFunction_UART5 = PAL_STM32_MODE_ALTERNATE |
                               PAL_STM32_ALTERNATE(8),
     AlternateFunction_USART6 = PAL_STM32_MODE_ALTERNATE |
                                PAL_STM32_ALTERNATE(8),
+#if MCU_LINE == MCU_LINE_STM32F427_F437 || MCU_LINE == MCU_LINE_STM32F429_F439
+    AlternateFunction_UART7 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(8),
+    AlternateFunction_UART8 = PAL_STM32_MODE_ALTERNATE |
+                              PAL_STM32_ALTERNATE(8),
+#endif
+
+    //! \section CAN interfaces
     AlternateFunction_CAN1 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
     AlternateFunction_CAN2 = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(9),
-    AlternateFunction_TIM12 = PAL_STM32_MODE_ALTERNATE |
-                              PAL_STM32_ALTERNATE(9),
-    AlternateFunction_TIM13 = PAL_STM32_MODE_ALTERNATE |
-                              PAL_STM32_ALTERNATE(9),
-    AlternateFunction_TIM14 = PAL_STM32_MODE_ALTERNATE |
-                              PAL_STM32_ALTERNATE(9),
-    AlternateFunction_OTG_FS = PAL_STM32_MODE_ALTERNATE |
-                               PAL_STM32_ALTERNATE(10),
-    AlternateFunction_OTG_HS_AF10 = PAL_STM32_MODE_ALTERNATE |
+
+    //! \section USB OTG interfaces
+    AlternateFunction_OTG_FS_AF10 = PAL_STM32_MODE_ALTERNATE |
                                     PAL_STM32_ALTERNATE(10),
-    AlternateFunction_ETH = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(11),
-    AlternateFunction_FSMC = PAL_STM32_MODE_ALTERNATE |
-                             PAL_STM32_ALTERNATE(12),
-    AlternateFunction_SDIO = PAL_STM32_MODE_ALTERNATE |
-                             PAL_STM32_ALTERNATE(12),
     AlternateFunction_OTG_FS_AF12 = PAL_STM32_MODE_ALTERNATE |
                                     PAL_STM32_ALTERNATE(12),
+    AlternateFunction_OTG_HS = PAL_STM32_MODE_ALTERNATE |
+                               PAL_STM32_ALTERNATE(10),
+
+    //! \section Ethernet interfaces
+#if MCU_LINE == MCU_LINE_STM32F407_F417 || \
+    MCU_LINE == MCU_LINE_STM32F427_F437 || \
+    MCU_LINE == MCU_LINE_STM32F429_F439
+    AlternateFunction_ETH = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(11),
+#endif
+
+    //! \section FMC/FSMC interfaces
+#if MCU_LINE == MCU_LINE_STM32F405_F415 || MCU_LINE == MCU_LINE_STM32F407_F417
+    AlternateFunction_FSMC = PAL_STM32_MODE_ALTERNATE |
+                             PAL_STM32_ALTERNATE(12),
+#elif MCU_LINE == MCU_LINE_STM32F427_F437 || MCU_LINE == MCU_LINE_STM32F429_F439
+    AlternateFunction_FMC = PAL_STM32_MODE_ALTERNATE |
+                            PAL_STM32_ALTERNATE(12),
+#endif
+
+    //! \section SD Card interfaces
+    AlternateFunction_SDIO = PAL_STM32_MODE_ALTERNATE |
+                             PAL_STM32_ALTERNATE(12),
+
+    //! \section DCMI interfaces
+#if MCU_LINE == MCU_LINE_STM32F407_F417 || \
+    MCU_LINE == MCU_LINE_STM32F427_F437 || \
+    MCU_LINE == MCU_LINE_STM32F429_F439
     AlternateFunction_DCMI = PAL_STM32_MODE_ALTERNATE |
                              PAL_STM32_ALTERNATE(13),
+#endif
+
+    //! \section LCD interfaces
+#if MCU_LINE == MCU_LINE_STM32F429_F439
+    AlternateFunction_LCD_AF9 = PAL_STM32_MODE_ALTERNATE |
+                                PAL_STM32_ALTERNATE(9),
+    AlternateFunction_LCD_AF14 = PAL_STM32_MODE_ALTERNATE |
+                                 PAL_STM32_ALTERNATE(14),
+#endif
+#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4
+
     AnalogInput = PAL_STM32_MODE_ANALOG,
 };
-#endif  // MCU_LINE == MCU_LINE_STM32F405_F407
-#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4
 
 enum class GPIOPullConfiguration : iomode_t
 {

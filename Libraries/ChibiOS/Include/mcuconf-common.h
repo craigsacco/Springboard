@@ -45,7 +45,8 @@
 #endif  // CORTEX_MODEL == 4
 
 //! \section device electronic signature
-#if defined(STM32F40_41xxx)
+#if defined(STM32F40_41xxx) || defined(STM32F427_437xx) || \
+    defined(STM32F429_439xx)
 #define MCU_UNIQUE_ID_LENGTH    12
 typedef struct
 {
@@ -69,7 +70,7 @@ typedef struct
 
 #define DES_BASE                (0x1FFF7A10)
 #define DES                     ((DES_TypeDef *) DES_BASE)
-#endif  // defined(STM32F40_41xxx)
+#endif  // defined(STM32F40_41xxx) || defined(STM32F427_437xx) || ...
 
 //! \section mandatory driver features
 #define STM32_WDG_USE_IWDG                  TRUE

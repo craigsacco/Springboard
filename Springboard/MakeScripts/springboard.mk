@@ -26,6 +26,10 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/rt/rt.mk
 
+# Linker script locations
+LDSCRIPTDIR_CHIBIOS = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld
+LDSCRIPTDIR_SPRINGBOARD = $(SPRINGBOARD)/LinkerScripts
+
 # Architecture settings
 ifeq ($(findstring STM32F4,$(PROJECT_MCU)), STM32F4)
 include $(SPRINGBOARD)/MakeScripts/springboard_stm32f4.mk

@@ -45,6 +45,11 @@ SPIBus::SPIBus(Bus* bus, const char* name, Priority priority,
     // determine maximum bus speed - it is half of the APB clock speed
     // of the bus it is running on
     if (false) {  // NOLINT
+#if MCU_FAMILY == MCU_FAMILY_STM32F4 && ( \
+    MCU_LINE == MCU_LINE_STM32F405_F415 || \
+    MCU_LINE == MCU_LINE_STM32F407_F417 || \
+    MCU_LINE == MCU_LINE_STM32F427_F437 || \
+    MCU_LINE == MCU_LINE_STM32F429_F439)
 #if SPRINGBOARD_HAL_USE_SPI1
     } else if (mBus == &SPID1) {
         mMaximumSpeed = STM32_PCLK2_MAX >> 1;
@@ -68,6 +73,9 @@ SPIBus::SPIBus(Bus* bus, const char* name, Priority priority,
 #if SPRINGBOARD_HAL_USE_SPI5
     } else if (mBus == &SPID6) {
         mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+#endif
+#else
+#error "Cannot determine maximum SPI interface speed"
 #endif
     } else {
         ASSERT_FAIL_MSG("Unknown SPI peripheral");

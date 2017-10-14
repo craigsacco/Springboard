@@ -19,6 +19,7 @@ rapid prototyping with the end goal of reducing implementation effort.
 
 * Only supports the following microcontrollers
     * STMicro STM32F407 and its siblings (405/415/417)
+    * STMicro STM32F429 and its siblings (427/437/439)
 
 * Communications interface
     * Communications using a UART/USART interface

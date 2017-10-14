@@ -39,19 +39,19 @@ class TestController : public Controller
 public:
     TestController() :
         Controller(1, "TestController"),
-        mSerialMessaging(this, mPeripheralFactory.GetUARTBus(2),
+        mSerialMessaging(this, mPeripheralFactory.GetUARTBus(1),
                          "SerialMessaging", NORMALPRIO),
-        mExpander(mPeripheralFactory.GetI2CBus(3), 0x20, 400000),
+        mExpander(mPeripheralFactory.GetI2CBus(1), 0x20, 400000),
         mExpanderDriver(this, 2, "MCP23017", &mExpander),
-        mGPS(mPeripheralFactory.GetUARTBus(1), "GPSDeviceComms", NORMALPRIO-1),
+        mGPS(mPeripheralFactory.GetUARTBus(3), "GPSDeviceComms", NORMALPRIO-1),
         mGPSDriver(this, 3, "GPSDevice", &mGPS),
         mExternalFlash_nCS(GPIOA, 4, GPIOPullConfiguration::Floating,
                            GPIOOutputConfiguration::PushPull,
                            GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash_nWP(GPIOB, 13, GPIOPullConfiguration::Floating,
+        mExternalFlash_nWP(GPIOH, 11, GPIOPullConfiguration::Floating,
                            GPIOOutputConfiguration::PushPull,
                            GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash_nRST(GPIOB, 14, GPIOPullConfiguration::Floating,
+        mExternalFlash_nRST(GPIOH, 10, GPIOPullConfiguration::Floating,
                             GPIOOutputConfiguration::PushPull,
                             GPIOOutputSpeed::Low_2MHz),
         mExternalFlash(mPeripheralFactory.GetSPIBus(1), &mExternalFlash_nCS,
@@ -62,30 +62,30 @@ public:
 
     void Start() final
     {
-        // setup I2C3_SDA on PC9, and I2C3_SCL on PH7
+        // setup I2C1_SDA on PB6, and I2C1_SCL on PB7
         InternalGPIOPin::SetPinConfiguration(
-            GPIOC, 9,
-            GPIOPinMode::AlternateFunction_I2C3,
+            GPIOB, 6,
+            GPIOPinMode::AlternateFunction_I2C1,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::OpenDrain,
             GPIOOutputSpeed::Low_2MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOH, 7,
-            GPIOPinMode::AlternateFunction_I2C3,
+            GPIOB, 7,
+            GPIOPinMode::AlternateFunction_I2C1,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::OpenDrain,
             GPIOOutputSpeed::Low_2MHz);
 
-        // setup USART2_TX on PA2, and USART2_RX on PA3
+        // setup USART3_TX on PD8, and USART3_RX on PD9
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 2,
-            GPIOPinMode::AlternateFunction_USART2,
+            GPIOD, 8,
+            GPIOPinMode::AlternateFunction_USART3,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
         InternalGPIOPin::SetPinConfiguration(
-            GPIOA, 3,
-            GPIOPinMode::AlternateFunction_USART2,
+            GPIOD, 9,
+            GPIOPinMode::AlternateFunction_USART3,
             GPIOPullConfiguration::Floating,
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::Low_2MHz);
@@ -124,8 +124,8 @@ public:
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::VeryHigh_100MHz);
 
-        mPeripheralFactory.GetUARTBus(1)->SetConfig(9600);
-        mPeripheralFactory.GetUARTBus(2)->SetConfig(57600);
+        mPeripheralFactory.GetUARTBus(3)->SetConfig(9600);  // GPS
+        mPeripheralFactory.GetUARTBus(1)->SetConfig(57600);  // serial client
         mPeripheralFactory.GetWatchdog(1)->SetTimeout(100000U);
 
         Controller::Start();
@@ -152,16 +152,16 @@ int main(void)
     TestController testController;
     testController.Start();
 
-    DigitalOutput led1(GPIOH, 2, GPIOPullConfiguration::Floating,
+    DigitalOutput led1(GPIOF, 6, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
-    DigitalOutput led2(GPIOH, 3, GPIOPullConfiguration::Floating,
+    DigitalOutput led2(GPIOF, 7, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
-    DigitalOutput led3(GPIOI, 8, GPIOPullConfiguration::Floating,
+    DigitalOutput led3(GPIOF, 8, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
-    DigitalOutput led4(GPIOI, 10, GPIOPullConfiguration::Floating,
+    DigitalOutput led4(GPIOF, 9, GPIOPullConfiguration::Floating,
                        GPIOOutputConfiguration::PushPull,
                        GPIOOutputSpeed::Low_2MHz);
 

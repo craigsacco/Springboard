@@ -11,10 +11,6 @@
 #define STM32_HSECLK                8000000U
 #define STM32_VDD                   330U
 
-//! \section Micro is an STM32F407xx
-#define STM32F407xx
-#define STM32F40_41xxx
-
 //! \section Debug port/pad definitions
 #define DEBUG_SWDIO_PORT            GPIOA
 #define DEBUG_SWDIO_PAD             13

@@ -34,6 +34,7 @@
 #include <stdint.h>
 #endif
 
+#include <Springboard/MCUTypes.h>
 #include <Springboard/ResultCodes.h>
 
 //! \section Common type definitions

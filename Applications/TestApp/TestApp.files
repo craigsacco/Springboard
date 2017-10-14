@@ -61,7 +61,6 @@
 ../../Libraries/ChibiOS/17.6.x/os/common/ports/ARMCMx/mpu.h
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/compilers/GCC/crt0_v7m.S
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/compilers/GCC/crt1.c
-../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/compilers/GCC/ld/STM32F407xG.ld
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/compilers/GCC/vectors.c
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/compilers/GCC/vectors.h
 ../../Libraries/ChibiOS/17.6.x/os/common/startup/ARMCMx/devices/STM32F4xx/cmparams.h
@@ -225,6 +224,7 @@
 ../../Libraries/ChibiOS/17.6.x/os/various/evtimer.h
 ../../Libraries/ChibiOS/17.6.x/os/various/syscalls.c
 ../../Springboard/Include/Springboard/Common.h
+../../Springboard/Include/Springboard/MCUTypes.h
 ../../Springboard/Include/Springboard/ResultCodes.h
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
@@ -269,6 +269,7 @@
 ../../Springboard/Include/Springboard/Utilities/Dictionary.hpp
 ../../Springboard/Include/Springboard/Utilities/LinkedList.hpp
 ../../Springboard/Include/Springboard/Utilities/StringSplitter.hpp
+../../Springboard/LinkerScripts/STM32F429xG.ld
 ../../Springboard/Source/Comms/MessageStreamHandler.cpp
 ../../Springboard/Source/Core/CrashHandler.c
 ../../Springboard/Source/Core/ExceptionHandling.c
