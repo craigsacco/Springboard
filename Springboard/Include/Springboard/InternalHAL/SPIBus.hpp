@@ -69,6 +69,11 @@ public:
 
     void Run() final;
 
+    inline Speed GetPeripheralSpeed() const
+    {
+        return mPeripheralSpeed;
+    }
+
     inline Speed GetMaximumSpeed() const
     {
         return mMaximumSpeed;
@@ -82,6 +87,7 @@ public:
 private:
     Bus* mBus;
     Config mConfig;
+    Speed mPeripheralSpeed;
     Speed mMaximumSpeed;
     Springboard::Kernel::Mailbox mTransactionQueue;
 };

@@ -70,6 +70,7 @@
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(RCBLK_HAL_I2C))
 #define RC_I2C_TIMED_OUT                    (RC_I2C_BASE + 0UL)
+#define RC_I2C_NOT_SUPPORTED                (RC_I2C_BASE + 1UL)
 #define RC_I2C_HARDWARE_ERROR_BASE          (RC_I2C_BASE + 0x8000UL)
 
 //! \section RTC result codes

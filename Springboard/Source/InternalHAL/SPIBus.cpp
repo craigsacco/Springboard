@@ -39,12 +39,11 @@ namespace InternalHAL {
 SPIBus::SPIBus(Bus* bus, const char* name, Priority priority,
                size_t transactionDepth)
     : Thread(name, SPRINGBOARD_HAL_SPI_THREAD_SIZE, priority),
-      mBus(bus), mConfig(), mMaximumSpeed(0),
+      mBus(bus), mConfig(), mPeripheralSpeed(0), mMaximumSpeed(0),
       mTransactionQueue(transactionDepth)
 {
-    // determine maximum bus speed - it is half of the APB clock speed
-    // of the bus it is running on
-    if (false) {  // NOLINT
+    // determine peripheral and maximum speed - it is half of the APB speed of
+    // the bus it is running on
 #if (MCU_FAMILY == MCU_FAMILY_STM32F4 && \
      (MCU_LINE == MCU_LINE_STM32F405_F415 || \
       MCU_LINE == MCU_LINE_STM32F407_F417 || \
@@ -52,36 +51,38 @@ SPIBus::SPIBus(Bus* bus, const char* name, Priority priority,
       MCU_LINE == MCU_LINE_STM32F429_F439)) || \
     (MCU_FAMILY == MCU_FAMILY_STM32F7 && \
      (MCU_LINE == MCU_LINE_STM32F746_F756))
+    if (false) {  // NOLINT
 #if SPRINGBOARD_HAL_USE_SPI1
     } else if (mBus == &SPID1) {
-        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+        mPeripheralSpeed = STM32_PCLK2_MAX;
 #endif
 #if SPRINGBOARD_HAL_USE_SPI2
     } else if (mBus == &SPID2) {
-        mMaximumSpeed = STM32_PCLK1_MAX >> 1;
+        mPeripheralSpeed = STM32_PCLK1_MAX;
 #endif
 #if SPRINGBOARD_HAL_USE_SPI3
     } else if (mBus == &SPID3) {
-        mMaximumSpeed = STM32_PCLK1_MAX >> 1;
+        mPeripheralSpeed = STM32_PCLK1_MAX;
 #endif
 #if SPRINGBOARD_HAL_USE_SPI4
     } else if (mBus == &SPID4) {
-        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+        mPeripheralSpeed = STM32_PCLK2_MAX;
 #endif
 #if SPRINGBOARD_HAL_USE_SPI5
     } else if (mBus == &SPID5) {
-        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
+        mPeripheralSpeed = STM32_PCLK2_MAX;
 #endif
 #if SPRINGBOARD_HAL_USE_SPI5
     } else if (mBus == &SPID6) {
-        mMaximumSpeed = STM32_PCLK2_MAX >> 1;
-#endif
-#else
-#error "Cannot determine maximum SPI interface speed"
+        mPeripheralSpeed = STM32_PCLK2_MAX;
 #endif
     } else {
         ASSERT_FAIL_MSG("Unknown SPI peripheral");
     }
+    mMaximumSpeed = mPeripheralSpeed / 2;
+#else
+#error "Cannot determine maximum SPI interface speed"
+#endif
 }
 
 void SPIBus::Run()
@@ -98,7 +99,7 @@ void SPIBus::Run()
         uint32_t cr1 =
             (static_cast<uint32_t>(transaction.clockPrescaler) << 3) |
             static_cast<uint32_t>(transaction.clockConfig);
-        uint32_t cr2 = 0;  // this is OK on the F7 - will be set to 8-bits
+        uint32_t cr2 = 0;
         if (mConfig.cr1 != cr1 || mConfig.cr2 != cr2) {
             mConfig.cr1 = cr1;
             mConfig.cr2 = cr2;

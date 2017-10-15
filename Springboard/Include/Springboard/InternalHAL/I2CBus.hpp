@@ -66,14 +66,30 @@ public:
            size_t transactionDepth);
     void Run() final;
 
+    inline Speed GetPeripheralSpeed() const
+    {
+        return mPeripheralSpeed;
+    }
+
+    inline Speed GetMaximumSpeed() const
+    {
+        return mMaximumSpeed;
+    }
+
     inline void Enqueue(const Transaction& transaction)
     {
         mTransactionQueue.Post(transaction);
     }
 
+    static constexpr Speed STANDARD_MODE_SPEED_MAX = 100000;
+    static constexpr Speed FAST_MODE_SPEED_MAX = 400000;
+    static constexpr Speed FAST_MODE_PLUS_SPEED_MAX = 1000000;
+
 private:
     Bus* mBus;
     Config mConfig;
+    Speed mPeripheralSpeed;
+    Speed mMaximumSpeed;
     Springboard::Kernel::Mailbox mTransactionQueue;
 };
 
