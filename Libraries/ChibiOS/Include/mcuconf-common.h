@@ -15,43 +15,48 @@
 #endif
 
 //! \section ARM architecture version
+#if defined(CORTEX_MODEL)
 #if CORTEX_MODEL == 4
-#define __CM4_ARCH_REV          ((__CM4_REV >> 8) & 0xff)
-#define __CM4_ARCH_PATCH        (__CM4_REV & 0xff)
-#if __CM4_ARCH_REV == 0
-#define __CM4_ARCH_REV_STR      "r0"
-#elif __CM4_ARCH_REV == 1
-#define __CM4_ARCH_REV_STR      "r1"
-#elif __CM4_ARCH_REV == 2
-#define __CM4_ARCH_REV_STR      "r2"
-#elif __CM4_ARCH_REV == 3
-#define __CM4_ARCH_REV_STR      "r3"
-#elif __CM4_ARCH_REV == 4
-#define __CM4_ARCH_REV_STR      "r4"
-#elif __CM4_ARCH_REV == 5
-#define __CM4_ARCH_REV_STR      "r5"
+#define CORTEX_ARCH_REV         ((__CM4_REV >> 8) & 0xff)
+#define CORTEX_ARCH_PATCH       (__CM4_REV & 0xff)
+#elif CORTEX_MODEL == 7
+#define CORTEX_ARCH_REV         ((__CM7_REV >> 8) & 0xff)
+#define CORTEX_ARCH_PATCH       (__CM7_REV & 0xff)
+#else
+#error "Unknown ARM Cortex model"
+#endif
+#if CORTEX_ARCH_REV == 0
+#define CORTEX_ARCH_REV_STR     "r0"
+#elif CORTEX_ARCH_REV == 1
+#define CORTEX_ARCH_REV_STR     "r1"
+#elif CORTEX_ARCH_REV == 2
+#define CORTEX_ARCH_REV_STR     "r2"
+#elif CORTEX_ARCH_REV == 3
+#define CORTEX_ARCH_REV_STR     "r3"
+#elif CORTEX_ARCH_REV == 4
+#define CORTEX_ARCH_REV_STR     "r4"
+#elif CORTEX_ARCH_REV == 5
+#define CORTEX_ARCH_REV_STR     "r5"
 #else
 #error "Need more conditions here"
 #endif
-#if __CM4_ARCH_PATCH == 0
-#define __CM4_ARCH_PATCH_STR    "p0"
-#elif __CM4_ARCH_PATCH == 1
-#define __CM4_ARCH_PATCH_STR    "p1"
-#elif __CM4_ARCH_PATCH == 2
-#define __CM4_ARCH_PATCH_STR    "p2"
-#elif __CM4_ARCH_PATCH == 3
-#define __CM4_ARCH_PATCH_STR    "p3"
-#elif __CM4_ARCH_PATCH == 4
-#define __CM4_ARCH_PATCH_STR    "p4"
-#elif __CM4_ARCH_PATCH == 5
-#define __CM4_ARCH_PATCH_STR    "p5"
+#if CORTEX_ARCH_PATCH == 0
+#define CORTEX_ARCH_PATCH_STR   "p0"
+#elif CORTEX_ARCH_PATCH == 1
+#define CORTEX_ARCH_PATCH_STR   "p1"
+#elif CORTEX_ARCH_PATCH == 2
+#define CORTEX_ARCH_PATCH_STR   "p2"
+#elif CORTEX_ARCH_PATCH == 3
+#define CORTEX_ARCH_PATCH_STR   "p3"
+#elif CORTEX_ARCH_PATCH == 4
+#define CORTEX_ARCH_PATCH_STR   "p4"
+#elif CORTEX_ARCH_PATCH == 5
+#define CORTEX_ARCH_PATCH_STR   "p5"
 #else
 #error "Need more conditions here"
 #endif
-#define PORT_ARCHITECTURE_REVISION  __CM4_ARCH_REV_STR __CM4_ARCH_PATCH_STR
-#else
-#define PORT_ARCHITECTURE_REVISION  "Unknown"
-#endif  // CORTEX_MODEL == 4
+#define PORT_ARCHITECTURE_REVISION  CORTEX_ARCH_REV_STR CORTEX_ARCH_PATCH_STR
+#endif  // defined(CORTEX_MODEL)
 
 //! \section device electronic signature
 #if (MCU_FAMILY == MCU_FAMILY_STM32F4 && \

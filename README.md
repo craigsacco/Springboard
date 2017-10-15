@@ -54,7 +54,7 @@ rapid prototyping with the end goal of reducing implementation effort.
 
 * U(S)ART interface
     * Implements IStream interface for common stream routines
-    * **\[TODO\]** - 9-bit data support
+    * **\[TODO\]** - Programmable frame width (only 8-bit at the moment)
     * **\[TODO\]** - Use DMA subsystem for transmitting data, currently relying on IRQ
 
 * OEM device support
@@ -68,7 +68,7 @@ rapid prototyping with the end goal of reducing implementation effort.
         * Determines actual speed to operate based on desired speed and host bus
     * Added drivers for following IC's
         * Adesto AT45DB041E external FLASH (very basic at the moment)
-    * **\[TODO\]** - programmable frame width (only 8-bit at the moment)
+    * **\[TODO\]** - Programmable frame width (only 8-bit at the moment)
     * **\[TODO\]** - Dual-SPI and Quad-SPI support
 
 * **\[TODO\]** CAN bus arbitrator
