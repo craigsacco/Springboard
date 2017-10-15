@@ -41,6 +41,7 @@ rapid prototyping with the end goal of reducing implementation effort.
     * Added drivers for following IC's
         * TI PCF8574 GPIO expander
         * Microchip MCP23017 GPIO expander
+        * Atmel AT24Cxx EEPROM (very basic at the moment)
     * **\[TODO\]** - extended addressing format
 
 * RTC support
@@ -66,7 +67,7 @@ rapid prototyping with the end goal of reducing implementation effort.
         * Determines actual speed to operate based on desired speed and host bus
     * Added drivers for following IC's
         * Adesto AT45DB041E external FLASH (very basic at the moment)
-    * **\[TODO\]** - 16-bit data support
+    * **\[TODO\]** - programmable frame width (only 8-bit at the moment)
     * **\[TODO\]** - Dual-SPI and Quad-SPI support
 
 * **\[TODO\]** CAN bus arbitrator
@@ -89,8 +90,6 @@ rapid prototyping with the end goal of reducing implementation effort.
     * GNU GDB 7.12
 * cpplint - for static code analysis
 * openocd - to act as a debug server
-    * If your target is a Cortex-M7 microcontroller, version
-      [0.10.0](https://sourceforge.net/p/openocd/code/ci/v0.10.0) is required
 
 ### Recommended Tools
 
@@ -99,6 +98,9 @@ rapid prototyping with the end goal of reducing implementation effort.
 * [PyCharm](http://www.jetbrains.com/pycharm/download) - great Python IDE
 * [Linux Mint](http://www.linuxmint.com) - most of the packages mentioned above can be downloaded
   either via the Ubuntu package repository, or a third-party PPA
+    * If your target is a Cortex-M7 microcontroller, version
+      [0.10.0](https://sourceforge.net/p/openocd/code/ci/v0.10.0) is required,
+      and will need to be built manually
 
 ## License
 
