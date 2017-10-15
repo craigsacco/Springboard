@@ -146,6 +146,7 @@ class MessageHandler:
         return bytearray(self.__get_property_raw(resource_id, property_id))
 
     def set_property_bool(self, resource_id, property_id, value):
+        assert type(value) == bool
         return self.__set_property_raw(resource_id, property_id, struct.pack("<B", 1 if value == True else 0))
 
     def set_property_uint8(self, resource_id, property_id, value):
