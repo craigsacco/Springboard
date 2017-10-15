@@ -32,31 +32,36 @@
 namespace Springboard {
 namespace InternalHAL {
 
-I2CBus::I2CBus(Bus* bus, I2CMode mode, const char* name, Priority priority,
+I2CBus::I2CBus(Bus* bus, const char* name, Priority priority,
                size_t transactionDepth)
     : Thread(name, SPRINGBOARD_HAL_I2C_THREAD_SIZE, priority),
       mBus(bus), mConfig(), mTransactionQueue(transactionDepth)
 {
-    mConfig.op_mode = static_cast<i2copmode_t>(mode);
+#if MCU_FAMILY == MCU_FAMILY_STM32F4
+    mConfig.op_mode = OPMODE_I2C;
+#endif
 }
 
 void I2CBus::Run()
 {
-    mConfig.clock_speed = 0;
+    uint32_t currentSpeed = 0;
 
     while (!ShouldTerminate()) {
         Transaction& transaction = mTransactionQueue.Fetch<Transaction>();
 
-        if (mConfig.clock_speed != transaction.speed) {
-            if (mConfig.clock_speed > 0) {
+        if (currentSpeed != transaction.speed) {
+            if (currentSpeed > 0) {
                 i2cStop(mBus);
             }
+#if MCU_FAMILY == MCU_FAMILY_STM32F4
             mConfig.clock_speed = transaction.speed;
-            mConfig.duty_cycle =
-                static_cast<i2cdutycycle_t>(transaction.speed <= 100000 ?
-                                            I2CDutyCycle::Standard :
-                                            I2CDutyCycle::Fast_2);
+            mConfig.duty_cycle = transaction.speed <= 100000 ?
+                STD_DUTY_CYCLE : FAST_DUTY_CYCLE_2);
+#elif MCU_FAMILY == MCU_FAMILY_STM32F7
+            // TODO(craig.sacco): calculate mConfig.timingr
+#endif
             i2cStart(mBus, &mConfig);
+            currentSpeed = transaction.speed;
         }
 
         msg_t result = MSG_OK;
@@ -78,7 +83,7 @@ void I2CBus::Run()
 
         if (result != MSG_OK) {
             transaction.result = RC_I2C_TIMED_OUT;
-            mConfig.clock_speed = 0;  // bus is locked - force bus restart
+            currentSpeed = 0;  // bus is locked - force bus restart
         } else if (mBus->errors != I2C_NO_ERROR) {
             transaction.result = RC_I2C_HARDWARE_ERROR_BASE + mBus->errors;
         } else {

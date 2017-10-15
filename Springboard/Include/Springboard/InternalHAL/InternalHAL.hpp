@@ -369,22 +369,6 @@ enum class GPIOOutputSpeed : iomode_t
     VeryHigh_100MHz = PAL_STM32_OSPEED_HIGHEST,
 };
 
-#if SPRINGBOARD_HAL_ENABLE_I2C
-enum class I2CMode
-{
-    I2C = OPMODE_I2C,
-    SMBusSlave = OPMODE_SMBUS_DEVICE,
-    SMBusHost = OPMODE_SMBUS_HOST,
-};
-
-enum class I2CDutyCycle
-{
-    Standard = STD_DUTY_CYCLE,
-    Fast_2 = FAST_DUTY_CYCLE_2,
-    Fast_16_9 = FAST_DUTY_CYCLE_16_9,
-};
-#endif  // SPRINGBOARD_HAL_ENABLE_I2C
-
 #if SPRINGBOARD_HAL_ENABLE_SPI
 enum class SPIClockConfig
 {

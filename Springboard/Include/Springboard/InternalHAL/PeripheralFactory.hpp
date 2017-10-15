@@ -198,7 +198,7 @@ private:
 #if SPRINGBOARD_HAL_ENABLE_I2C
 #define SPRINGBOARD_HAL_PF_I2C_DECL(n)                              \
     I2CBus mI2C##n##Bus                                             \
-        { &I2CD##n, I2CMode::I2C, "I2C" #n "Bus",                   \
+        { &I2CD##n, "I2C" #n "Bus",                                 \
           SPRINGBOARD_HAL_I2C##n##_THREAD_PRIORITY,                 \
           SPRINGBOARD_HAL_I2C##n##_XACTION_DEPTH }
 #if SPRINGBOARD_HAL_USE_I2C1

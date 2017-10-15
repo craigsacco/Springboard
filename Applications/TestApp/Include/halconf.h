@@ -29,20 +29,6 @@
 
 #include <halconf-common.h>
 
-#if MCU_FAMILY == MCU_FAMILY_STM32F4
-#define HAL_USE_I2C                 TRUE
-#define HAL_USE_SERIAL              TRUE
-#define HAL_USE_SPI                 TRUE
-#endif
-
-#if MCU_FAMILY == MCU_FAMILY_STM32F7
-#define HAL_USE_I2C                 FALSE
-#define HAL_USE_SERIAL              TRUE
-#define HAL_USE_SPI                 TRUE
-#endif
-
-
-
 /**
  * @brief   Enables the ADC subsystem.
  */

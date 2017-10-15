@@ -43,6 +43,7 @@ rapid prototyping with the end goal of reducing implementation effort.
         * Microchip MCP23017 GPIO expander
         * Atmel AT24Cxx EEPROM (very basic at the moment)
     * **\[TODO\]** - extended addressing format
+    * **\[TODO\]** - SMBus support
 
 * RTC support
     * Calendar get/set support through the communications interface
