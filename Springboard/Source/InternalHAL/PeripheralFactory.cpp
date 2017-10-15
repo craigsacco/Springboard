@@ -59,11 +59,11 @@ void PeripheralFactory::Start()
     }
 #endif
 
-//    for (Watchdog* wdg : mWDGs) {
-//        if (wdg != nullptr) {
-//            wdg->Start();
-//        }
-//    }
+    for (Watchdog* wdg : mWDGs) {
+        if (wdg != nullptr) {
+            wdg->Start();
+        }
+    }
 }
 
 I2CBus* PeripheralFactory::GetI2CBus(size_t index) const

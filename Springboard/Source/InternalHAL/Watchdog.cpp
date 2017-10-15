@@ -36,6 +36,9 @@ Watchdog::Watchdog(Driver* driver, const char* name, Priority priority)
     // by default, make the timeout huge (in this case, 32.768 seconds)
     mConfig.pr = 7;
     mConfig.rlr = 0xFFF;
+#if STM32_IWDG_IS_WINDOWED
+    mConfig.winr = STM32_IWDG_WIN_DISABLED;
+#endif
 }
 
 bool Watchdog::SetTimeout(uint32_t microseconds)

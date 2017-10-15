@@ -98,7 +98,7 @@ void SPIBus::Run()
         uint32_t cr1 =
             (static_cast<uint32_t>(transaction.clockPrescaler) << 3) |
             static_cast<uint32_t>(transaction.clockConfig);
-        uint32_t cr2 = 0;
+        uint32_t cr2 = 0;  // this is OK on the F7 - will set to 8-bits
         if (mConfig.cr1 != cr1 || mConfig.cr2 != cr2) {
             mConfig.cr1 = cr1;
             mConfig.cr2 = cr2;

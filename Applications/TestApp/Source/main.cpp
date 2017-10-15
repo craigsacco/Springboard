@@ -242,8 +242,8 @@ public:
         mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex)
             ->SetConfig(57600);
 #endif
-//        mPeripheralFactory.GetWatchdog(1)
-//            ->SetTimeout(100000U);
+        mPeripheralFactory.GetWatchdog(1)
+            ->SetTimeout(100000U);
 
         Controller::Start();
 
@@ -272,8 +272,6 @@ private:
 
 int main(void)
 {
-    volatile uint32_t rstf = RCC->CSR;
-
     TestController testController;
     testController.Start();
 
