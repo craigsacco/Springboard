@@ -6,7 +6,7 @@ sys.path.append("../../Springboard/PythonLib")
 from pyspringboard.Client import SerialClient
 from pyspringboard.MessageHandler import MessageHandler
 from pyspringboard.Controller import Controller
-from pyspringboard.drivers.MCP23017 import MCP23017
+from pyspringboard.drivers.PCF8574 import PCF8574
 from pyspringboard.drivers.NMEA0183GPS import NMEA0183GPS
 from pyspringboard.drivers.AT45DB041E import AT45DB041E
 
@@ -15,7 +15,7 @@ class TestController(Controller):
 
     def __init__(self, handler):
         super(TestController, self).__init__(handler)
-        self.__expander = MCP23017(handler, 2)
+        self.__expander = PCF8574(handler, 2)
         self.__gps = NMEA0183GPS(handler, 3)
         self.__flash = AT45DB041E(handler, 4)
 
@@ -59,8 +59,8 @@ def main():
         print "controller MCU family: {0}".format(controller.get_mcu_family())
         print "controller MCU line: {0}".format(controller.get_mcu_line())
         print "controller MCU variant: {0}".format(controller.get_mcu_variant())
-        # print "expander resource type: {0}".format(controller.expander.get_resource_type())
-        # print "expander resource name: {0}".format(controller.expander.get_resource_name())
+        print "expander resource type: {0}".format(controller.expander.get_resource_type())
+        print "expander resource name: {0}".format(controller.expander.get_resource_name())
         print "GPS resource type: {0}".format(controller.gps.get_resource_type())
         print "GPS resource name: {0}".format(controller.gps.get_resource_name())
         print "GPS last fix time UTC: {0}".format(controller.gps.get_last_fix_time_utc())

@@ -9,8 +9,8 @@
 #include <Springboard/Kernel/Kernel.hpp>
 #include <Springboard/Kernel/Thread.hpp>
 #include <Springboard/Comms/MessageStreamHandler.hpp>
-#include <Springboard/ExternalHAL/MCP23017.hpp>
-#include <Springboard/Drivers/MCP23017Driver.hpp>
+#include <Springboard/ExternalHAL/PCF8574.hpp>
+#include <Springboard/Drivers/PCF8574Driver.hpp>
 #include <Springboard/ExternalHAL/NMEA0183GPSDevice.hpp>
 #include <Springboard/Drivers/NMEA0183GPSDriver.hpp>
 #include <Springboard/ExternalHAL/AT45DB041E.hpp>
@@ -27,8 +27,8 @@ using Springboard::InternalHAL::DigitalOutput;
 using Springboard::Infrastructure::Controller;
 using Springboard::Comms::MessageStreamHandler;
 #if SPRINGBOARD_HAL_ENABLE_I2C
-using Springboard::ExternalHAL::MCP23017;
-using Springboard::Drivers::MCP23017Driver;
+using Springboard::ExternalHAL::PCF8574;
+using Springboard::Drivers::PCF8574Driver;
 #endif
 #if SPRINGBOARD_HAL_ENABLE_UART
 using Springboard::ExternalHAL::NMEA0183GPSDevice;
@@ -149,8 +149,8 @@ public:
     TestController() :
         Controller(1, "TestController")
 #if SPRINGBOARD_HAL_ENABLE_I2C
-        , mExpander(mPeripheralFactory.GetI2CBus(I2CBusIndex), 0x20, 400000)
-        , mExpanderDriver(this, 2, "MCP23017", &mExpander)
+        , mExpander(mPeripheralFactory.GetI2CBus(I2CBusIndex), 0x20, 100000)
+        , mExpanderDriver(this, 2, "PCF8574", &mExpander)
 #endif
 #if SPRINGBOARD_HAL_ENABLE_UART
         , mSerialMessaging(
@@ -242,8 +242,7 @@ public:
         mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex)
             ->SetConfig(57600);
 #endif
-        mPeripheralFactory.GetWatchdog(1)
-            ->SetTimeout(100000U);
+        mPeripheralFactory.GetWatchdog(1)->SetTimeout(100000U);
 
         Controller::Start();
 
@@ -253,8 +252,8 @@ public:
 
 private:
 #if SPRINGBOARD_HAL_ENABLE_I2C
-    MCP23017 mExpander;
-    MCP23017Driver mExpanderDriver;
+    PCF8574 mExpander;
+    PCF8574Driver mExpanderDriver;
 #endif
 #if SPRINGBOARD_HAL_ENABLE_UART
     MessageStreamHandler mSerialMessaging;
