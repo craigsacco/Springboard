@@ -21,7 +21,6 @@ CHIBIOS = $(SPRINGBOARD)/../Libraries/ChibiOS/17.6.x
 
 # ChibiOS make includes
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/rt/rt.mk
@@ -31,8 +30,10 @@ LDSCRIPTDIR_CHIBIOS = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld
 LDSCRIPTDIR_SPRINGBOARD = $(SPRINGBOARD)/LinkerScripts
 
 # Architecture settings
-ifeq ($(findstring STM32F4,$(PROJECT_MCU)), STM32F4)
+ifeq ($(findstring STM32F4,$(TARGET)), STM32F4)
 include $(SPRINGBOARD)/MakeScripts/springboard_stm32f4.mk
+else ifeq ($(findstring STM32F7,$(TARGET)), STM32F7)
+include $(SPRINGBOARD)/MakeScripts/springboard_stm32f7.mk
 else
 $(error Architecture is not defined, or is not supported)
 endif
@@ -49,7 +50,6 @@ USE_VERBOSE_COMPILE = no
 USE_SMART_BUILD = no
 USE_PROCESS_STACKSIZE = 0x1000
 USE_EXCEPTIONS_STACKSIZE = 0x400
-USE_FPU = hard
 
 # Optional sources provided by ChibiOS
 VARIOUSINC = $(CHIBIOS)/os/various

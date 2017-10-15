@@ -6,11 +6,7 @@
 
 #include <Springboard/MCUTypes.h>
 
-#if MCU_FAMILY == MCU_FAMILY_STM32F4
-#if MCU_LINE == MCU_LINE_STM32F405_F415 || \
-    MCU_LINE == MCU_LINE_STM32F407_F417 || \
-    MCU_LINE == MCU_LINE_STM32F427_F437 || \
-    MCU_LINE == MCU_LINE_STM32F429_F439
+#if MCU_FAMILY == MCU_FAMILY_STM32F4 || MCU_FAMILY == MCU_FAMILY_STM32F7
 
 //! \section Debug port/pad definitions
 #define DEBUG_SWDIO_PORT            GPIOA
@@ -111,8 +107,25 @@
 #define VAL_GPIOI_AFRL              (0U)
 #define VAL_GPIOI_AFRH              (0U)
 
-#endif  // MCU_LINE == MCU_LINE_STM32F405_F415 || ...
-#endif  // MCU_FAMILY == MCU_FAMILY_STM32F4
+//! \section GPIOJ configuration
+#define VAL_GPIOJ_MODER             (0U)
+#define VAL_GPIOJ_OTYPER            (0U)
+#define VAL_GPIOJ_OSPEEDR           (0U)
+#define VAL_GPIOJ_PUPDR             (0U)
+#define VAL_GPIOJ_ODR               (0U)
+#define VAL_GPIOJ_AFRL              (0U)
+#define VAL_GPIOJ_AFRH              (0U)
+
+//! \section GPIOK configuration
+#define VAL_GPIOK_MODER             (0U)
+#define VAL_GPIOK_OTYPER            (0U)
+#define VAL_GPIOK_OSPEEDR           (0U)
+#define VAL_GPIOK_PUPDR             (0U)
+#define VAL_GPIOK_ODR               (0U)
+#define VAL_GPIOK_AFRL              (0U)
+#define VAL_GPIOK_AFRH              (0U)
+
+#endif  // #if MCU_FAMILY == MCU_FAMILY_STM32F4 || MCU_FAMILY == MCU_FAMILY_STM32F7
 
 //! \section boardInit() declaration
 #ifdef __cplusplus
@@ -159,8 +172,7 @@ void boardInit(void);
 
 //! \section Microcontroller declaration
 #if MCU_FAMILY == MCU_FAMILY_STM32F4
-#if MCU_LINE == MCU_LINE_STM32F405_F415 || \
-    MCU_LINE == MCU_LINE_STM32F407_F417
+#if MCU_LINE == MCU_LINE_STM32F405_F415 || MCU_LINE == MCU_LINE_STM32F407_F417
 #define STM32F40_41xxx
 #if MCU_VARIANT_STM32_IN_GROUP(MCU_VARIANT_STM32F405xx)
 #define STM32F405xx
@@ -186,7 +198,17 @@ void boardInit(void);
 #define STM32F439xx
 #endif
 #else
-#error "Unsupported microcontroller line"
+#error "Unsupported STM32F4 microcontroller line"
+#endif
+#elif MCU_FAMILY == MCU_FAMILY_STM32F7
+#if MCU_LINE == MCU_LINE_STM32F746_F756
+#if MCU_VARIANT_STM32_IN_GROUP(MCU_VARIANT_STM32F746xx)
+#define STM32F746xx
+#elif MCU_VARIANT_STM32_IN_GROUP(MCU_VARIANT_STM32F756xx)
+#define STM32F756xx
+#endif
+#else
+#error "Unsupported STM32F7 microcontroller line"
 #endif
 #else
 #error "Unsupported microcontroller family"

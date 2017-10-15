@@ -42,6 +42,7 @@
 #define SPRINGBOARD_HAL_CAN_THREAD_PRIORITY_DEFAULT     HIGHPRIO-2
 #define SPRINGBOARD_HAL_I2C_THREAD_PRIORITY_DEFAULT     HIGHPRIO-3
 
+#if SPRINGBOARD_HAL_ENABLE_I2C
 //! \section I2C1 thread macro checking
 #if SPRINGBOARD_HAL_USE_I2C1
 #if !defined(SPRINGBOARD_HAL_I2C1_THREAD_PRIORITY)
@@ -77,7 +78,9 @@
     "SPRINGBOARD_HAL_USE_I2C3 is set"
 #endif
 #endif
+#endif  // SPRINGBOARD_HAL_ENABLE_I2C
 
+#if SPRINGBOARD_HAL_ENABLE_SPI
 //! \section SPI1 thread macro checking
 #if SPRINGBOARD_HAL_USE_SPI1
 #if !defined(SPRINGBOARD_HAL_SPI1_THREAD_PRIORITY)
@@ -149,6 +152,7 @@
     "SPRINGBOARD_HAL_USE_SPI6 is set"
 #endif
 #endif
+#endif  // SPRINGBOARD_HAL_ENABLE_SPI
 
 //! \section watchdog thread macro checking
 #if !defined(SPRINGBOARD_HAL_WDG_THREAD_PRIORITY)

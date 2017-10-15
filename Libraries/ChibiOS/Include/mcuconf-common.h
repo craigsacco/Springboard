@@ -10,6 +10,9 @@
 #if MCU_FAMILY == MCU_FAMILY_STM32F4
 #define STM32F4xx_MCUCONF
 #endif
+#if MCU_FAMILY == MCU_FAMILY_STM32F7
+#define STM32F7xx_MCUCONF
+#endif
 
 //! \section ARM architecture version
 #if CORTEX_MODEL == 4
@@ -45,16 +48,20 @@
 #else
 #error "Need more conditions here"
 #endif
-#define __CM4_REV_STR           __CM4_ARCH_REV_STR __CM4_ARCH_PATCH_STR
+#define PORT_ARCHITECTURE_REVISION  __CM4_ARCH_REV_STR __CM4_ARCH_PATCH_STR
+#else
+#define PORT_ARCHITECTURE_REVISION  "Unknown"
 #endif  // CORTEX_MODEL == 4
 
 //! \section device electronic signature
-#if MCU_FAMILY == MCU_FAMILY_STM32F4 && ( \
-    MCU_LINE == MCU_LINE_STM32F405_F415 || \
-    MCU_LINE == MCU_LINE_STM32F407_F417 || \
-    MCU_LINE == MCU_LINE_STM32F427_F437 || \
-    MCU_LINE == MCU_LINE_STM32F429_F439)
-#define MCU_UNIQUE_ID_LENGTH    12
+#if (MCU_FAMILY == MCU_FAMILY_STM32F4 && \
+     (MCU_LINE == MCU_LINE_STM32F405_F415 || \
+      MCU_LINE == MCU_LINE_STM32F407_F417 || \
+      MCU_LINE == MCU_LINE_STM32F427_F437 || \
+      MCU_LINE == MCU_LINE_STM32F429_F439)) || \
+    (MCU_FAMILY == MCU_FAMILY_STM32F7 && \
+     (MCU_LINE == MCU_LINE_STM32F746_F756))
+#define MCU_DES_UID_LENGTH      12
 typedef struct
 {
     uint32_t                    low;
@@ -65,7 +72,7 @@ typedef struct
 typedef union
 {
     DES_UID_Regs_TypeDef        regs;
-    uint8_t                     data[MCU_UNIQUE_ID_LENGTH];
+    uint8_t                     data[MCU_DES_UID_LENGTH];
 } DES_UID_TypeDef;
 
 typedef struct
@@ -75,7 +82,11 @@ typedef struct
     uint16_t                    FLASH_SIZE;     /*!< flash size (in kB) */
 } DES_TypeDef;
 
+#if MCU_FAMILY == MCU_FAMILY_STM32F4
 #define DES_BASE                (0x1FFF7A10)
+#elif MCU_FAMILY == MCU_FAMILY_STM32F7
+#define DES_BASE                (0x1FF0F420)
+#endif
 #define DES                     ((DES_TypeDef *) DES_BASE)
 #endif  // MCU_FAMILY == MCU_FAMILY_STM32F4 && ( ...
 

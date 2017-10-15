@@ -20,6 +20,7 @@ rapid prototyping with the end goal of reducing implementation effort.
 * Only supports the following microcontrollers
     * STMicro STM32F407 and its siblings (405/415/417)
     * STMicro STM32F429 and its siblings (427/437/439)
+    * STMicro STM32F746 and its siblings (756)
 
 * Communications interface
     * Communications using a UART/USART interface
@@ -88,6 +89,8 @@ rapid prototyping with the end goal of reducing implementation effort.
     * GNU GDB 7.12
 * cpplint - for static code analysis
 * openocd - to act as a debug server
+    * If your target is a Cortex-M7 microcontroller, version
+      [0.10.0](https://sourceforge.net/p/openocd/code/ci/v0.10.0) is required
 
 ### Recommended Tools
 

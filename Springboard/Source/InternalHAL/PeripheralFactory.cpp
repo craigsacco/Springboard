@@ -59,11 +59,11 @@ void PeripheralFactory::Start()
     }
 #endif
 
-    for (Watchdog* wdg : mWDGs) {
-        if (wdg != nullptr) {
-            wdg->Start();
-        }
-    }
+//    for (Watchdog* wdg : mWDGs) {
+//        if (wdg != nullptr) {
+//            wdg->Start();
+//        }
+//    }
 }
 
 I2CBus* PeripheralFactory::GetI2CBus(size_t index) const
@@ -72,6 +72,7 @@ I2CBus* PeripheralFactory::GetI2CBus(size_t index) const
     ASSERT(index > 0 && index <= SPRINGBOARD_HAL_I2C_COUNT);
     return mI2Cs[index-1];
 #else
+    (void)index;
     return nullptr;
 #endif
 }
@@ -82,6 +83,7 @@ SPIBus* PeripheralFactory::GetSPIBus(size_t index) const
     ASSERT(index > 0 && index <= SPRINGBOARD_HAL_SPI_COUNT);
     return mSPIs[index-1];
 #else
+    (void)index;
     return nullptr;
 #endif
 }
@@ -92,6 +94,7 @@ UARTBus* PeripheralFactory::GetUARTBus(size_t index) const
     ASSERT(index > 0 && index <= SPRINGBOARD_HAL_UART_COUNT);
     return mUARTs[index-1];
 #else
+    (void)index;
     return nullptr;
 #endif
 }

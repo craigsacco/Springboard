@@ -61,7 +61,7 @@ const char* GetMCUArchitectureName()
 
 const char* GetMCUArchitectureRevision()
 {
-    return __CM4_REV_STR;
+    return PORT_ARCHITECTURE_REVISION;
 }
 
 const char* GetMCUCoreVariantName()
@@ -77,11 +77,11 @@ uint32_t GetMCUDeviceId()
 bool GetMCUUniqueId(Springboard::Utilities::ByteArray buffer)
 {
     // ensure that the provided buffer can accomodate the identifier
-    if (buffer.GetSize() < MCU_UNIQUE_ID_LENGTH) {
+    if (buffer.GetSize() < MCU_DES_UID_LENGTH) {
         return false;
     }
 
-    memcpy(buffer.GetData(), DES->UID.data, MCU_UNIQUE_ID_LENGTH);
+    memcpy(buffer.GetData(), DES->UID.data, MCU_DES_UID_LENGTH);
     return true;
 }
 

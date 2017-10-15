@@ -176,7 +176,7 @@ private:
     PROPERTY_ENTRY_UINT32_RO(Controller, 16, "MCUDeviceId",
                              GetMCUDeviceIdPropertyRequest)
     PROPERTY_ENTRY_BYTEARRAY_RO(Controller, 17, "MCUUniqueId",
-                                MCU_UNIQUE_ID_LENGTH,
+                                MCU_DES_UID_LENGTH,
                                 GetMCUDeviceIdPropertyRequest)
     PROPERTY_ENTRY_UINT32_RO(Controller, 18, "SystemTime",
                              GetSystemTimePropertyRequest)

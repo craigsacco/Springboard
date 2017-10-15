@@ -26,12 +26,18 @@ using Springboard::InternalHAL::DigitalInput;
 using Springboard::InternalHAL::DigitalOutput;
 using Springboard::Infrastructure::Controller;
 using Springboard::Comms::MessageStreamHandler;
+#if SPRINGBOARD_HAL_ENABLE_I2C
 using Springboard::ExternalHAL::MCP23017;
 using Springboard::Drivers::MCP23017Driver;
+#endif
+#if SPRINGBOARD_HAL_ENABLE_UART
 using Springboard::ExternalHAL::NMEA0183GPSDevice;
 using Springboard::Drivers::NMEA0183GPSDriver;
+#endif
+#if SPRINGBOARD_HAL_ENABLE_SPI
 using Springboard::ExternalHAL::AT45DB041E;
 using Springboard::Drivers::AT45DB041EDriver;
+#endif
 
 
 #if MCU_FAMILY == MCU_FAMILY_STM32F4 && MCU_LINE == MCU_LINE_STM32F407_F417
@@ -102,36 +108,76 @@ static constexpr InternalGPIOPin::Pad LEDPad_3 = { GPIOF, 8 };
 static constexpr InternalGPIOPin::Pad LEDPad_4 = { GPIOF, 9 };
 #endif  // MCU_FAMILY == MCU_FAMILY_STM32F4 && MCU_LINE == ...
 
+#if MCU_FAMILY == MCU_FAMILY_STM32F7 && MCU_LINE == MCU_LINE_STM32F746_F756
+// Setup on a Waveshare Open746I-C development board
+static constexpr size_t SerialMessagingUARTBusIndex = 1;
+static constexpr GPIOPinMode SerialMessagingUARTBusPinMode =
+    GPIOPinMode::AlternateFunction_USART1;
+static constexpr InternalGPIOPin::Pad SerialMessagingUARTBusPad_TX =
+    { GPIOA, 9 };
+static constexpr InternalGPIOPin::Pad SerialMessagingUARTBusPad_RX =
+    { GPIOA, 10 };
+static constexpr size_t GPSDeviceUARTBusIndex = 3;
+static constexpr GPIOPinMode GPSDeviceUARTBusPinMode =
+    GPIOPinMode::AlternateFunction_USART3;
+static constexpr InternalGPIOPin::Pad GPSDeviceUARTBusPad_TX = { GPIOD, 8 };
+static constexpr InternalGPIOPin::Pad GPSDeviceUARTBusPad_RX = { GPIOD, 9 };
+static constexpr size_t I2CBusIndex = 1;
+static constexpr GPIOPinMode I2CBusPinMode =
+    GPIOPinMode::AlternateFunction_I2C1;
+static constexpr InternalGPIOPin::Pad I2CBusPad_SDA = { GPIOB, 8 };
+static constexpr InternalGPIOPin::Pad I2CBusPad_SCL = { GPIOB, 9 };
+static constexpr size_t SPIBusIndex = 1;
+static constexpr GPIOPinMode SPIBusPinMode =
+    GPIOPinMode::AlternateFunction_SPI1;
+static constexpr InternalGPIOPin::Pad SPIBusPad_CLK = { GPIOA, 5 };
+static constexpr InternalGPIOPin::Pad SPIBusPad_MISO = { GPIOA, 6 };
+static constexpr InternalGPIOPin::Pad SPIBusPad_MOSI = { GPIOA, 7 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nCS = { GPIOA, 4 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nWP = { GPIOH, 11 };
+static constexpr InternalGPIOPin::Pad ExternalFlashPad_nRST = { GPIOH, 10 };
+static constexpr InternalGPIOPin::Pad LEDPad_1 = { GPIOB, 6 };
+static constexpr InternalGPIOPin::Pad LEDPad_2 = { GPIOB, 7 };
+static constexpr InternalGPIOPin::Pad LEDPad_3 = { GPIOH, 4 };
+static constexpr InternalGPIOPin::Pad LEDPad_4 = { GPIOI, 8 };
+#endif  // MCU_FAMILY == MCU_FAMILY_STM32F7 && MCU_LINE == ...
+
 
 class TestController : public Controller
 {
 public:
     TestController() :
-        Controller(1, "TestController"),
-        mSerialMessaging(
-            this, mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex),
-            "SerialMessaging", NORMALPRIO),
-        mExpander(mPeripheralFactory.GetI2CBus(I2CBusIndex), 0x20, 400000),
-        mExpanderDriver(this, 2, "MCP23017", &mExpander),
-        mGPS(mPeripheralFactory.GetUARTBus(GPSDeviceUARTBusIndex),
-             "GPSDeviceComms", NORMALPRIO-1),
-        mGPSDriver(this, 3, "GPSDevice", &mGPS),
-        mExternalFlash_nCS(ExternalFlashPad_nCS,
-                           GPIOPullConfiguration::Floating,
-                           GPIOOutputConfiguration::PushPull,
-                           GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash_nWP(ExternalFlashPad_nWP,
-                           GPIOPullConfiguration::Floating,
-                           GPIOOutputConfiguration::PushPull,
-                           GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash_nRST(ExternalFlashPad_nRST,
-                            GPIOPullConfiguration::Floating,
-                            GPIOOutputConfiguration::PushPull,
-                            GPIOOutputSpeed::Low_2MHz),
-        mExternalFlash(mPeripheralFactory.GetSPIBus(SPIBusIndex),
-                       &mExternalFlash_nCS, 25000000, &mExternalFlash_nWP,
-                       &mExternalFlash_nRST),
-        mExternalFlashDriver(this, 4, "FlashDevice", &mExternalFlash)
+        Controller(1, "TestController")
+#if SPRINGBOARD_HAL_ENABLE_I2C
+        , mExpander(mPeripheralFactory.GetI2CBus(I2CBusIndex), 0x20, 400000)
+        , mExpanderDriver(this, 2, "MCP23017", &mExpander)
+#endif
+#if SPRINGBOARD_HAL_ENABLE_UART
+        , mSerialMessaging(
+              this, mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex),
+              "SerialMessaging", NORMALPRIO)
+        , mGPS(mPeripheralFactory.GetUARTBus(GPSDeviceUARTBusIndex),
+               "GPSDeviceComms", NORMALPRIO-1)
+        , mGPSDriver(this, 3, "GPSDevice", &mGPS)
+#endif
+#if SPRINGBOARD_HAL_ENABLE_SPI
+        , mExternalFlash_nCS(ExternalFlashPad_nCS,
+                             GPIOPullConfiguration::Floating,
+                             GPIOOutputConfiguration::PushPull,
+                             GPIOOutputSpeed::Low_2MHz)
+        , mExternalFlash_nWP(ExternalFlashPad_nWP,
+                             GPIOPullConfiguration::Floating,
+                             GPIOOutputConfiguration::PushPull,
+                             GPIOOutputSpeed::Low_2MHz)
+        , mExternalFlash_nRST(ExternalFlashPad_nRST,
+                              GPIOPullConfiguration::Floating,
+                              GPIOOutputConfiguration::PushPull,
+                              GPIOOutputSpeed::Low_2MHz)
+        , mExternalFlash(mPeripheralFactory.GetSPIBus(SPIBusIndex),
+                         &mExternalFlash_nCS, 25000000, &mExternalFlash_nWP,
+                         &mExternalFlash_nRST)
+        , mExternalFlashDriver(this, 4, "FlashDevice", &mExternalFlash)
+#endif
     {
     }
 
@@ -190,12 +236,14 @@ public:
             GPIOOutputConfiguration::PushPull,
             GPIOOutputSpeed::VeryHigh_100MHz);
 
+#if SPRINGBOARD_HAL_ENABLE_UART
         mPeripheralFactory.GetUARTBus(GPSDeviceUARTBusIndex)
             ->SetConfig(9600);
         mPeripheralFactory.GetUARTBus(SerialMessagingUARTBusIndex)
             ->SetConfig(57600);
-        mPeripheralFactory.GetWatchdog(1)
-            ->SetTimeout(100000U);
+#endif
+//        mPeripheralFactory.GetWatchdog(1)
+//            ->SetTimeout(100000U);
 
         Controller::Start();
 
@@ -204,20 +252,28 @@ public:
     }
 
 private:
-    MessageStreamHandler mSerialMessaging;
+#if SPRINGBOARD_HAL_ENABLE_I2C
     MCP23017 mExpander;
     MCP23017Driver mExpanderDriver;
+#endif
+#if SPRINGBOARD_HAL_ENABLE_UART
+    MessageStreamHandler mSerialMessaging;
     NMEA0183GPSDevice mGPS;
     NMEA0183GPSDriver mGPSDriver;
+#endif
+#if SPRINGBOARD_HAL_ENABLE_SPI
     DigitalOutput mExternalFlash_nCS;
     DigitalOutput mExternalFlash_nWP;
     DigitalOutput mExternalFlash_nRST;
     AT45DB041E mExternalFlash;
     AT45DB041EDriver mExternalFlashDriver;
+#endif
 };
 
 int main(void)
 {
+    volatile uint32_t rstf = RCC->CSR;
+
     TestController testController;
     testController.Start();
 
