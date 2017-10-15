@@ -137,11 +137,6 @@ ResultCode MCP23017Driver::WriteINTFx(const uint16_t value)
     return mDriver->WriteINTFx(value);
 }
 
-ResultCode MCP23017Driver::WriteINTCAPx(const uint16_t value)
-{
-    return mDriver->WriteINTCAPx(value);
-}
-
 ResultCode MCP23017Driver::WritePORTx(const uint16_t value)
 {
     return mDriver->WritePORTx(value);

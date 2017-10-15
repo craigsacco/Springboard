@@ -64,7 +64,6 @@ public:
     ResultCode WriteIOCON(const uint8_t value);
     ResultCode WriteGPPUx(const uint16_t value);
     ResultCode WriteINTFx(const uint16_t value);
-    ResultCode WriteINTCAPx(const uint16_t value);
     ResultCode WritePORTx(const uint16_t value);
     ResultCode WriteOLATx(const uint16_t value);
 
@@ -87,8 +86,7 @@ private:
     PROPERTY_ENTRY_UINT8_RW(MCP23017Driver, 105, "IOCON", ReadIOCON, WriteIOCON)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 106, "GPPU", ReadGPPUx, WriteGPPUx)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 107, "INTF", ReadINTFx, WriteINTFx)
-    PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 108, "INTCAP", ReadINTCAPx,
-                             WriteINTCAPx)
+    PROPERTY_ENTRY_UINT16_RO(MCP23017Driver, 108, "INTCAP", ReadINTCAPx)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 109, "PORT", ReadPORTx, WritePORTx)
     PROPERTY_ENTRY_UINT16_RW(MCP23017Driver, 110, "OLAT", ReadOLATx, WriteOLATx)
     PROPERTY_TABLE_END()

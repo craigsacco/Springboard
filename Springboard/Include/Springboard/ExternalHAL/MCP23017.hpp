@@ -59,7 +59,6 @@ public:
     ResultCode WriteIOCON(const uint8_t value);
     ResultCode WriteGPPUx(const uint16_t value);
     ResultCode WriteINTFx(const uint16_t value);
-    ResultCode WriteINTCAPx(const uint16_t value);
     ResultCode WritePORTx(const uint16_t value);
     ResultCode WriteOLATx(const uint16_t value);
 

@@ -37,26 +37,50 @@ class MCP23017(Resource):
     def get_reg_iodir(self):
         return self._get_property_uint16(100)
 
+    def set_reg_iodir(self, value):
+        return self._set_property_uint16(100, value)
+
     def get_reg_ipol(self):
         return self._get_property_uint16(101)
+
+    def set_reg_ipol(self, value):
+        return self._set_property_uint16(101, value)
 
     def get_reg_gpinten(self):
         return self._get_property_uint16(102)
 
+    def set_reg_gpinten(self, value):
+        return self._set_property_uint16(102, value)
+
     def get_reg_defval(self):
         return self._get_property_uint16(103)
+
+    def set_reg_defval(self, value):
+        return self._set_property_uint16(103, value)
 
     def get_reg_intcon(self):
         return self._get_property_uint16(104)
 
+    def set_reg_intcon(self, value):
+        return self._set_property_uint16(104, value)
+
     def get_reg_iocon(self):
         return self._get_property_uint8(105)
+
+    def set_reg_iocon(self, value):
+        return self._set_property_uint16(105, value)
 
     def get_reg_gppu(self):
         return self._get_property_uint16(106)
 
+    def set_reg_gppu(self, value):
+        return self._set_property_uint16(106, value)
+
     def get_reg_intf(self):
         return self._get_property_uint16(107)
+
+    def set_reg_intf(self, value):
+        return self._set_property_uint16(107, value)
 
     def get_reg_intcap(self):
         return self._get_property_uint16(108)
@@ -64,5 +88,11 @@ class MCP23017(Resource):
     def get_reg_port(self):
         return self._get_property_uint16(109)
 
+    def set_reg_port(self, value):
+        return self._set_property_uint16(109, value)
+
     def get_reg_olat(self):
         return self._get_property_uint16(110)
+
+    def set_reg_olat(self, value):
+        return self._set_property_uint16(110, value)

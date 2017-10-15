@@ -147,11 +147,6 @@ ResultCode MCP23017::WriteINTFx(const uint16_t value)
     return WriteRegister(Register::INTFA, value);
 }
 
-ResultCode MCP23017::WriteINTCAPx(const uint16_t value)
-{
-    return WriteRegister(Register::INTCAPA, value);
-}
-
 ResultCode MCP23017::WritePORTx(const uint16_t value)
 {
     return WriteRegister(Register::PORTA, value);
