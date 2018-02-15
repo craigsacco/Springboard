@@ -4,3 +4,9 @@
 .idea
 *.creator.user
 *.autosave
+
+Applications/**/CMakeCache.txt
+Applications/**/CMakeFiles
+Applications/**/cmake_install.cmake
+Applications/**/Makefile
+Applications/**/*.elf
