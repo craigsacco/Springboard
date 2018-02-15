@@ -100,6 +100,9 @@ void SPIBus::Run()
             (static_cast<uint32_t>(transaction.clockPrescaler) << 3) |
             static_cast<uint32_t>(transaction.clockConfig);
         uint32_t cr2 = 0;
+#if MCU_FAMILY_STM32F7
+        cr2 = (0x07UL << 8);  // force 8-bit transfers
+#endif
         if (mConfig.cr1 != cr1 || mConfig.cr2 != cr2) {
             mConfig.cr1 = cr1;
             mConfig.cr2 = cr2;
