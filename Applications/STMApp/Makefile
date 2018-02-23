@@ -3,13 +3,19 @@ PROJECT_NAME = STMApp
 
 STM32F4_ROOT = ../../Libraries/STMStdPeripheralLibrary/STM32F4/1.8.0
 STM32F4_INC = $(STM32F4_ROOT)/Libraries/STM32F4xx_StdPeriph_Driver/inc
+STM32F4_SRC = $(STM32F4_ROOT)/Libraries/STM32F4xx_StdPeriph_Driver/src
 STM32F4_CMSIS = $(STM32F4_ROOT)/Libraries/CMSIS/Include
 STM32F4_CMSIS_STM32F4 = $(STM32F4_ROOT)/Libraries/CMSIS/Device/ST/STM32F4xx/Include
 STM32F4_CMSIS_STARTUP = $(STM32F4_ROOT)/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/SW4STM32
-STM32F4_SRC = $(STM32F4_ROOT)/Libraries/STM32F4xx_StdPeriph_Driver/src
 
-INCDIR = ./Include $(STM32F4_INC) $(STM32F4_CMSIS) $(STM32F4_CMSIS_STM32F4)
-SRCDIR = ./Source $(STM32F4_SRC) $(STM32F4_CMSIS_STARTUP)
+FREERTOS_ROOT = ../../Libraries/FreeRTOS/10.0.1
+FREERTOS_INC = $(FREERTOS_ROOT)/FreeRTOS/Source/include
+FREERTOS_SRC = $(FREERTOS_ROOT)/FreeRTOS/Source
+FREERTOS_PORT = $(FREERTOS_SRC)/portable/GCC/ARM_CM4F
+FREERTOS_PORT_MEMMANG = $(FREERTOS_SRC)/portable/MemMang
+
+INCDIR = ./Include $(STM32F4_INC) $(STM32F4_CMSIS) $(STM32F4_CMSIS_STM32F4) $(FREERTOS_INC) $(FREERTOS_PORT)
+SRCDIR = ./Source $(STM32F4_SRC) $(STM32F4_CMSIS_STARTUP) $(FREERTOS_SRC) $(FREERTOS_PORT) $(FREERTOS_PORT_MEMMANG)
 
 STM32F4_SOURCE_ASM = $(STM32F4_CMSIS_STARTUP)/startup_stm32f40_41xxx.s
 STM32F4_SOURCE_C = $(addprefix $(STM32F4_SRC)/, stm32f4xx_adc.c \
@@ -39,19 +45,38 @@ STM32F4_SOURCE_C = $(addprefix $(STM32F4_SRC)/, stm32f4xx_adc.c \
                                                 stm32f4xx_fsmc.c)
 STM32F4_SOURCE_CPP =
 
-SOURCE_ASM = $(wildcard ./Source/*.s) $(STM32F4_SOURCE_ASM)
-SOURCE_C = $(wildcard ./Source/*.c) $(STM32F4_SOURCE_C)
-SOURCE_CPP = $(wildcard ./Source/*.cpp) $(STM32F4_SOURCE_CPP)
+FREERTOS_SOURCE_ASM =
+FREERTOS_SOURCE_C = $(addprefix $(FREERTOS_SRC)/, croutine.c \
+                                                  event_groups.c \
+                                                  list.c \
+                                                  queue.c \
+                                                  stream_buffer.c \
+                                                  tasks.c \
+                                                  timers.c) \
+                    $(FREERTOS_PORT)/port.c \
+                    $(FREERTOS_PORT_MEMMANG)/heap_1.c
+FREERTOS_SOURCE_CPP =
+
+SOURCE_ASM = $(wildcard ./Source/*.s) $(STM32F4_SOURCE_ASM) $(FREERTOS_SOURCE_ASM)
+SOURCE_C = $(wildcard ./Source/*.c) $(STM32F4_SOURCE_C) $(FREERTOS_SOURCE_C)
+SOURCE_CPP = $(wildcard ./Source/*.cpp) $(STM32F4_SOURCE_CPP) $(FREERTOS_SOURCE_CPP)
 
 OBJDIR = ./build/objs
 OBJECTS_ASM = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_ASM:.s=.o)))
 OBJECTS_C = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_C:.c=.o)))
 OBJECTS_CPP = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_CPP:.cpp=.o)))
 
+LDSCRIPT = ./STM32F407xG.ld
+
 OUTDIR = ./build/output
 ELFOUT = $(OUTDIR)/$(PROJECT_NAME).elf
 BINOUT = $(OUTDIR)/$(PROJECT_NAME).bin
 LSTOUT = $(OUTDIR)/$(PROJECT_NAME).lst
+
+QTPRJCONFIG = ./$(PROJECT_NAME).config
+QTPRJFILES = ./$(PROJECT_NAME).files
+QTPRJINCLUDES = ./$(PROJECT_NAME).includes
+QTPRJOUT = ./$(PROJECT_NAME).creator
 
 DEPDIR = ./build/deps
 
@@ -72,12 +97,12 @@ ASMOPT = $(OPT) -mthumb
 CXXOPT = $(OPT) -Wall -Wextra -Wundef
 COPT = $(CXXOPT) -Wstrict-prototypes
 CPPOPT = $(CXXOPT) -fno-rtti
-LDOPT = -mno-thumb-interwork -mthumb -Wl,-Map=$(OUTDIR)/$(PROJECT_NAME).map,--no-warn-mismatch,--gc-sections,--script=./STM32F407xG.ld
+LDOPT = -mno-thumb-interwork -mthumb -Wl,-Map=$(OUTDIR)/$(PROJECT_NAME).map,--no-warn-mismatch,--gc-sections,--script=$(LDSCRIPT)
 BINOPT = -x --syms
 
 VPATH = $(SRCDIR)
 
-all : $(ELFOUT) $(BINOUT) $(LSTOUT)
+all : $(ELFOUT) $(BINOUT) $(LSTOUT) $(QTPRJOUT)
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
@@ -106,6 +131,19 @@ $(BINOUT): $(ELFOUT)
 
 $(LSTOUT): $(ELFOUT)
 	$(OBJDUMP) -S $< > $@
+
+$(QTPRJOUT): Makefile
+	@touch $(QTPRJOUT)
+	@touch $(QTPRJCONFIG)
+	@rm -f $(QTPRJFILES) $(QTPRJINCLUDES)
+	@$(foreach file,$(SOURCE_ASM),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@$(foreach file,$(SOURCE_C),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@$(foreach file,$(SOURCE_CPP),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@$(foreach file,$(foreach dir,$(INCDIR),$(wildcard $(dir)/*.h)),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@$(foreach file,$(foreach dir,$(INCDIR),$(wildcard $(dir)/*.hpp)),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@echo $(LDSCRIPT) >>  $(QTPRJFILES)
+	@echo Makefile >>  $(QTPRJFILES)
+	@$(foreach dir,$(INCDIR),echo `realpath --relative-to=. $(dir)` >> $(QTPRJINCLUDES);)
 
 clean:
 	rm -rf $(OBJDIR)

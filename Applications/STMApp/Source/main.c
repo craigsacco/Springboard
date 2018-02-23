@@ -1,133 +1,77 @@
-/**
-  ******************************************************************************
-  * @file    GPIO/GPIO_IOToggle/main.c 
-  * @author  MCD Application Team
-  * @version V1.8.0
-  * @date    04-November-2016
-  * @brief   Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2016 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
+#include "stm32f4xx.h"
+#include "stm32f4xx_conf.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
-/* Includes ------------------------------------------------------------------*/
-#include "main.h"
+static portTASK_FUNCTION(taskTest, pvParameters)
+{
+    (void) pvParameters;
 
-/** @addtogroup STM32F4xx_StdPeriph_Examples
-  * @{
-  */
+    uint8_t i = 0;
 
-/** @addtogroup GPIO_IOToggle
-  * @{
-  */ 
+    while (1)
+    {
+        switch (i)
+        {
+        case 0:
+            GPIOI->BSRRH = GPIO_Pin_10;
+            GPIOH->BSRRL = GPIO_Pin_2;
+            i++;
+            break;
+        case 1:
+            GPIOH->BSRRH = GPIO_Pin_2;
+            GPIOH->BSRRL = GPIO_Pin_3;
+            i++;
+            break;
+        case 2:
+            GPIOH->BSRRH = GPIO_Pin_3;
+            GPIOI->BSRRL = GPIO_Pin_8;
+            i++;
+            break;
+        case 3:
+            GPIOI->BSRRH = GPIO_Pin_8;
+            GPIOI->BSRRL = GPIO_Pin_10;
+            i = 0;
+            break;
+        }
 
-/* Private typedef -----------------------------------------------------------*/
-GPIO_InitTypeDef  GPIO_InitStructure;
+        vTaskDelay(500/portTICK_PERIOD_MS);
+    }
+}
 
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
 int main(void)
 {
-  /*!< At this stage the microcontroller clock setting is already configured, 
-       this is done through SystemInit() function which is called from startup
-       files (startup_stm32f40_41xxx.s/startup_stm32f427_437xx.s/startup_stm32f429_439xx.s)
-       before to branch to application main. 
-       To reconfigure the default setting of SystemInit() function, refer to
-       system_stm32f4xx.c file
-     */  
+    GPIO_InitTypeDef  GPIO_InitStructure;
 
-  /* GPIOG Peripheral clock enable */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOH, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOI, ENABLE);
 
-  /* Configure PG6 and PG8 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = LED1_PIN | LED2_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_Init(GPIOG, &GPIO_InitStructure);
+    // configure PH2 and PH3 as outputs
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOH, &GPIO_InitStructure);
 
-  /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
-     You can monitor PG6 or PG8 on the scope to measure the output signal. 
-     If you need to fine tune this frequency, you can add more GPIO set/reset 
-     cycles to minimize more the infinite loop timing.
-     This code needs to be compiled with high speed optimization option.  */  
-  while (1)
-  {
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
+    // configure PI8 and PI10 as outputs
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOI, &GPIO_InitStructure);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
+    // create new task
+    xTaskCreate(taskTest, "TaskTest", configMINIMAL_STACK_SIZE,
+                NULL, tskIDLE_PRIORITY + 1UL,
+                (TaskHandle_t*)NULL);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
+    vTaskStartScheduler();
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-
-    /* Set PG6 and PG8 */
-    GPIOG->BSRRL = LED1_PIN | LED2_PIN;
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRRH = LED1_PIN | LED2_PIN;
-  }
+    // should never get here
+	for( ;; );
+	return 0;
 }
 
 #ifdef  USE_FULL_ASSERT
@@ -150,6 +94,29 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+
+void vApplicationTickHook( void )
+{
+}
+
+void vApplicationIdleHook( void )
+{
+}
+
+void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
+{
+	( void ) pcTaskName;
+	( void ) pxTask;
+
+	taskDISABLE_INTERRUPTS();
+	for( ;; );
+}
+
+void vApplicationMallocFailedHook( void )
+{
+	taskDISABLE_INTERRUPTS();
+	for( ;; );
+}
 
 /**
   * @}
