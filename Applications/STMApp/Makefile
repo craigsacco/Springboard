@@ -1,60 +1,113 @@
 
-
+PROJECT_NAME = STMApp
 
 STM32F4_ROOT = ../../Libraries/STMStdPeripheralLibrary/STM32F4/1.8.0
 STM32F4_INC = $(STM32F4_ROOT)/Libraries/STM32F4xx_StdPeriph_Driver/inc
 STM32F4_CMSIS = $(STM32F4_ROOT)/Libraries/CMSIS/Include
 STM32F4_CMSIS_STM32F4 = $(STM32F4_ROOT)/Libraries/CMSIS/Device/ST/STM32F4xx/Include
+STM32F4_CMSIS_STARTUP = $(STM32F4_ROOT)/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/SW4STM32
 STM32F4_SRC = $(STM32F4_ROOT)/Libraries/STM32F4xx_StdPeriph_Driver/src
 
 INCDIR = ./Include $(STM32F4_INC) $(STM32F4_CMSIS) $(STM32F4_CMSIS_STM32F4)
-SRCDIR = ./Source $(STM32F4_SRC)
+SRCDIR = ./Source $(STM32F4_SRC) $(STM32F4_CMSIS_STARTUP)
 
-SOURCE_ASM = $(wildcard ./Source/*.S) $(wildcard $(STM32F4_SRC)/*.S)
-SOURCE_C = $(wildcard ./Source/*.c) $(wildcard $(STM32F4_SRC)/*.c)
-SOURCE_CPP = $(wildcard ./Source/*.cpp) $(wildcard $(STM32F4_SRC)/*.cpp)
+STM32F4_SOURCE_ASM = $(STM32F4_CMSIS_STARTUP)/startup_stm32f40_41xxx.s
+STM32F4_SOURCE_C = $(addprefix $(STM32F4_SRC)/, stm32f4xx_adc.c \
+                                                stm32f4xx_crc.c \
+                                                stm32f4xx_dbgmcu.c \
+                                                stm32f4xx_dma.c \
+                                                stm32f4xx_exti.c \
+                                                stm32f4xx_flash.c \
+                                                stm32f4xx_gpio.c \
+                                                stm32f4xx_i2c.c \
+                                                stm32f4xx_iwdg.c \
+                                                stm32f4xx_pwr.c \
+                                                stm32f4xx_rcc.c \
+                                                stm32f4xx_rtc.c \
+                                                stm32f4xx_sdio.c \
+                                                stm32f4xx_spi.c \
+                                                stm32f4xx_syscfg.c \
+                                                stm32f4xx_tim.c \
+                                                stm32f4xx_usart.c \
+                                                stm32f4xx_wwdg.c \
+                                                stm32f4xx_cryp.c \
+                                                stm32f4xx_hash.c \
+                                                stm32f4xx_rng.c \
+                                                stm32f4xx_can.c \
+                                                stm32f4xx_dac.c \
+                                                stm32f4xx_dcmi.c \
+                                                stm32f4xx_fsmc.c)
+STM32F4_SOURCE_CPP =
+
+SOURCE_ASM = $(wildcard ./Source/*.s) $(STM32F4_SOURCE_ASM)
+SOURCE_C = $(wildcard ./Source/*.c) $(STM32F4_SOURCE_C)
+SOURCE_CPP = $(wildcard ./Source/*.cpp) $(STM32F4_SOURCE_CPP)
 
 OBJDIR = ./build/objs
-OBJECTS_ASM = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_ASM:.S=.o)))
+OBJECTS_ASM = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_ASM:.s=.o)))
 OBJECTS_C = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_C:.c=.o)))
 OBJECTS_CPP = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_CPP:.cpp=.o)))
 
 OUTDIR = ./build/output
-ELFOUT = $(OUTDIR)/program.elf
+ELFOUT = $(OUTDIR)/$(PROJECT_NAME).elf
+BINOUT = $(OUTDIR)/$(PROJECT_NAME).bin
+LSTOUT = $(OUTDIR)/$(PROJECT_NAME).lst
+
+DEPDIR = ./build/deps
 
 CC = arm-none-eabi-gcc
 CPP = arm-none-eabi-g++
 LD = arm-none-eabi-gcc
 AS = arm-none-eabi-gcc -x assembler-with-cpp
+OBJCOPY = arm-none-eabi-objcopy
+OBJDUMP = arm-none-eabi-objdump
+SIZE = arm-none-eabi-size
 
-OPT = -mcpu=cortex-m4 -DTHUMB_PRESENT -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -ffunction-sections -fdata-sections -fno-common -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -DCORTEX_USE_FPU=TRUE -O2 -ggdb -fomit-frame-pointer -falign-functions=16 $(addprefix -I, $(INCDIR))
+DEFS = -DTHUMB_PRESENT -DUSE_STDPERIPH_DRIVER -DTHUMB_NO_INTERWORKING -DCORTEX_USE_FPU=TRUE
+OPT = $(DEFS) -c -mcpu=cortex-m4 -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mno-thumb-interwork
+OPT += -ffunction-sections -fdata-sections -fno-common -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+OPT += $(addprefix -I, $(INCDIR)) -MD -MP -MF $(DEPDIR)/$(@F).d
 OPT += -DSTM32F40_41xxx
 ASMOPT = $(OPT) -mthumb
-CXXOPT = $(OPT) -Wall -Wextra -Wundef -c
+CXXOPT = $(OPT) -Wall -Wextra -Wundef
 COPT = $(CXXOPT) -Wstrict-prototypes
 CPPOPT = $(CXXOPT) -fno-rtti
-LDOPT = -nostartfiles -Wl,--cref,--no-warn-mismatch,--gc-sections
+LDOPT = -mno-thumb-interwork -mthumb -Wl,-Map=$(OUTDIR)/$(PROJECT_NAME).map,--no-warn-mismatch,--gc-sections,--script=./STM32F407xG.ld
+BINOPT = -x --syms
 
 VPATH = $(SRCDIR)
 
-all : $(ELFOUT)
+all : $(ELFOUT) $(BINOUT) $(LSTOUT)
 
-$(OBJECTS_ASM) : $(OBJDIR)/%.o : %.S Makefile
+$(OBJDIR):
 	@mkdir -p $(OBJDIR)
+
+$(DEPDIR):
+	@mkdir -p $(DEPDIR)
+
+$(OUTDIR):
+	@mkdir -p $(OUTDIR)
+
+$(OBJECTS_ASM) : $(OBJDIR)/%.o : %.s $(OBJDIR) $(DEPDIR)
 	$(AS) $(ASMOPT) -o $@ $<
 
-$(OBJECTS_C) : $(OBJDIR)/%.o : %.c Makefile
-	@mkdir -p $(OBJDIR)
+$(OBJECTS_C) : $(OBJDIR)/%.o : %.c $(OBJDIR) $(DEPDIR)
 	$(CC) $(COPT) -o $@ $<
 
-$(OBJECTS_CPP) : $(OBJDIR)/%.o : %.cpp Makefile
-	@mkdir -p $(OBJDIR)
+$(OBJECTS_CPP) : $(OBJDIR)/%.o : %.cpp $(OBJDIR) $(DEPDIR)
 	$(CPP) $(CPPOPT) -o $@ $<
 
-$(ELFOUT) : $(OBJECTS_ASM) $(OBJECTS_C) $(OBJECTS_CPP)
-	@mkdir -p $(OUTDIR)
-	$(LD) $(LDOPT) -o $@ $<
+$(ELFOUT) : $(OBJECTS_ASM) $(OBJECTS_C) $(OBJECTS_CPP) $(OUTDIR)
+	$(LD) $(LDOPT) -o $@ $(OBJECTS_ASM) $(OBJECTS_C) $(OBJECTS_CPP)
+
+$(BINOUT): $(ELFOUT)
+	$(OBJDUMP) $(BINOPT) $< > $@
+	$(SIZE) $<
+
+$(LSTOUT): $(ELFOUT)
+	$(OBJDUMP) -S $< > $@
 
 clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(OUTDIR)
+	rm -rf $(DEPDIR)
