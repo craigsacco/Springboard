@@ -26,33 +26,28 @@
 
 #pragma once
 
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/InternalHAL/GPIOPort.hpp>
 #include <Springboard/CommonHAL/IDigitalInput.hpp>
-#include <Springboard/InternalHAL/InternalGPIOPin.hpp>
+#include <Springboard/Configuration/IConfigurable.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalInput : public InternalGPIOPin,
-                     public Springboard::CommonHAL::IDigitalInput
+struct DigitalInputConfiguration : public Springboard::Configuration::IConfiguration
 {
 public:
-    DigitalInput(const Pad pad, const GPIOPullConfiguration pullConfiguration) :
-        DigitalInput(pad.port, pad.pin, pullConfiguration)
-    {
-    }
+    GPIOPortConfiguration* port;
+    uint8_t pad;
+};
 
-    DigitalInput(const Port port, const uint8_t pin,
-                 const GPIOPullConfiguration pullConfiguration)
-        : InternalGPIOPin(port, pin, pullConfiguration)
-    {
-        SetPinConfiguration(mPort, mPin, GPIOPinMode::Input,
-                            mPullConfiguration);
-    }
-
-    inline bool Get() const final
-    {
-        return palReadPad(mPort, mPin);
-    }
+class DigitalInput : public Springboard::CommonHAL::IDigitalInput,
+                     public Springboard::Configuration::IConfigurable<DigitalInputConfiguration>
+{
+public:
+    DigitalInput();
+    ResultCode ConfigureInternal(DigitalInputConfiguration* config) override final;
+    bool Get() const override final;
 };
 
 }  // namespace InternalHAL

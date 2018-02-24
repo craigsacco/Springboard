@@ -26,24 +26,43 @@
 
 #pragma once
 
-#include <FreeRTOS.h>
-#include <task.h>
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
+#include <type_traits>
+#include <Springboard/Configuration/IConfiguration.hpp>
 
-#include <Springboard/MCUTypes.h>
-#include <Springboard/ResultCodes.h>
+namespace Springboard {
+namespace Configuration {
 
-//! \section Common type definitions
-typedef uint32_t ResultCode;
-typedef uint16_t ResourceIdentifier;
-typedef uint16_t PropertyIdentifier;
+template <typename TConfiguration>
+class IConfigurable
+{
+public:
+    static_assert(std::is_base_of<Springboard::Configuration::IConfiguration,
+                                  TConfiguration>(),
+                  "TConfiguration must be based from IConfiguration");
 
-//! \section Assertion checking
-#define ASSERT(cond)                configASSERT(cond)
-#define ASSERT_MSG(cond, msg)       configASSERT(cond)
-#define ASSERT_FAIL()               configASSERT(false)
-#define ASSERT_FAIL_MSG(msg)        configASSERT(false)
+    IConfigurable() : mConfig(nullptr)
+    {
+    }
+
+    ResultCode Configure(TConfiguration* config)
+    {
+        if (mConfig != nullptr) {
+            return RC_OK;
+        }
+
+        ResultCode result = ConfigureInternal(config);
+        if (result == RC_OK) {
+            mConfig = config;
+        }
+
+        return result;
+    }
+
+    virtual ResultCode ConfigureInternal(TConfiguration* config) = 0;
+
+protected:
+    TConfiguration* mConfig;
+};
+
+}  // namespace Configuration
+}  // namespace Springboard

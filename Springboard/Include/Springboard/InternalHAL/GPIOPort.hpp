@@ -26,24 +26,24 @@
 
 #pragma once
 
-#include <FreeRTOS.h>
-#include <task.h>
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/Configuration/IConfigurable.hpp>
 
-#include <Springboard/MCUTypes.h>
-#include <Springboard/ResultCodes.h>
+namespace Springboard {
+namespace InternalHAL {
 
-//! \section Common type definitions
-typedef uint32_t ResultCode;
-typedef uint16_t ResourceIdentifier;
-typedef uint16_t PropertyIdentifier;
+struct GPIOPortConfiguration : public Springboard::Configuration::IConfiguration
+{
+public:
+    GPIO_TypeDef* regs;
+};
 
-//! \section Assertion checking
-#define ASSERT(cond)                configASSERT(cond)
-#define ASSERT_MSG(cond, msg)       configASSERT(cond)
-#define ASSERT_FAIL()               configASSERT(false)
-#define ASSERT_FAIL_MSG(msg)        configASSERT(false)
+class GPIOPort : public Springboard::Configuration::IConfigurable<GPIOPortConfiguration>
+{
+public:
+    GPIOPort();
+    ResultCode ConfigureInternal(GPIOPortConfiguration* config) override final;
+};
+
+}  // namespace InternalHAL
+}  // namespace Springboard

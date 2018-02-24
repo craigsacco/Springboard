@@ -34,6 +34,7 @@
 #define RC_BASE_INFRASTRUCTURE_BLOCK(x)     (RC_BASE_INFRASTRUCTURE + (x << 16))
 #define RCBLK_INFRASTRUCTURE_RESOURCE       (0UL)
 #define RCBLK_INFRASTRUCTURE_CONTROLLER     (1UL)
+#define RCBLK_INFRASTRUCTURE_CONFIGURATION  (2UL)
 
 //! \section Driver result code macros and block ids
 #define RC_BASE_DRIVERS                     ((ResultCode)0x20000000UL)
@@ -66,6 +67,11 @@
 #define RC_CONTROLLER_BASE                  (RC_BASE_INFRASTRUCTURE_BLOCK(  \
                                              RCBLK_INFRASTRUCTURE_CONTROLLER))
 #define RC_CONTROLLER_INVALID_RESOURCE_ID   (RC_CONTROLLER_BASE + 0UL)
+
+//! \section Configuration result codes
+#define RC_CONFIGURATION_BASE               (RC_BASE_INFRASTRUCTURE_BLOCK(  \
+                                             RCBLK_INFRASTRUCTURE_CONFIGURATION))
+#define RC_CONFIGURATION_FAILED             (RC_CONTROLLER_BASE + 0UL)
 
 //! \section I2C result codes
 #define RC_I2C_BASE                         (RC_BASE_HAL_BLOCK(RCBLK_HAL_I2C))

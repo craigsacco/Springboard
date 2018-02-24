@@ -26,24 +26,42 @@
 
 #pragma once
 
-#include <FreeRTOS.h>
-#include <task.h>
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
+#include <Springboard/InternalHAL/GPIOPort.hpp>
+#include <Springboard/Utilities/StaticLookup.hpp>
+#include <stm32f4xx_rcc.h>
 
-#include <Springboard/MCUTypes.h>
-#include <Springboard/ResultCodes.h>
+namespace Springboard {
+namespace InternalHAL {
 
-//! \section Common type definitions
-typedef uint32_t ResultCode;
-typedef uint16_t ResourceIdentifier;
-typedef uint16_t PropertyIdentifier;
+GPIOPort::GPIOPort()
+{
+}
 
-//! \section Assertion checking
-#define ASSERT(cond)                configASSERT(cond)
-#define ASSERT_MSG(cond, msg)       configASSERT(cond)
-#define ASSERT_FAIL()               configASSERT(false)
-#define ASSERT_FAIL_MSG(msg)        configASSERT(false)
+const Springboard::Utilities::StaticLookup<GPIO_TypeDef*, uint32_t, 9>
+    GPIOToAHB1PeripheralEnable {
+    {
+        { GPIOA, RCC_AHB1Periph_GPIOA },
+        { GPIOB, RCC_AHB1Periph_GPIOB },
+        { GPIOC, RCC_AHB1Periph_GPIOC },
+        { GPIOD, RCC_AHB1Periph_GPIOD },
+        { GPIOE, RCC_AHB1Periph_GPIOE },
+        { GPIOF, RCC_AHB1Periph_GPIOF },
+        { GPIOG, RCC_AHB1Periph_GPIOG },
+        { GPIOH, RCC_AHB1Periph_GPIOH },
+        { GPIOI, RCC_AHB1Periph_GPIOI },
+    }
+};
+
+ResultCode GPIOPort::ConfigureInternal(GPIOPortConfiguration* config)
+{
+    uint32_t peripheral;
+    if (GPIOToAHB1PeripheralEnable.Find(config->regs, &peripheral)) {
+        RCC_AHB1PeriphClockCmd(peripheral, ENABLE);
+        return RC_OK;
+    }
+
+    return RC_CONFIGURATION_FAILED;
+}
+
+}  // namespace InternalHAL
+}  // namespace Springboard

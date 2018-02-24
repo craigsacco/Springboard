@@ -26,61 +26,32 @@
 
 #pragma once
 
+#include <Springboard/InternalHAL/InternalHAL.hpp>
+#include <Springboard/InternalHAL/GPIOPort.hpp>
 #include <Springboard/CommonHAL/IDigitalOutput.hpp>
-#include <Springboard/InternalHAL/InternalGPIOPin.hpp>
+#include <Springboard/Configuration/IConfigurable.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalOutput : public InternalGPIOPin,
-                      public Springboard::CommonHAL::IDigitalOutput
+struct DigitalOutputConfiguration : public Springboard::Configuration::IConfiguration
 {
 public:
-    DigitalOutput(const Pad pad,
-                  const GPIOPullConfiguration pullConfiguration,
-                  const GPIOOutputConfiguration outputConfiguration,
-                  const GPIOOutputSpeed outputSpeed) :
-        DigitalOutput(pad.port, pad.pin, pullConfiguration, outputConfiguration,
-                      outputSpeed)
-    {
-    }
+    GPIOPortConfiguration* port;
+    uint8_t pad;
+};
 
-    DigitalOutput(const Port port, const uint8_t pin,
-                  const GPIOPullConfiguration pullConfiguration,
-                  const GPIOOutputConfiguration outputConfiguration,
-                  const GPIOOutputSpeed outputSpeed) :
-        InternalGPIOPin(port, pin, pullConfiguration),
-        mOutputConfiguration(outputConfiguration),
-        mOutputSpeed(outputSpeed)
-    {
-        SetPinConfiguration(mPort, mPin, GPIOPinMode::Output,
-                            mPullConfiguration, mOutputConfiguration,
-                            mOutputSpeed);
-    }
-
-    inline bool Get() const final
-    {
-        return palReadLatch(mPort) & (1UL << mPin);
-    }
-
-    inline void Set(bool state = true) final
-    {
-        palWritePad(mPort, mPin, state);
-    }
-
-    inline void Clear() final
-    {
-        palClearPad(mPort, mPin);
-    }
-
-    inline void Toggle() final
-    {
-        palTogglePad(mPort, mPin);
-    }
-
-private:
-    const GPIOOutputConfiguration mOutputConfiguration;
-    const GPIOOutputSpeed mOutputSpeed;
+class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput,
+                      public Springboard::Configuration::IConfigurable<DigitalOutputConfiguration>
+{
+public:
+    DigitalOutput();
+    ResultCode ConfigureInternal(DigitalOutputConfiguration* config) override final;
+    bool Get() const override final;
+    void Set() override final;
+    void Set(bool state) override final;
+    void Clear() override final;
+    void Toggle() override final;
 };
 
 }  // namespace InternalHAL

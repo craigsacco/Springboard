@@ -24,49 +24,45 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <board.h>
-#include <hal.h>
-#include <chprintf.h>
-#include <chversion.h>
 #include <cstring>
+#include <stm32f4xx_des.h>
+#include <Springboard/InternalHAL/InternalHAL.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
 void Initialise()
 {
-    halInit();
 }
 
 const char* GetRTOSName()
 {
-    return "ChibiOS/RT";
+    return "FreeRTOS";
 }
 
 const char* GetRTOSVersion()
 {
-    return CH_VERSION;
+    return tskKERNEL_VERSION_NUMBER;
 }
 
 const char* GetRTOSPortInfo()
 {
-    return PORT_INFO;
+    return "";
 }
 
 const char* GetMCUArchitectureName()
 {
-    return PORT_ARCHITECTURE_NAME;
+    return "";
 }
 
 const char* GetMCUArchitectureRevision()
 {
-    return __CM4_REV_STR;
+    return "";
 }
 
 const char* GetMCUCoreVariantName()
 {
-    return PORT_CORE_VARIANT_NAME;
+    return "";
 }
 
 uint32_t GetMCUDeviceId()

@@ -26,24 +26,55 @@
 
 #pragma once
 
-#include <FreeRTOS.h>
-#include <task.h>
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
+#include <stm32f4xx_gpio.h>
+#include <Springboard/InternalHAL/DigitalOutput.hpp>
 
-#include <Springboard/MCUTypes.h>
-#include <Springboard/ResultCodes.h>
+namespace Springboard {
+namespace InternalHAL {
 
-//! \section Common type definitions
-typedef uint32_t ResultCode;
-typedef uint16_t ResourceIdentifier;
-typedef uint16_t PropertyIdentifier;
+DigitalOutput::DigitalOutput()
+{
+}
 
-//! \section Assertion checking
-#define ASSERT(cond)                configASSERT(cond)
-#define ASSERT_MSG(cond, msg)       configASSERT(cond)
-#define ASSERT_FAIL()               configASSERT(false)
-#define ASSERT_FAIL_MSG(msg)        configASSERT(false)
+ResultCode DigitalOutput::ConfigureInternal(DigitalOutputConfiguration* config)
+{
+    GPIO_InitTypeDef init;
+    init.GPIO_Pin = (1UL << config->pad);
+    init.GPIO_Mode = GPIO_Mode_OUT;
+    init.GPIO_OType = GPIO_OType_PP;
+    init.GPIO_Speed = GPIO_Low_Speed;
+    init.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(config->port->regs, &init);
+
+    return RC_OK;
+}
+
+bool DigitalOutput::Get() const
+{
+    return mConfig->port->regs->ODR & (1UL << mConfig->pad);
+}
+
+void DigitalOutput::Set()
+{
+    mConfig->port->regs->BSRRL = (1UL << mConfig->pad);
+}
+
+void DigitalOutput::Set(bool state)
+{
+    mConfig->port->regs->ODR =
+        (mConfig->port->regs->ODR & ~(1UL << mConfig->pad)) |
+        ((state ? 1UL : 0UL) << mConfig->pad);
+}
+
+void DigitalOutput::Clear()
+{
+    mConfig->port->regs->BSRRH = (1UL << mConfig->pad);
+}
+
+void DigitalOutput::Toggle()
+{
+    mConfig->port->regs->ODR ^= (1UL << mConfig->pad);
+}
+
+}  // namespace InternalHAL
+}  // namespace Springboard

@@ -7,6 +7,7 @@ STM32F4_SRC = $(STM32F4_ROOT)/Libraries/STM32F4xx_StdPeriph_Driver/src
 STM32F4_CMSIS = $(STM32F4_ROOT)/Libraries/CMSIS/Include
 STM32F4_CMSIS_STM32F4 = $(STM32F4_ROOT)/Libraries/CMSIS/Device/ST/STM32F4xx/Include
 STM32F4_CMSIS_STARTUP = $(STM32F4_ROOT)/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/SW4STM32
+STM32F4_OTHER = $(STM32F4_ROOT)/../Include
 
 FREERTOS_ROOT = ../../Libraries/FreeRTOS/10.0.1
 FREERTOS_INC = $(FREERTOS_ROOT)/FreeRTOS/Source/include
@@ -14,8 +15,15 @@ FREERTOS_SRC = $(FREERTOS_ROOT)/FreeRTOS/Source
 FREERTOS_PORT = $(FREERTOS_SRC)/portable/GCC/ARM_CM4F
 FREERTOS_PORT_MEMMANG = $(FREERTOS_SRC)/portable/MemMang
 
-INCDIR = ./Include $(STM32F4_INC) $(STM32F4_CMSIS) $(STM32F4_CMSIS_STM32F4) $(FREERTOS_INC) $(FREERTOS_PORT)
-SRCDIR = ./Source $(STM32F4_SRC) $(STM32F4_CMSIS_STARTUP) $(FREERTOS_SRC) $(FREERTOS_PORT) $(FREERTOS_PORT_MEMMANG)
+SPRINGBOARD_ROOT = ../../Springboard
+SPRINGBOARD_INC = $(SPRINGBOARD_ROOT)/Include
+SPRINGBOARD_SRC = $(SPRINGBOARD_ROOT)/Source
+SPRINGBOARD_MODULES = CommonHAL Configuration InternalHAL Utilities
+
+INCDIR = ./Include $(STM32F4_INC) $(STM32F4_CMSIS) $(STM32F4_CMSIS_STM32F4) $(STM32F4_OTHER) $(FREERTOS_INC) \
+         $(FREERTOS_PORT) $(SPRINGBOARD_INC)
+SRCDIR = ./Source $(STM32F4_SRC) $(STM32F4_CMSIS_STARTUP) $(FREERTOS_SRC) $(FREERTOS_PORT) $(FREERTOS_PORT_MEMMANG) \
+         $(foreach module,$(SPRINGBOARD_MODULES),$(SPRINGBOARD_SRC)/$(module))
 
 STM32F4_SOURCE_ASM = $(STM32F4_CMSIS_STARTUP)/startup_stm32f40_41xxx.s
 STM32F4_SOURCE_C = $(addprefix $(STM32F4_SRC)/, stm32f4xx_adc.c \
@@ -43,9 +51,7 @@ STM32F4_SOURCE_C = $(addprefix $(STM32F4_SRC)/, stm32f4xx_adc.c \
                                                 stm32f4xx_dac.c \
                                                 stm32f4xx_dcmi.c \
                                                 stm32f4xx_fsmc.c)
-STM32F4_SOURCE_CPP =
 
-FREERTOS_SOURCE_ASM =
 FREERTOS_SOURCE_C = $(addprefix $(FREERTOS_SRC)/, croutine.c \
                                                   event_groups.c \
                                                   list.c \
@@ -55,18 +61,17 @@ FREERTOS_SOURCE_C = $(addprefix $(FREERTOS_SRC)/, croutine.c \
                                                   timers.c) \
                     $(FREERTOS_PORT)/port.c \
                     $(FREERTOS_PORT_MEMMANG)/heap_1.c
-FREERTOS_SOURCE_CPP =
 
-SOURCE_ASM = $(wildcard ./Source/*.s) $(STM32F4_SOURCE_ASM) $(FREERTOS_SOURCE_ASM)
+SPRINGBOARD_SOURCE_CPP = $(foreach module,$(SPRINGBOARD_MODULES),$(wildcard $(SPRINGBOARD_SRC)/$(module)/*.cpp))
+
+SOURCE_ASM = $(wildcard ./Source/*.s) $(STM32F4_SOURCE_ASM)
 SOURCE_C = $(wildcard ./Source/*.c) $(STM32F4_SOURCE_C) $(FREERTOS_SOURCE_C)
-SOURCE_CPP = $(wildcard ./Source/*.cpp) $(STM32F4_SOURCE_CPP) $(FREERTOS_SOURCE_CPP)
+SOURCE_CPP = $(wildcard ./Source/*.cpp) $(SPRINGBOARD_SOURCE_CPP)
 
 OBJDIR = ./build/objs
 OBJECTS_ASM = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_ASM:.s=.o)))
 OBJECTS_C = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_C:.c=.o)))
 OBJECTS_CPP = $(addprefix $(OBJDIR)/, $(notdir $(SOURCE_CPP:.cpp=.o)))
-
-LDSCRIPT = ./STM32F407xG.ld
 
 OUTDIR = ./build/output
 ELFOUT = $(OUTDIR)/$(PROJECT_NAME).elf
@@ -80,29 +85,39 @@ QTPRJOUT = ./$(PROJECT_NAME).creator
 
 DEPDIR = ./build/deps
 
+MCU_FAMILY_NAME = STM32F4
+MCU_LINE_NAME = STM32F407_F417
+MCU_NAME = STM32F407xG
+
+LDSCRIPT = ./$(MCU_NAME).ld
+
 CC = arm-none-eabi-gcc
 CPP = arm-none-eabi-g++
-LD = arm-none-eabi-gcc
+LD = arm-none-eabi-g++
 AS = arm-none-eabi-gcc -x assembler-with-cpp
 OBJCOPY = arm-none-eabi-objcopy
 OBJDUMP = arm-none-eabi-objdump
 SIZE = arm-none-eabi-size
 
 DEFS = -DTHUMB_PRESENT -DUSE_STDPERIPH_DRIVER -DTHUMB_NO_INTERWORKING -DCORTEX_USE_FPU=TRUE
+DEFS += -DMCU_FAMILY_NAME=\"$(MCU_FAMILY_NAME)\" -DMCU_NAME=\"$(MCU_NAME)\"
+DEFS += -DMCU_LINE_NAME=\"$(MCU_LINE_NAME)\" -DMCU_TYPE_VALUE=MCU_TYPE\($(MCU_FAMILY_NAME),$(MCU_LINE_NAME),$(MCU_NAME)\)
 OPT = $(DEFS) -c -mcpu=cortex-m4 -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mno-thumb-interwork
 OPT += -ffunction-sections -fdata-sections -fno-common -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant
 OPT += $(addprefix -I, $(INCDIR)) -MD -MP -MF $(DEPDIR)/$(@F).d
 OPT += -DSTM32F40_41xxx
 ASMOPT = $(OPT) -mthumb
 CXXOPT = $(OPT) -Wall -Wextra -Wundef
-COPT = $(CXXOPT) -Wstrict-prototypes
-CPPOPT = $(CXXOPT) -fno-rtti
-LDOPT = -mno-thumb-interwork -mthumb -Wl,-Map=$(OUTDIR)/$(PROJECT_NAME).map,--no-warn-mismatch,--gc-sections,--script=$(LDSCRIPT)
+COPT = $(CXXOPT) -Wstrict-prototypes -std=c11
+CPPOPT = $(CXXOPT) -fno-rtti -std=c++17
+LDOPT = -mno-thumb-interwork -mthumb --specs=nosys.specs -Wl,-Map=$(OUTDIR)/$(PROJECT_NAME).map,--no-warn-mismatch,--gc-sections,--script=$(LDSCRIPT)
 BINOPT = -x --syms
 
 VPATH = $(SRCDIR)
 
-all : $(ELFOUT) $(BINOUT) $(LSTOUT) $(QTPRJOUT)
+all : PRE_MAKE_ALL_RULE_HOOK $(ELFOUT) $(BINOUT) $(LSTOUT)
+
+PRE_MAKE_ALL_RULE_HOOK : $(QTPRJOUT)
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR)
@@ -139,8 +154,8 @@ $(QTPRJOUT): Makefile
 	@$(foreach file,$(SOURCE_ASM),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
 	@$(foreach file,$(SOURCE_C),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
 	@$(foreach file,$(SOURCE_CPP),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
-	@$(foreach file,$(foreach dir,$(INCDIR),$(wildcard $(dir)/*.h)),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
-	@$(foreach file,$(foreach dir,$(INCDIR),$(wildcard $(dir)/*.hpp)),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@$(foreach file,$(foreach dir,$(INCDIR),$(shell find $(dir) -type f -name '*.h')),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
+	@$(foreach file,$(foreach dir,$(INCDIR),$(shell find $(dir) -type f -name '*.hpp')),echo `realpath --relative-to=. $(file)` >> $(QTPRJFILES);)
 	@echo $(LDSCRIPT) >>  $(QTPRJFILES)
 	@echo Makefile >>  $(QTPRJFILES)
 	@$(foreach dir,$(INCDIR),echo `realpath --relative-to=. $(dir)` >> $(QTPRJINCLUDES);)

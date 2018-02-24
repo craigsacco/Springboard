@@ -26,24 +26,17 @@
 
 #pragma once
 
-#include <FreeRTOS.h>
-#include <task.h>
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
+#include <Springboard/Configuration/ConfigurationTypes.hpp>
 
-#include <Springboard/MCUTypes.h>
-#include <Springboard/ResultCodes.h>
+namespace Springboard {
+namespace Configuration {
 
-//! \section Common type definitions
-typedef uint32_t ResultCode;
-typedef uint16_t ResourceIdentifier;
-typedef uint16_t PropertyIdentifier;
+struct IConfiguration
+{
+public:
+    uint32_t id;
+    ConfigurationTypes type;
+};
 
-//! \section Assertion checking
-#define ASSERT(cond)                configASSERT(cond)
-#define ASSERT_MSG(cond, msg)       configASSERT(cond)
-#define ASSERT_FAIL()               configASSERT(false)
-#define ASSERT_FAIL_MSG(msg)        configASSERT(false)
+}  // namespace Configuration
+}  // namespace Springboard
