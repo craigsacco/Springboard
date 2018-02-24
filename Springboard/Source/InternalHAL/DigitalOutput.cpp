@@ -41,9 +41,9 @@ ResultCode DigitalOutput::ConfigureInternal(DigitalOutputConfiguration* config)
     GPIO_InitTypeDef init;
     init.GPIO_Pin = (1UL << config->pad);
     init.GPIO_Mode = GPIO_Mode_OUT;
-    init.GPIO_OType = GPIO_OType_PP;
-    init.GPIO_Speed = GPIO_Low_Speed;
-    init.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    init.GPIO_OType = static_cast<GPIOOType_TypeDef>(config->outputType);
+    init.GPIO_Speed = static_cast<GPIOSpeed_TypeDef>(config->outputSpeed);
+    init.GPIO_PuPd = static_cast<GPIOPuPd_TypeDef>(config->pullType);
     GPIO_Init(config->port->regs, &init);
 
     return RC_OK;

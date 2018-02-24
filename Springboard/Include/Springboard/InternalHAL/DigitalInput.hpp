@@ -30,15 +30,27 @@
 #include <Springboard/InternalHAL/GPIOPort.hpp>
 #include <Springboard/CommonHAL/IDigitalInput.hpp>
 #include <Springboard/Configuration/IConfigurable.hpp>
+#include <stm32f4xx_gpio.h>
 
 namespace Springboard {
 namespace InternalHAL {
 
-struct DigitalInputConfiguration : public Springboard::Configuration::IConfiguration
+struct GPIOPortPinConfiguration : public Springboard::Configuration::IConfiguration
 {
-public:
+    enum class PullType : uint8_t
+    {
+        None = GPIO_PuPd_NOPULL,
+        PullUp = GPIO_PuPd_UP,
+        PullDown = GPIO_PuPd_DOWN,
+    };
+
     GPIOPortConfiguration* port;
     uint8_t pad;
+    PullType pullType = PullType::None;
+};
+
+struct DigitalInputConfiguration : public GPIOPortPinConfiguration
+{
 };
 
 class DigitalInput : public Springboard::CommonHAL::IDigitalInput,

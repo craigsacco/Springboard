@@ -28,17 +28,29 @@
 
 #include <Springboard/InternalHAL/InternalHAL.hpp>
 #include <Springboard/InternalHAL/GPIOPort.hpp>
+#include <Springboard/InternalHAL/DigitalInput.hpp>
 #include <Springboard/CommonHAL/IDigitalOutput.hpp>
 #include <Springboard/Configuration/IConfigurable.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-struct DigitalOutputConfiguration : public Springboard::Configuration::IConfiguration
+struct DigitalOutputConfiguration : public GPIOPortPinConfiguration
 {
-public:
-    GPIOPortConfiguration* port;
-    uint8_t pad;
+    enum class OutputType : uint8_t {
+        PushPull = GPIO_OType_PP,
+        OpenDrain = GPIO_OType_OD,
+    };
+
+    enum class OutputSpeedType : uint8_t {
+        LowSpeed = GPIO_Low_Speed,
+        MediumSpeed = GPIO_Medium_Speed,
+        FastSpeed = GPIO_Fast_Speed,
+        HighSpeed = GPIO_High_Speed,
+    };
+
+    OutputType outputType = OutputType::PushPull;
+    OutputSpeedType outputSpeed = OutputSpeedType::LowSpeed;
 };
 
 class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput,
