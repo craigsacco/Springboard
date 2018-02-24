@@ -39,6 +39,9 @@ enum class ConfigurationTypes : uint32_t
 
     DigitalInput = 0x00000200,
     DigitalOutput = 0x00000201,
+    AlternateFunctionPin = 0x00000202,
+
+    UART = 0x00000300,
 };
 
 }  // namespace CommonHAL

@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <stm32f4xx_gpio.h>
 #include <Springboard/InternalHAL/DigitalInput.hpp>
 
 namespace Springboard {

@@ -210,27 +210,6 @@ constexpr uint8_t GetMCUVariant()
 //    AnalogInput = PAL_STM32_MODE_ANALOG,
 //};
 
-//enum class GPIOPullConfiguration : iomode_t
-//{
-//    Floating = PAL_STM32_PUPDR_FLOATING,
-//    PullUp = PAL_STM32_PUPDR_PULLUP,
-//    PullDown = PAL_STM32_PUPDR_PULLDOWN,
-//};
-
-//enum class GPIOOutputConfiguration : iomode_t
-//{
-//    PushPull = PAL_STM32_OTYPE_PUSHPULL,
-//    OpenDrain = PAL_STM32_OTYPE_OPENDRAIN,
-//};
-
-//enum class GPIOOutputSpeed : iomode_t
-//{
-//    Low_2MHz = PAL_STM32_OSPEED_LOWEST,
-//    Medium_25MHz = PAL_STM32_OSPEED_MID1,
-//    High_50MHz = PAL_STM32_OSPEED_MID2,
-//    VeryHigh_100MHz = PAL_STM32_OSPEED_HIGHEST,
-//};
-
 //enum class I2CMode
 //{
 //    I2C = OPMODE_I2C,
@@ -274,7 +253,6 @@ constexpr uint8_t GetMCUVariant()
 //    Two = USART_CR2_STOP_1,
 //};
 
-void Initialise();
 const char* GetRTOSName();
 const char* GetRTOSVersion();
 const char* GetRTOSPortInfo();

@@ -31,10 +31,6 @@
 namespace Springboard {
 namespace InternalHAL {
 
-void Initialise()
-{
-}
-
 const char* GetRTOSName()
 {
     return "FreeRTOS";

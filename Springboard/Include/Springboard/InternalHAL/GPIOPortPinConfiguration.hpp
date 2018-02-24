@@ -26,24 +26,52 @@
 
 #pragma once
 
-#include <Springboard/CommonHAL/IDigitalOutput.hpp>
-#include <Springboard/Configuration/IConfigurable.hpp>
-#include <Springboard/InternalHAL/GPIOPortPinConfiguration.hpp>
+#include <Springboard/InternalHAL/GPIOPort.hpp>
+#include <Springboard/Configuration/IConfiguration.hpp>
+#include <stm32f4xx_gpio.h>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput,
-                      public Springboard::Configuration::IConfigurable<DigitalOutputConfiguration>
+struct GPIOPortPinConfiguration : public Springboard::Configuration::IConfiguration
 {
-public:
-    DigitalOutput();
-    ResultCode ConfigureInternal(DigitalOutputConfiguration* config) override final;
-    bool Get() const override final;
-    void Set() override final;
-    void Set(bool state) override final;
-    void Clear() override final;
-    void Toggle() override final;
+    enum class PullType : uint8_t
+    {
+        None = GPIO_PuPd_NOPULL,
+        PullUp = GPIO_PuPd_UP,
+        PullDown = GPIO_PuPd_DOWN,
+    };
+
+    GPIOPortConfiguration* port;
+    uint8_t pad;
+    PullType pullType = PullType::None;
+};
+
+struct DigitalInputConfiguration : public GPIOPortPinConfiguration
+{
+};
+
+struct DigitalOutputConfiguration : public GPIOPortPinConfiguration
+{
+    enum class OutputType : uint8_t {
+        PushPull = GPIO_OType_PP,
+        OpenDrain = GPIO_OType_OD,
+    };
+
+    enum class OutputSpeedType : uint8_t {
+        LowSpeed = GPIO_Low_Speed,
+        MediumSpeed = GPIO_Medium_Speed,
+        FastSpeed = GPIO_Fast_Speed,
+        HighSpeed = GPIO_High_Speed,
+    };
+
+    OutputType outputType = OutputType::PushPull;
+    OutputSpeedType outputSpeed = OutputSpeedType::LowSpeed;
+};
+
+struct AlternateFunctionPinConfiguration : public DigitalOutputConfiguration
+{
+    uint8_t alternateFunction;
 };
 
 }  // namespace InternalHAL

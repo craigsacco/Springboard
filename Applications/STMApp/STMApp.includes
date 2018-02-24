@@ -6,3 +6,5 @@ Include
 ../../Libraries/FreeRTOS/10.0.1/FreeRTOS/Source/include
 ../../Libraries/FreeRTOS/10.0.1/FreeRTOS/Source/portable/GCC/ARM_CM4F
 ../../Springboard/Include
+../../Springboard/Include/Springboard/InternalHAL
+../../Springboard/Source/InternalHAL

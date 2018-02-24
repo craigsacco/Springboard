@@ -26,25 +26,33 @@
 
 #pragma once
 
-#include <Springboard/CommonHAL/IDigitalOutput.hpp>
-#include <Springboard/Configuration/IConfigurable.hpp>
-#include <Springboard/InternalHAL/GPIOPortPinConfiguration.hpp>
+#include <Springboard/InternalHAL/AlternateFunctionPin.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput,
-                      public Springboard::Configuration::IConfigurable<DigitalOutputConfiguration>
+AlternateFunctionPin::AlternateFunctionPin()
 {
-public:
-    DigitalOutput();
-    ResultCode ConfigureInternal(DigitalOutputConfiguration* config) override final;
-    bool Get() const override final;
-    void Set() override final;
-    void Set(bool state) override final;
-    void Clear() override final;
-    void Toggle() override final;
-};
+}
+
+ResultCode AlternateFunctionPin::ConfigureInternal(AlternateFunctionPinConfiguration* config)
+{
+    GPIO_InitTypeDef init;
+    init.GPIO_Pin = (1UL << config->pad);
+    init.GPIO_Mode = GPIO_Mode_AF;
+    init.GPIO_OType = static_cast<GPIOOType_TypeDef>(config->outputType);
+    init.GPIO_Speed = static_cast<GPIOSpeed_TypeDef>(config->outputSpeed);
+    init.GPIO_PuPd = static_cast<GPIOPuPd_TypeDef>(config->pullType);
+    GPIO_Init(config->port->regs, &init);
+    GPIO_PinAFConfig(config->port->regs, init.GPIO_Pin, config->alternateFunction);
+
+    return RC_OK;
+}
+
+bool AlternateFunctionPin::Get() const
+{
+    return mConfig->port->regs->IDR & (1UL << mConfig->pad);
+}
 
 }  // namespace InternalHAL
 }  // namespace Springboard

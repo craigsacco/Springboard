@@ -26,24 +26,18 @@
 
 #pragma once
 
-#include <Springboard/CommonHAL/IDigitalOutput.hpp>
 #include <Springboard/Configuration/IConfigurable.hpp>
 #include <Springboard/InternalHAL/GPIOPortPinConfiguration.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalOutput : public Springboard::CommonHAL::IDigitalOutput,
-                      public Springboard::Configuration::IConfigurable<DigitalOutputConfiguration>
+class AlternateFunctionPin : public Springboard::Configuration::IConfigurable<AlternateFunctionPinConfiguration>
 {
 public:
-    DigitalOutput();
-    ResultCode ConfigureInternal(DigitalOutputConfiguration* config) override final;
-    bool Get() const override final;
-    void Set() override final;
-    void Set(bool state) override final;
-    void Clear() override final;
-    void Toggle() override final;
+    AlternateFunctionPin();
+    ResultCode ConfigureInternal(AlternateFunctionPinConfiguration* config) override final;
+    bool Get() const;
 };
 
 }  // namespace InternalHAL
