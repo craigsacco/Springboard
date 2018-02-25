@@ -1,7 +1,4 @@
 ../../Libraries/STMStdPeripheralLibrary/STM32F4/1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/SW4STM32/startup_stm32f40_41xxx.s
-../../Springboard/Include/Springboard/InternalHAL/AlternateFunctionPin.hpp
-../../Springboard/Include/Springboard/InternalHAL/GPIOPortPinConfiguration.hpp
-../../Springboard/Source/InternalHAL/AlternateFunctionPin.cpp
 Source/stm32f4xx_it.c
 Source/system_stm32f4xx.c
 ../../Libraries/STMStdPeripheralLibrary/STM32F4/1.8.0/Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_adc.c
@@ -51,6 +48,7 @@ Source/main.cpp
 ../../Springboard/Source/InternalHAL/InternalHAL.cpp
 ../../Springboard/Source/InternalHAL/SPIBus.cpp
 ../../Springboard/Source/InternalHAL/Watchdog.cpp
+../../Springboard/Source/InternalHAL/AlternateFunctionPin.cpp
 ../../Springboard/Source/Utilities/ArrayReference.cpp
 ../../Springboard/Source/Utilities/StringSplitter.cpp
 Include/stm32f4xx_it.h
@@ -138,8 +136,8 @@ Include/stm32f4xx_conf.h
 ../../Springboard/Include/Springboard/Drivers/MCP23017Driver.hpp
 ../../Springboard/Include/Springboard/Drivers/PCF8574Driver.hpp
 ../../Springboard/Include/Springboard/Configuration/IConfiguration.hpp
-../../Springboard/Include/Springboard/Configuration/IConfigurable.hpp
 ../../Springboard/Include/Springboard/Configuration/ConfigurationTypes.hpp
+../../Springboard/Include/Springboard/Configuration/Configurable.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalOutput.hpp
 ../../Springboard/Include/Springboard/CommonHAL/IDigitalInput.hpp
 ../../Springboard/Include/Springboard/Infrastructure/Resource.hpp
@@ -172,8 +170,10 @@ Include/stm32f4xx_conf.h
 ../../Springboard/Include/Springboard/InternalHAL/DigitalOutput.hpp
 ../../Springboard/Include/Springboard/InternalHAL/InternalHAL.hpp
 ../../Springboard/Include/Springboard/InternalHAL/UARTBus.hpp
+../../Springboard/Include/Springboard/InternalHAL/AlternateFunctionPin.hpp
 ../../Springboard/Include/Springboard/InternalHAL/PeripheralFactory.hpp
 ../../Springboard/Include/Springboard/InternalHAL/DigitalInput.hpp
+../../Springboard/Include/Springboard/InternalHAL/GPIOPortPinConfiguration.hpp
 ../../Springboard/Include/Springboard/InternalHAL/RealTimeClock.hpp
 ../../Springboard/Include/Springboard/InternalHAL/I2CBus.hpp
 ../../Springboard/Include/Springboard/InternalHAL/SPIBus.hpp

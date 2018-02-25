@@ -24,10 +24,7 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#pragma once
-
 #include <Springboard/InternalHAL/GPIOPort.hpp>
-#include <Springboard/Utilities/StaticLookup.hpp>
 #include <stm32f4xx_rcc.h>
 
 namespace Springboard {
@@ -37,27 +34,33 @@ GPIOPort::GPIOPort()
 {
 }
 
-const Springboard::Utilities::StaticLookup<GPIO_TypeDef*, uint32_t, 9>
-    GPIOToAHB1PeripheralEnable {
-    {
-        { GPIOA, RCC_AHB1Periph_GPIOA },
-        { GPIOB, RCC_AHB1Periph_GPIOB },
-        { GPIOC, RCC_AHB1Periph_GPIOC },
-        { GPIOD, RCC_AHB1Periph_GPIOD },
-        { GPIOE, RCC_AHB1Periph_GPIOE },
-        { GPIOF, RCC_AHB1Periph_GPIOF },
-        { GPIOG, RCC_AHB1Periph_GPIOG },
-        { GPIOH, RCC_AHB1Periph_GPIOH },
-        { GPIOI, RCC_AHB1Periph_GPIOI },
-    }
+#pragma pack(1)
+struct GPIOPeripheralInfo
+{
+    GPIO_TypeDef* regs;
+    uint32_t rccbit;
+};
+#pragma pack
+
+const GPIOPeripheralInfo gGPIOPeripherals[GPIOPort::NUMBER_OF_GPIOPORTS] {
+    { GPIOA, RCC_AHB1Periph_GPIOA },
+    { GPIOB, RCC_AHB1Periph_GPIOB },
+    { GPIOC, RCC_AHB1Periph_GPIOC },
+    { GPIOD, RCC_AHB1Periph_GPIOD },
+    { GPIOE, RCC_AHB1Periph_GPIOE },
+    { GPIOF, RCC_AHB1Periph_GPIOF },
+    { GPIOG, RCC_AHB1Periph_GPIOG },
+    { GPIOH, RCC_AHB1Periph_GPIOH },
+    { GPIOI, RCC_AHB1Periph_GPIOI },
 };
 
 ResultCode GPIOPort::ConfigureInternal(GPIOPortConfiguration* config)
 {
-    uint32_t peripheral;
-    if (GPIOToAHB1PeripheralEnable.Find(config->regs, &peripheral)) {
-        RCC_AHB1PeriphClockCmd(peripheral, ENABLE);
-        return RC_OK;
+    for (const GPIOPeripheralInfo& info : gGPIOPeripherals) {
+        if (config->regs == info.regs) {
+            RCC_AHB1PeriphClockCmd(info.rccbit, ENABLE);
+            return RC_OK;
+        }
     }
 
     return RC_CONFIGURATION_FAILED;

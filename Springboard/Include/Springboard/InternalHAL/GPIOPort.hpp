@@ -26,8 +26,9 @@
 
 #pragma once
 
-#include <Springboard/InternalHAL/InternalHAL.hpp>
-#include <Springboard/Configuration/IConfigurable.hpp>
+#include <Springboard/Common.h>
+#include <Springboard/Configuration/Configurable.hpp>
+#include <stm32f4xx_gpio.h>
 
 namespace Springboard {
 namespace InternalHAL {
@@ -38,11 +39,13 @@ public:
     GPIO_TypeDef* regs;
 };
 
-class GPIOPort : public Springboard::Configuration::IConfigurable<GPIOPortConfiguration>
+class GPIOPort : public Springboard::Configuration::Configurable<GPIOPortConfiguration>
 {
 public:
     GPIOPort();
     ResultCode ConfigureInternal(GPIOPortConfiguration* config) override final;
+
+    static constexpr size_t NUMBER_OF_GPIOPORTS = 9;
 };
 
 }  // namespace InternalHAL

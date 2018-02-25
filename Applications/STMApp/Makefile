@@ -109,7 +109,7 @@ OPT += -DSTM32F40_41xxx
 ASMOPT = $(OPT) -mthumb
 CXXOPT = $(OPT) -Wall -Wextra -Wundef
 COPT = $(CXXOPT) -Wstrict-prototypes -std=c11
-CPPOPT = $(CXXOPT) -fno-rtti -std=c++17
+CPPOPT = $(CXXOPT) -fno-rtti -std=c++17 -Wno-register
 LDOPT = -mno-thumb-interwork -mthumb --specs=nosys.specs -Wl,-Map=$(OUTDIR)/$(PROJECT_NAME).map,--no-warn-mismatch,--gc-sections,--script=$(LDSCRIPT)
 BINOPT = -x --syms
 

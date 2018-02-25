@@ -26,13 +26,13 @@
 
 #pragma once
 
-#include <Springboard/Configuration/IConfigurable.hpp>
+#include <Springboard/Configuration/Configurable.hpp>
 #include <Springboard/InternalHAL/GPIOPortPinConfiguration.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class AlternateFunctionPin : public Springboard::Configuration::IConfigurable<AlternateFunctionPinConfiguration>
+class AlternateFunctionPin : public Springboard::Configuration::Configurable<AlternateFunctionPinConfiguration>
 {
 public:
     AlternateFunctionPin();

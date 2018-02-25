@@ -26,74 +26,72 @@
 
 #pragma once
 
+#include <Springboard/Common.h>
+#include <Springboard/InternalHAL/AlternateFunctionPin.hpp>
 #include <Springboard/Comms/IStream.hpp>
-#include <Springboard/InternalHAL/InternalHAL.hpp>
-
-#if SPRINGBOARD_HAL_ENABLE_UART
+#include <Springboard/Configuration/Configurable.hpp>
+#include <stm32f4xx_usart.h>
 
 namespace Springboard {
-
-namespace Kernel { class BinarySemaphore; }
-
 namespace InternalHAL {
 
-class UARTBus : public Springboard::Comms::IStream
+struct UARTBusConfiguration : public Springboard::Configuration::IConfiguration
+{
+    enum class DataBitsType : uint16_t
+    {
+        Eight = USART_WordLength_8b,
+        Nine = USART_WordLength_9b,
+    };
+
+    enum class ParityType : uint16_t
+    {
+        None = USART_Parity_No,
+        Even = USART_Parity_Even,
+        Odd = USART_Parity_Odd,
+    };
+
+    enum class StopBitsType : uint16_t
+    {
+        ZeroPointFive = USART_StopBits_0_5,
+        One = USART_StopBits_1,
+        OnePointFive = USART_StopBits_1_5,
+        Two = USART_StopBits_2,
+    };
+
+    enum class FlowControlType : uint16_t
+    {
+        None = USART_HardwareFlowControl_None,
+        RTSOnly = USART_HardwareFlowControl_RTS,
+        CTSOnly = USART_HardwareFlowControl_CTS,
+        Full = USART_HardwareFlowControl_RTS_CTS,
+    };
+
+    USART_TypeDef* regs;
+    AlternateFunctionPinConfiguration* txPin;
+    AlternateFunctionPinConfiguration* rxPin;
+    uint32_t speed;
+    DataBitsType dataBits;
+    ParityType parity;
+    StopBitsType stopBits;
+    FlowControlType flowControl;
+};
+
+class UARTBus : public Springboard::Configuration::Configurable<UARTBusConfiguration>,
+                public Springboard::Comms::IStream
 {
 public:
-    typedef SerialDriver Bus;
-    typedef SerialConfig Config;
-    typedef uint32_t Speed;
+    explicit UARTBus();
+    ResultCode ConfigureInternal(UARTBusConfiguration* config) override final;
 
-    explicit UARTBus(Bus* bus);
+    uint8_t Read() override final;
+    void Read(Springboard::Utilities::ByteArray buffer) override final;
+    size_t ReadAsync(Springboard::Utilities::ByteArray buffer) override final;
+    void Write(uint8_t b) override final;
+    void Write(Springboard::Utilities::ConstByteArray buffer) override final;
+    size_t ReadAsync(Springboard::Utilities::ConstByteArray buffer) override final;
 
-    void Start();
-    void Stop();
-    void SetConfig(Speed speed,
-                   UARTDataBits databits = UARTDataBits::Eight,
-                   UARTParity parity = UARTParity::None,
-                   UARTStopBits stopbits = UARTStopBits::One);
-
-    inline bool IsStarted()
-    {
-        return (mBus->state == SD_READY);
-    }
-
-    inline uint8_t Read() final
-    {
-        return sdGet(mBus);
-    }
-
-    inline void Read(Springboard::Utilities::ByteArray buffer) final
-    {
-        sdRead(mBus, buffer.GetData(), buffer.GetSize());
-    }
-
-    inline size_t ReadAsync(Springboard::Utilities::ByteArray buffer) final
-    {
-        return sdAsynchronousRead(mBus, buffer.GetData(), buffer.GetSize());
-    }
-
-    inline void Write(uint8_t b) final
-    {
-        sdPut(mBus, b);
-    }
-
-    inline void Write(Springboard::Utilities::ConstByteArray buffer) final
-    {
-        sdWrite(mBus, buffer.GetData(), buffer.GetSize());
-    }
-
-    inline size_t ReadAsync(Springboard::Utilities::ConstByteArray buffer) final
-    {
-        return sdAsynchronousWrite(mBus, buffer.GetData(), buffer.GetSize());
-    }
-
-private:
-    Bus* mBus;
-    Config mConfig;
+    static constexpr size_t NUMBER_OF_UARTS = 6;
 };
 
 }  // namespace InternalHAL
 }  // namespace Springboard
-
-#endif  // SPRINGBOARD_HAL_ENABLE_UART

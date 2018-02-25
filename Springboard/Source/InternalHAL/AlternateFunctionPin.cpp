@@ -24,8 +24,6 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#pragma once
-
 #include <Springboard/InternalHAL/AlternateFunctionPin.hpp>
 
 namespace Springboard {

@@ -74,11 +74,6 @@ constexpr uint8_t GetMCUVariant()
     return static_cast<uint8_t>(MCU_VARIANT);
 }
 
-//enum class GPIOPinMode : iomode_t
-//{
-//    Input = PAL_STM32_MODE_INPUT,
-//    Output = PAL_STM32_MODE_OUTPUT,
-
 //#if MCU_FAMILY == MCU_FAMILY_STM32F4
 //    //! \section System functions
 //    AlternateFunction_SYS = PAL_STM32_MODE_ALTERNATE | PAL_STM32_ALTERNATE(0),
@@ -230,27 +225,6 @@ constexpr uint8_t GetMCUVariant()
 //    Mode1_CPOL0_CPHA1 = SPI_CR1_CPHA,
 //    Mode2_CPOL1_CPHA0 = SPI_CR1_CPOL,
 //    Mode3_CPOL1_CPHA1 = SPI_CR1_CPOL | SPI_CR1_CPHA,
-//};
-
-//enum class UARTDataBits
-//{
-//    Eight = 0,
-//    Nine = USART_CR1_M,
-//};
-
-//enum class UARTParity
-//{
-//    None = 0,
-//    Even = USART_CR1_PCE,
-//    Odd = USART_CR1_PCE | USART_CR1_PS,
-//};
-
-//enum class UARTStopBits
-//{
-//    ZeroPointFive = USART_CR2_STOP_0,
-//    One = 0,
-//    OnePointFive = USART_CR2_STOP_1 | USART_CR2_STOP_0,
-//    Two = USART_CR2_STOP_1,
 //};
 
 const char* GetRTOSName();

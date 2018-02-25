@@ -27,14 +27,14 @@
 #pragma once
 
 #include <Springboard/CommonHAL/IDigitalInput.hpp>
-#include <Springboard/Configuration/IConfigurable.hpp>
+#include <Springboard/Configuration/Configurable.hpp>
 #include <Springboard/InternalHAL/GPIOPortPinConfiguration.hpp>
 
 namespace Springboard {
 namespace InternalHAL {
 
-class DigitalInput : public Springboard::CommonHAL::IDigitalInput,
-                     public Springboard::Configuration::IConfigurable<DigitalInputConfiguration>
+class DigitalInput : public Springboard::Configuration::Configurable<DigitalInputConfiguration>,
+                     public Springboard::CommonHAL::IDigitalInput
 {
 public:
     DigitalInput();

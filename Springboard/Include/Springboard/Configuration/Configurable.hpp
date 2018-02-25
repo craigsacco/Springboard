@@ -33,14 +33,14 @@ namespace Springboard {
 namespace Configuration {
 
 template <typename TConfiguration>
-class IConfigurable
+class Configurable
 {
 public:
     static_assert(std::is_base_of<Springboard::Configuration::IConfiguration,
                                   TConfiguration>(),
                   "TConfiguration must be based from IConfiguration");
 
-    IConfigurable() : mConfig(nullptr)
+    Configurable() : mConfig(nullptr)
     {
     }
 
