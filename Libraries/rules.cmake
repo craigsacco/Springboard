@@ -2,6 +2,7 @@ INCLUDE(${project_path}/project.cmake)
 
 PROJECT(${project_name} LANGUAGES C CXX ASM)
 
+SET(springboard_root ./Libraries/Springboard)
 SET(stm32f4xx_stdperiph_library_libroot ./Libraries/STM32F4xx_StdPeriph_Library)
 SET(stm32l4xx_hal_driver_libroot ./Libraries/STM32L4xx_HAL_Driver)
 SET(cmsis_libroot ./Libraries/CMSIS)
@@ -48,7 +49,6 @@ FILE(GLOB project_sources_cpp ${project_path}/*.cpp)
 SET(project_sources ${project_sources_asm} ${project_sources_c} ${project_sources_cpp})
 SET(project_includes ${project_path})
 
-SET(springboard_root ./Libraries/Springboard)
 SET(springboard_includes ${springboard_root}/Include)
 FILE(GLOB_RECURSE springboard_sources ${springboard_root}/Source/*.cpp)
 
@@ -66,7 +66,8 @@ ADD_EXECUTABLE(${project_name}.elf
     ${hal_sources}
     ${cmsis_sources}
     ${cmsis_device_sources}
-    ${springboard_sources})
+    ${springboard_sources}
+    ${springboard_startup_source})
 
 ADD_CUSTOM_COMMAND(
     TARGET ${project_name}.elf

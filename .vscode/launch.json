@@ -17,20 +17,36 @@
         //         "target/stm32l4x.cfg"
         //     ],
         //     "armToolchainPath": "/home/craig/Applications/gcc-arm-embedded/7-2018-q2-update/bin"
-        // },
+        // }
+
         {
-            "name": "GDB TestApp (on Waveshare Open407I-G)",
+            "name": "GDB TestApp (on ST-Nucleo-32 F429ZI)",
             "type": "cortex-debug",
             "request": "launch",
             "servertype": "openocd",
             "executable": "${workspaceRoot}/build/TestApp.elf", 
             "cwd": "${workspaceRoot}",
-            "device": "STM32F407IG",
+            "device": "STM32F429ZI",
             "configFiles": [
-                "interface/stlink-v2.cfg",
+                "interface/stlink-v2-1.cfg",
                 "target/stm32f4x.cfg"
             ],
             "armToolchainPath": "/home/craig/Applications/gcc-arm-embedded/7-2018-q2-update/bin"
         }
+
+        // {
+        //     "name": "GDB TestApp (on Waveshare Open407I-G)",
+        //     "type": "cortex-debug",
+        //     "request": "launch",
+        //     "servertype": "openocd",
+        //     "executable": "${workspaceRoot}/build/TestApp.elf", 
+        //     "cwd": "${workspaceRoot}",
+        //     "device": "STM32F407IG",
+        //     "configFiles": [
+        //         "interface/stlink-v2.cfg",
+        //         "target/stm32f4x.cfg"
+        //     ],
+        //     "armToolchainPath": "/home/craig/Applications/gcc-arm-embedded/7-2018-q2-update/bin"
+        // }
     ]
 }

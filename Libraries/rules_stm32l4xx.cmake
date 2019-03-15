@@ -8,6 +8,7 @@ IF(${project_mcu} STREQUAL "STM32L432xC")
     # chip is an L432xC
     SET(ldscript_file ${ldscript_root}/STM32L432xC_FLASH.ld)
     SET(mcu_subfamily STM32L432xx)
+    SET(springboard_startup_source ${springboard_root}/Startup/startup_stm32l432xx.s)
 ELSE()
     MESSAGE(FATAL_ERROR "Unsupported MCU type: ${project_mcu}")
 ENDIF()

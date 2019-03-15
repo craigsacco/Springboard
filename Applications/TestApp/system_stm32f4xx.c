@@ -261,6 +261,12 @@
 #define PLL_P      2
 #endif /* STM32F40_41xxx */
 
+#if defined (STM32F429_439xx)
+#define PLL_N      360
+/* SYSCLK = PLL_VCO / PLL_P */
+#define PLL_P      2
+#endif /* STM32F40_41xxx */
+
 
 /******************************************************************************/
 
