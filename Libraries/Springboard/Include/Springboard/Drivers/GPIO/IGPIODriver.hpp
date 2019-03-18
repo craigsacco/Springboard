@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Springboard/Drivers/ITypeSpecificDriver.hpp"
+#include "Springboard/Drivers/IDriver.hpp"
 
 namespace Springboard {
 namespace Drivers {
@@ -8,8 +8,6 @@ namespace Drivers {
 class IDriverLookup;
 
 namespace GPIO {
-
-class IGPIODriverFactory;
 
 enum class DriverType_t : uint32_t {
     InternalGPIO,
@@ -20,11 +18,10 @@ struct DriverConfig_t {
     void* driverSpecificConfig;
 };
 
-class IGPIODriver : public ITypeSpecificDriver<DriverConfig_t, IGPIODriverFactory>
+class IGPIODriver : public IDriver
 {
 public:
-    virtual Springboard::Error_t ConfigureDriver(DriverConfig_t* config,
-                                                 IGPIODriverFactory* factory) = 0;
+    virtual Springboard::Error_t ConfigureDriver(DriverConfig_t* config) = 0;
 };
 
 }

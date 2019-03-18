@@ -4,7 +4,8 @@
 namespace Springboard {
 namespace Devices {
 
-DeviceFactory::DeviceFactory()
+DeviceFactory::DeviceFactory(Springboard::Drivers::GPIO::IGPIODriverFactory& gpioDriverFactory)
+    : mGPIODriverFactory(gpioDriverFactory)
 {
 }
 
@@ -12,7 +13,7 @@ IDevice* DeviceFactory::CreateDevice(DeviceConfig_t& config) const
 {
     switch (config.type) {
         case Springboard::DeviceType_t::GPIO:
-            return new Springboard::Devices::GPIODevice();
+            return new Springboard::Devices::GPIODevice(mGPIODriverFactory);
         default:
             return nullptr;
     }

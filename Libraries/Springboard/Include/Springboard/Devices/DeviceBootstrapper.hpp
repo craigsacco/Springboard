@@ -2,6 +2,7 @@
 
 #include "Springboard/Devices/DeviceFactory.hpp"
 #include "Springboard/Devices/DeviceRegistry.hpp"
+#include "Springboard/Drivers/GPIO/GPIODriverFactory.hpp"
 
 namespace Springboard {
 namespace Devices {
@@ -13,7 +14,8 @@ public:
     IDeviceRegistry& GetDeviceRegistry();
 
 private:
-    DeviceFactory mDeviceFactory {};
+    Springboard::Drivers::GPIO::GPIODriverFactory mGPIODriverFactory {};
+    DeviceFactory mDeviceFactory { mGPIODriverFactory };
     DeviceRegistry mDeviceRegistry { mDeviceFactory };
 };
 

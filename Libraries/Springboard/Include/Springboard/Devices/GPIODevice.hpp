@@ -8,6 +8,7 @@ namespace Springboard {
 namespace Drivers {
 namespace GPIO {
 class IGPIODriver;
+class IGPIODriverFactory;
 }
 }
 
@@ -16,12 +17,13 @@ namespace Devices {
 class GPIODevice : public IDevice
 {
 public:
-    GPIODevice();
+    GPIODevice(Springboard::Drivers::GPIO::IGPIODriverFactory& driverFactory);
     Springboard::Error_t ConfigureDevice(DeviceConfig_t& config) override final;
     Springboard::Drivers::IDriver* GetDriver() const override final;
     const DeviceConfig_t* GetDeviceConfig() const override final;
 
 protected:
+    Springboard::Drivers::GPIO::IGPIODriverFactory& mDriverFactory;
     Springboard::Drivers::GPIO::IGPIODriver* mDriver;
     const DeviceConfig_t* mDeviceConfig;
 };

@@ -1,17 +1,17 @@
-// #pragma once
+#pragma once
 
-// #include "Springboard/Drivers/GPIO/IGPIODriver.hpp"
+#include "Springboard/Drivers/GPIO/IGPIODriver.hpp"
 
-// namespace Springboard {
-// namespace Drivers {
-// namespace GPIO {
+namespace Springboard {
+namespace Drivers {
+namespace GPIO {
 
-// class IGPIODriverFactory
-// {
-// public:
-//     virtual IGPIODriver* CreateDriver(DriverConfig_t* config) = 0;
-// };
+class IGPIODriverFactory
+{
+public:
+    virtual IGPIODriver* CreateDriver(DriverConfig_t* config) = 0;
+};
 
-// }
-// }
-// }
+}
+}
+}
