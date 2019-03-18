@@ -9,10 +9,10 @@ GPIODriverFactory::GPIODriverFactory()
 {
 }
 
-IGPIODriver* GPIODriverFactory::CreateDriver(DriverConfig_t* config)
+IGPIODriver* GPIODriverFactory::CreateDriver(GPIODriverConfig_t& config)
 {
-    switch (config->type) {
-        case DriverType_t::InternalGPIO:
+    switch (config.type) {
+        case GPIODriverConfig_t::Type_t::InternalGPIO:
             return new InternalGPIODriver();
         default:
             return nullptr;

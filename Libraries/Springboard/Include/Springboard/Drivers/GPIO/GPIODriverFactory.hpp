@@ -10,7 +10,7 @@ class GPIODriverFactory : public IGPIODriverFactory
 {
 public:
     GPIODriverFactory();
-    IGPIODriver* CreateDriver(DriverConfig_t* config) override final;
+    IGPIODriver* CreateDriver(GPIODriverConfig_t& config) override final;
 };
 
 }

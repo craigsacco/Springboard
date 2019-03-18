@@ -9,7 +9,7 @@ namespace GPIO {
 class IGPIODriverFactory
 {
 public:
-    virtual IGPIODriver* CreateDriver(DriverConfig_t* config) = 0;
+    virtual IGPIODriver* CreateDriver(GPIODriverConfig_t& config) = 0;
 };
 
 }

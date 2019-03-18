@@ -12,7 +12,7 @@ class InternalGPIODriver : public BaseGPIODriver
 {
 public:
     InternalGPIODriver();
-    Springboard::Error_t ConfigureDriver(DriverConfig_t* config) override final;
+    Springboard::Error_t ConfigureDriver(GPIODriverConfig_t& config, Springboard::Drivers::IDriverLookup& lookup) override final;
     GPIO_TypeDef* GetGPIO() const;
 
 private:

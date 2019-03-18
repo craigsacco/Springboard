@@ -11,13 +11,13 @@ InternalGPIODriver::InternalGPIODriver()
 {
 }
 
-Springboard::Error_t InternalGPIODriver::ConfigureDriver(DriverConfig_t* config)
+Springboard::Error_t InternalGPIODriver::ConfigureDriver(GPIODriverConfig_t& config, Springboard::Drivers::IDriverLookup& lookup)
 {
-    if (config->type != DriverType_t::InternalGPIO) {
+    if (config.type != GPIODriverConfig_t::Type_t::InternalGPIO) {
         return RAISE_ERROR(Springboard::Error_t::InvalidDriverType, "Attempted to configure InternalGPIO using wrong config");
     }
 
-    InternalGPIODriverConfig_t* driverConfig = reinterpret_cast<InternalGPIODriverConfig_t*>(config->driverSpecificConfig);
+    InternalGPIODriverConfig_t* driverSpecificConfig = reinterpret_cast<InternalGPIODriverConfig_t*>(config.driverSpecificConfig);
 
     static constexpr InternalGPIOStaticInfoRecord_t records[11] = {
         { InternalGPIODriverConfig_t::Port_t::A, GPIOA, RCC_AHB1Periph_GPIOA },
@@ -33,7 +33,7 @@ Springboard::Error_t InternalGPIODriver::ConfigureDriver(DriverConfig_t* config)
         { InternalGPIODriverConfig_t::Port_t::K, GPIOK, RCC_AHB1Periph_GPIOK },
     };
     for (auto& record : records) {
-        if (record.port == driverConfig->port) {
+        if (record.port == driverSpecificConfig->port) {
             RCC_AHB1PeriphClockCmd(record.rccEnable, ENABLE);
             mGPIO = record.gpio;
             return Springboard::Error_t::Success;

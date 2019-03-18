@@ -26,7 +26,7 @@ Springboard::Error_t  DeviceRegistry::CreateDevices(DeviceConfig_t configs[], si
         if (mDevices[i] == nullptr) {
             return RAISE_ERROR(Springboard::Error_t::DeviceNotCreated, "Could not create device from configuration");
         }
-        result = mDevices[i]->ConfigureDevice(config);
+        result = mDevices[i]->ConfigureDevice(config, *this);
         if (result != Springboard::Error_t::Success) {
             return result;
         }

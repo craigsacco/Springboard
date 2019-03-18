@@ -9,7 +9,7 @@ BaseGPIODriver::BaseGPIODriver()
 {
 }
 
-const DriverConfig_t* BaseGPIODriver::GetDriverConfig() const
+const GPIODriverConfig_t* BaseGPIODriver::GetDriverConfig() const
 {
     return mConfig;
 }

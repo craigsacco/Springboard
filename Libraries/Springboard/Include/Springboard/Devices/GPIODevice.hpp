@@ -18,7 +18,7 @@ class GPIODevice : public IDevice
 {
 public:
     GPIODevice(Springboard::Drivers::GPIO::IGPIODriverFactory& driverFactory);
-    Springboard::Error_t ConfigureDevice(DeviceConfig_t& config) override final;
+    Springboard::Error_t ConfigureDevice(DeviceConfig_t& config, Springboard::Drivers::IDriverLookup& lookup) override final;
     Springboard::Drivers::IDriver* GetDriver() const override final;
     const DeviceConfig_t* GetDeviceConfig() const override final;
 
