@@ -4,10 +4,8 @@
 namespace Springboard {
 namespace Devices {
 
-DeviceRegistry::DeviceRegistry(IDeviceFactory& deviceFactory,
-                               Springboard::Drivers::GPIO::IGPIODriverFactory& gpioDriverFactory)
+DeviceRegistry::DeviceRegistry(IDeviceFactory& deviceFactory)
     : mDeviceFactory(&deviceFactory)
-    , mGPIODriverFactory(&gpioDriverFactory)
     , mDevices(nullptr)
     , mDeviceCount(0)
 {
@@ -28,7 +26,7 @@ Springboard::Error_t  DeviceRegistry::CreateDevices(DeviceConfig_t configs[], si
         if (mDevices[i] == nullptr) {
             return RAISE_ERROR(Springboard::Error_t::DeviceNotCreated, "Could not create device from configuration");
         }
-        result = mDevices[i]->Configure(config);
+        result = mDevices[i]->ConfigureDevice(config);
         if (result != Springboard::Error_t::Success) {
             return result;
         }
@@ -49,15 +47,15 @@ IDevice* DeviceRegistry::GetDeviceById(DeviceId_t id) const
     return nullptr;
 }
 
-Springboard::Drivers::IDriver* DeviceRegistry::GetDriverByDeviceId(Springboard::DeviceId_t id) const
-{
-    IDevice* device = GetDeviceById(id);
-    if (device == nullptr) {
-        return nullptr;
-    }
+// Springboard::Drivers::IDriver* DeviceRegistry::GetDriverByDeviceId(Springboard::DeviceId_t id) const
+// {
+//     IDevice* device = GetDeviceById(id);
+//     if (device == nullptr) {
+//         return nullptr;
+//     }
 
-    return device->GetDriver();
-}
+//     return device->GetDriver();
+// }
 
 }
 }

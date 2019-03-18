@@ -2,8 +2,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "Springboard/Drivers/GPIO/InternalGPIODriver.hpp"
-#include "Springboard/Devices/GPIODevice.hpp"
+#include "Springboard/Devices/DeviceConfig.hpp"
+#include "Springboard/Drivers/GPIO/GPIODriverConfig.hpp"
+#include "Springboard/Drivers/GPIO/InternalGPIODriverConfig.hpp"
 #include "Springboard/Devices/DeviceBootstrapper.hpp"
 #include <array>
 
@@ -36,17 +37,18 @@ int main(void)
         PortHDevice = 1,
     };
 
-    static Springboard::Drivers::GPIO::InternalGPIODriver::DriverSpecificConfig_t portHDriverSpecificConfig {
-        Springboard::Drivers::GPIO::InternalGPIODriver::GPIOPort_t::H,
+    static Springboard::Drivers::GPIO::InternalGPIODriverConfig_t portHDriverSpecificConfig {
+        Springboard::Drivers::GPIO::InternalGPIODriverConfig_t::Port_t::H,
     };
-    static Springboard::Drivers::GPIO::DriverConfig_t portHDriverConfig {
-        Springboard::Drivers::GPIO::DriverType_t::InternalGPIO,
+    static Springboard::Drivers::GPIO::GPIODriverConfig_t portHDriverConfig {
+        Springboard::Drivers::GPIO::GPIODriverConfig_t::Type_t::InternalGPIO,
         &portHDriverSpecificConfig,
     };
     static std::array<Springboard::Devices::DeviceConfig_t, 1> deviceConfigs {
         { ProjectDeviceIds::PortHDevice, Springboard::DeviceType_t::GPIO,
           "PortHDevice", &portHDriverConfig },
     };
+
     Springboard::Devices::DeviceBootstrapper deviceBootstrapper;
     deviceBootstrapper.GetDeviceRegistry().CreateDevices(deviceConfigs.data(), deviceConfigs.size());
 

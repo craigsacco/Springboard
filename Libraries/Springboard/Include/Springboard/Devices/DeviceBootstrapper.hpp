@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Springboard/Devices/DeviceFactory.hpp"
-#include "Springboard/Drivers/GPIO/GPIODriverFactory.hpp"
 #include "Springboard/Devices/DeviceRegistry.hpp"
 
 namespace Springboard {
@@ -11,16 +10,11 @@ class DeviceBootstrapper
 {
 public:
     DeviceBootstrapper();
-
-    DeviceRegistry& GetDeviceRegistry()
-    {
-        return mDeviceRegistry;
-    }
+    IDeviceRegistry& GetDeviceRegistry();
 
 private:
     DeviceFactory mDeviceFactory {};
-    Springboard::Drivers::GPIO::GPIODriverFactory mGPIODriverFactory {};
-    DeviceRegistry mDeviceRegistry { mDeviceFactory, mGPIODriverFactory };
+    DeviceRegistry mDeviceRegistry { mDeviceFactory };
 };
 
 }

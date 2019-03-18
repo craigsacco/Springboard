@@ -8,11 +8,11 @@ DeviceFactory::DeviceFactory()
 {
 }
 
-IDevice* DeviceFactory::CreateDevice(DeviceConfig_t& config)
+IDevice* DeviceFactory::CreateDevice(DeviceConfig_t& config) const
 {
     switch (config.type) {
         case Springboard::DeviceType_t::GPIO:
-            return new GPIODevice();
+            return new Springboard::Devices::GPIODevice();
         default:
             return nullptr;
     }

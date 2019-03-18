@@ -2,6 +2,7 @@ SET(stm32f4xx_stdperiph_library_root ${stm32f4xx_stdperiph_library_libroot}/1.8.
 
 SET(hal_includes
     ${stm32f4xx_stdperiph_library_root}/inc
+    ${stm32f4xx_stdperiph_library_libroot}/Include
 )
 
 # common peripherals for all F4xx micros

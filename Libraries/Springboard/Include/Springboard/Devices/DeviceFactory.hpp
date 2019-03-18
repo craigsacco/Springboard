@@ -9,7 +9,7 @@ class DeviceFactory : public IDeviceFactory
 {
 public:
     DeviceFactory();
-    IDevice* CreateDevice(DeviceConfig_t& config) override final;
+    IDevice* CreateDevice(DeviceConfig_t& config) const override final;
 };
 
 }
