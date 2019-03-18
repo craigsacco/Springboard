@@ -22,6 +22,7 @@ class IGPIODriver : public IDriver
 {
 public:
     virtual Springboard::Error_t ConfigureDriver(DriverConfig_t* config) = 0;
+    virtual const DriverConfig_t* GetDriverConfig() const = 0;
 };
 
 }

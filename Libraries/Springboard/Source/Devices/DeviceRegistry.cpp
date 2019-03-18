@@ -47,15 +47,15 @@ IDevice* DeviceRegistry::GetDeviceById(DeviceId_t id) const
     return nullptr;
 }
 
-// Springboard::Drivers::IDriver* DeviceRegistry::GetDriverByDeviceId(Springboard::DeviceId_t id) const
-// {
-//     IDevice* device = GetDeviceById(id);
-//     if (device == nullptr) {
-//         return nullptr;
-//     }
+Springboard::Drivers::IDriver* DeviceRegistry::GetDriverByDeviceId(Springboard::DeviceId_t id) const
+{
+    IDevice* device = GetDeviceById(id);
+    if (device == nullptr) {
+        return nullptr;
+    }
 
-//     return device->GetDriver();
-// }
+    return device->GetDriver();
+}
 
 }
 }

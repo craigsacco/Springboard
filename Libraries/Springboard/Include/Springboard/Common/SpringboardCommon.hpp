@@ -29,4 +29,7 @@ enum class DeviceType_t : UnderlyingDeviceType_t {
     GPIO,
 };
 
+// assertion macros
+#define ASSERT(condition, message)              (void)0;
+
 }
