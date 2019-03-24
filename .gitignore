@@ -1,0 +1,6 @@
+# build folder
+build
+
+# visual studio code
+.vscode/.cortex-debug.*.json
+.vscode/settings.json
